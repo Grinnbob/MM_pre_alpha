@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_authentication"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.mycompany.grifon.mm_pre_alpha.LoginActivity">
+
+    <EditText
+        android:id="@+id/et_userName"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_above="@+id/et_email"
+        android:layout_alignLeft="@+id/et_email"
+        android:layout_alignStart="@+id/et_email"
+        android:hint="User Name"
+        android:textSize="30dp" />
+
+    <EditText android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:id="@+id/et_email"
+        android:hint="Email"
+        android:textSize="30dp"
+        android:layout_marginBottom="12dp"
+        android:layout_above="@+id/et_password"
+        android:layout_centerHorizontal="true" />
+
+    <EditText android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:hint="Password"
+        android:textSize="30dp"
+        android:id="@+id/et_password"
+        android:layout_above="@+id/linearLayout2"
+        android:layout_alignLeft="@+id/et_email"
+        android:layout_alignStart="@+id/et_email"
+        android:layout_marginBottom="30dp" />
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="52dp"
+        android:id="@+id/linearLayout2">
+        <Button android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Sign In"
+            android:layout_weight="1"
+            android:id="@+id/btn_sign_in"/>
+        <Button android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Registration"
+            android:id="@+id/btn_registration"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "480966663765",
+    "firebase_url": "https://mmprealpha.firebaseio.com",
+    "project_id": "mmprealpha",
+    "storage_bucket": "mmprealpha.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:480966663765:android:0184881e0cc95766",
+        "android_client_info": {
+          "package_name": "com.mycompany.grifon.mm_pre_alpha"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "480966663765-54m3phisi4lu330jsq13dbes64pv1rcc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mycompany.grifon.mm_pre_alpha",
+            "certificate_hash": "da5c44a538b811690d35fb7e9031851ba1522915"
+          }
+        },
+        {
+          "client_id": "480966663765-ji5uvq87h4ro8ji231ttf8f01hqvqj5h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlcDzrgjJkLNSax4lskURAONjDm1wTZZ0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "480966663765-ji5uvq87h4ro8ji231ttf8f01hqvqj5h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
