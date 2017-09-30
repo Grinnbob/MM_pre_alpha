@@ -63,6 +63,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         if(view.getId() == R.id.btn_sign_in) {
             //signIn(email.getText().toString(), password.getText().toString());
+            //vlad.comment
             signIn("1234@qwe.ru", "123456");
         } else if (view.getId() == R.id.btn_registration) {
             registration(email.getText().toString(), password.getText().toString());
