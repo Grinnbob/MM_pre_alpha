@@ -103,6 +103,11 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    "Регистрация успешна"
+    <string name="login_authorisation_success_toast_message">Авторизация успешна</string>
+    <string name="login_authorisation_failed_toast_message">Aвторизация провалена</string>
+    <string name="login_registration_success_toast_message">Регистрация успешна</string>
+    <string name="login_registration_failed_toast_message">Регистрация провалена</string>
     <string name="action_music">music</string>
     <string name="action_subscribers">subscribers</string>
     <string name="action_news">news</string>
