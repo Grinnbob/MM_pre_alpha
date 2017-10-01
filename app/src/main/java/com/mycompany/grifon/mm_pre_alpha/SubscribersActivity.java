@@ -9,12 +9,16 @@ import android.view.MenuItem;
 
 public class SubscribersActivity extends AppCompatActivity{
 
+    private Toolbar toolbar;
+    private Intent intentMusic;
+    private Intent intentNews;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscribers);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
 
@@ -26,8 +30,6 @@ public class SubscribersActivity extends AppCompatActivity{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intentMusic;
-        Intent intentNews;
         // Операции для выбранного пункта меню
         switch (item.getItemId()) {
             case R.id.subscriptions:
