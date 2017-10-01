@@ -8,6 +8,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 public class MusicActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Toolbar toolbar;
@@ -22,17 +25,26 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        findViewById(R.id.btn_add_music).setOnClickListener(this);
+        findViewById(R.id.btn_play).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         // добавить музыку
-        //if(view.getId() == R.id.btn_add_music) {
+        if(view.getId() == R.id.btn_add_music) {
+            // Получаем доступ к Хранилищу
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            // Создаем ссылку на рут
+            StorageReference storageRef = storage.getReference();
+            // Создаем ссылку на файл
+            StorageReference mountainsRef = storageRef.child("audio/mountains.jpg");
+
 
             // воспроизвести музыку
-       // } else if(view.getId() == R.id.btn_play_music) {
+        } else if(view.getId() == R.id.btn_play) {
 
-        //}
+        }
 
     }
 

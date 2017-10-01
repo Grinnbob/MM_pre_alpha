@@ -1,13 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.mycompany.grifon.mm_pre_alpha.MusicActivity">
 
-    <include
-        layout="@layout/toolbar"/>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.mycompany.grifon.mm_pre_alpha.MusicActivity">
 
-</LinearLayout>
+        <include layout="@layout/toolbar" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_play"
+        android:layout_width="37dp"
+        android:layout_height="31dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="9dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="61dp"
+        android:layout_weight="0.01"
+        android:text="|>" />
+
+    <Button
+        android:id="@+id/btn_add_music"
+        android:layout_width="31dp"
+        android:layout_height="27dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="56dp"
+        android:layout_marginStart="56dp"
+        android:text="v"
+        android:layout_alignTop="@+id/btn_play"
+        android:layout_alignBottom="@+id/btn_play" />
+
+</RelativeLayout>
