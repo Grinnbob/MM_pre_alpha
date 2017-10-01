@@ -31,11 +31,11 @@
         <activity
             android:name=".SubscribersActivity"
             android:label="@string/action_subscribers"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MusicActivity"
             android:label="@string/action_music"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

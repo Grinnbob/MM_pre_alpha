@@ -9,17 +9,17 @@ import android.view.MenuItem;
 
 public class NewsActivity extends AppCompatActivity {
 
+    private Toolbar toolbar;
+    private Intent intentSubscribers;
+    private Intent intentMusic;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //Intent intentLogin = new Intent(this, LoginActivity.class);
-        //startActivity(intentLogin);
-
     }
 
     @Override
@@ -30,8 +30,6 @@ public class NewsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intentSubscribers;
-        Intent intentMusic;
         // Операции для выбранного пункта меню
         switch (item.getItemId()) {
             case R.id.subscriptions:
