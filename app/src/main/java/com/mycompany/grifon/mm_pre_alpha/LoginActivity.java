@@ -23,11 +23,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private volatile boolean success = false;
 
     private EditText email;
     private EditText password;
     private EditText userName;
+
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,15 +78,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
                     Toast.makeText(LoginActivity.this, "Aвторизация успешна", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, NewsActivity.class);
-                    startActivity(intent);
-                    success = true;
                 } else
                     Toast.makeText(LoginActivity.this, "Aвторизация провалена", Toast.LENGTH_SHORT).show();
 
             }
         });
-        //if(success) this.finish();
+        intent = new Intent(LoginActivity.this, NewsActivity.class);
+        startActivity(intent);
     }
 
     public void registration (String email , String password){
@@ -94,7 +93,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
                     Toast.makeText(LoginActivity.this, "Регистрация успешна", Toast.LENGTH_SHORT).show();
-                    success = true;
                 } else
                     Toast.makeText(LoginActivity.this, "Регистрация провалена", Toast.LENGTH_SHORT).show();
             }
@@ -115,7 +113,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                     }
                 });
-        //if(success) this.finish();
+        intent = new Intent(LoginActivity.this, NewsActivity.class);
+        startActivity(intent);
     }
 }
 
