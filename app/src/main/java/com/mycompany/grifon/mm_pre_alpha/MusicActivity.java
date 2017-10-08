@@ -51,37 +51,12 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         // добавить музыку
         if(view.getId() == R.id.btn_add_music) {
-            // Выбираем файл на смартфоне
+            // Выбираем файл на смартфоне и загружаем в Firebase storage
             Intent intent = new Intent();
             intent.setType("audio/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             startActivityForResult(intent, SELECT_MUSIC);
-
-            // Получаем доступ к Хранилищу
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            // Создаем ссылку на рут
-            StorageReference storageRef = storage.getReference();
-            // Создаем ссылку на файл
-            StorageReference audiosRef = storageRef.child("audio/");
-
-            // Создаем ссылку в Хранилище Firebase
-            StorageReference riversRef = storageRef.child("audio/" + uri.getLastPathSegment());
-            // создаем uploadTask посредством вызова метода putFile(), в качестве аргумента идет созданная нами ранее Uri
-            UploadTask uploadTask = riversRef.putFile(uri);
-            // устанавливаем 1-й слушатель на uploadTask, который среагирует, если произойдет ошибка, а также 2-й слушатель, который сработает в случае успеха операции
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-            // Ошибка
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-            // Успешно! Берем ссылку прямую https-ссылку на файл
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                }
-            });
 
             // воспроизвести музыку ... хз что это делает, доделать
         } else if(view.getId() == R.id.btn_play) {
@@ -95,9 +70,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 Intent intent = new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER); //"android.intent.action.MUSIC_PLAYER"
                 startActivity(intent);
             }
-
         }
-
     }
 
     // выбирает файл
@@ -109,8 +82,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             if (requestCode == SELECT_MUSIC)
             {
                 Uri selectedAudioUri = data.getData();
-                uri = selectedAudioUri;
                 selectedAudioPath = getPath(selectedAudioUri);
+                // што эта такое????
                 try {
                     FileInputStream files = new FileInputStream(selectedAudioPath);
                     BufferedInputStream bufferedStream = new BufferedInputStream(files);
@@ -129,15 +102,19 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                // загружаем в бд музыку
+                uploadFileInFirebaseStorage();
             }
         }
     }
 
-    // получить путь к выбранному файлу
+    // получить абсолютный путь к выбранному файлу по uri
     public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
+        String[] projection = { MediaStore.Audio.Media.DATA };
+        @SuppressWarnings("deprecation")
         Cursor cursor = managedQuery(uri, projection, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
@@ -147,6 +124,33 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         getMenuInflater().inflate(R.menu.menu_music, menu);
 
         return true;
+    }
+
+    private void uploadFileInFirebaseStorage() {
+        // Получаем доступ к Хранилищу
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        // Создаем ссылку на рут
+        StorageReference storageRef = storage.getReference();
+        // Создаем ссылку на файл
+        StorageReference audiosRef = storageRef.child("audio/");
+
+        // Создаем ссылку в Хранилище Firebase
+        StorageReference riversRef = storageRef.child("audio/" + uri.getLastPathSegment());
+        // создаем uploadTask посредством вызова метода putFile(), в качестве аргумента идет созданная нами ранее Uri
+        UploadTask uploadTask = riversRef.putFile(uri);
+        // устанавливаем 1-й слушатель на uploadTask, который среагирует, если произойдет ошибка, а также 2-й слушатель, который сработает в случае успеха операции
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Ошибка
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // Успешно! Берем ссылку прямую https-ссылку на файл
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+            }
+        });
     }
 
     @Override
