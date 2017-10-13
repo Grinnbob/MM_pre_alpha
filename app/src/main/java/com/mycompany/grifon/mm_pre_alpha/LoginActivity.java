@@ -23,11 +23,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private volatile boolean success = false;
 
     private EditText email;
     private EditText password;
     private EditText userName;
+
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +64,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         if(view.getId() == R.id.btn_sign_in) {
             //signIn(email.getText().toString(), password.getText().toString());
-            //vlad.comment
-            //vlad.comment_2
             signIn("1234@qwe.ru", "123456");
         } else if (view.getId() == R.id.btn_registration) {
             registration(email.getText().toString(), password.getText().toString());
@@ -79,9 +78,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
                     Toast.makeText(LoginActivity.this, R.string.login_authorisation_success_toast_message, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, NewsActivity.class);
+                    intent = new Intent(LoginActivity.this, NewsActivity.class);
                     startActivity(intent);
-                    success = true;
                 } else
                     Toast.makeText(LoginActivity.this, R.string.login_authorisation_failed_toast_message, Toast.LENGTH_SHORT).show();
 
@@ -91,17 +89,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void registration (String email , String password){
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()) {
-                    Toast.makeText(LoginActivity.this, R.string.login_registration_success_toast_message, Toast.LENGTH_SHORT).show();
-                    success = true;
-                } else
-                    Toast.makeText(LoginActivity.this, R.string.login_registration_failed_toast_message, Toast.LENGTH_SHORT).show();
-            }
-        });
-
         //add user name
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -117,7 +104,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                     }
                 });
-        //if(success) this.finish();
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()) {
+                    Toast.makeText(LoginActivity.this, R.string.login_registration_success_toast_message, Toast.LENGTH_SHORT).show();
+                    intent = new Intent(LoginActivity.this, NewsActivity.class);
+                    startActivity(intent);
+                } else
+                    Toast.makeText(LoginActivity.this, R.string.login_registration_failed_toast_message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
 
