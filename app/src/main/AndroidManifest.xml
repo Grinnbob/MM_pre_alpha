@@ -26,8 +26,7 @@
         <activity
             android:name=".NewsActivity"
             android:label="@string/action_news"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SubscribersActivity"
             android:label="@string/action_subscribers"
@@ -36,6 +35,11 @@
             android:name=".MusicActivity"
             android:label="@string/action_music"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ProfileActivity"
+            android:label="@string/action_profile"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ChatActivity"></activity>
     </application>
 
 </manifest>

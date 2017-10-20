@@ -30,6 +30,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private Toolbar toolbar;
     private Intent intentSubscribers;
     private Intent intentNews;
+    private Intent intentProfile;
 
     private static final int SELECT_MUSIC = 1;
     private String selectedAudioPath;
@@ -159,6 +160,11 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             case R.id.news:
                 intentNews = new Intent(this, NewsActivity.class);
                 startActivity(intentNews);
+                this.finish();
+                break;
+            case R.id.profile:
+                intentProfile = new Intent(this, ProfileActivity.class);
+                startActivity(intentProfile);
                 this.finish();
                 break;
             default:

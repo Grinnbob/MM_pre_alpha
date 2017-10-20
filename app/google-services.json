@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "480966663765-134jkoinb7hts6h1h09j7g8g9vpcbdd2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mycompany.grifon.mm_pre_alpha",
+            "certificate_hash": "4d4c3d8ddee6c2f667ddaaf685517660444bbb81"
+          }
+        },
+        {
           "client_id": "480966663765-54m3phisi4lu330jsq13dbes64pv1rcc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
