@@ -12,6 +12,7 @@ public class SubscribersActivity extends AppCompatActivity{
     private Toolbar toolbar;
     private Intent intentMusic;
     private Intent intentNews;
+    private Intent intentProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,11 @@ public class SubscribersActivity extends AppCompatActivity{
             case R.id.news:
                 intentNews = new Intent(this, NewsActivity.class);
                 startActivity(intentNews);
+                this.finish();
+                break;
+            case R.id.profile:
+                intentProfile = new Intent(this, ProfileActivity.class);
+                startActivity(intentProfile);
                 this.finish();
                 break;
             default:

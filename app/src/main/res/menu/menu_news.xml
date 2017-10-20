@@ -20,4 +20,10 @@
         android:orderInCategory="2"
         android:title="@string/action_subscribers"
         app:showAsAction="always" />
+    <item
+        android:icon="@android:drawable/ic_dialog_info"
+        android:id="@+id/profile"
+        android:orderInCategory="4"
+        android:title="@string/action_profile"
+        app:showAsAction="always" />
 </menu>

@@ -111,4 +111,5 @@
     <string name="action_music">music</string>
     <string name="action_subscribers">subscribers</string>
     <string name="action_news">news</string>
+    <string name="action_profile">profile</string>
 </resources>
