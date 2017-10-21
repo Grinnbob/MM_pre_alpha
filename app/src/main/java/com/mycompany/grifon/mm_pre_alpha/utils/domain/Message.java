@@ -1,4 +1,4 @@
-package com.mycompany.grifon.mm_pre_alpha;
+package com.mycompany.grifon.mm_pre_alpha.utils.domain;
 
 import java.util.Date;
 

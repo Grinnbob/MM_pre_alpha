@@ -1,4 +1,4 @@
-package com.mycompany.grifon.mm_pre_alpha;
+package com.mycompany.grifon.mm_pre_alpha.utils;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;

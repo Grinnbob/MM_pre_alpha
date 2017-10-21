@@ -10,9 +10,10 @@
 
 
     <Button
-        android:id="@+id/btn_play"
-        android:layout_width="37dp"
-        android:layout_height="31dp"
+        android:id="@+id/add"
+        android:layout_width="50dp"
+        android:layout_height="30dp"
+        android:textSize="10sp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
@@ -20,19 +21,26 @@
         android:layout_marginStart="9dp"
         android:layout_marginTop="61dp"
         android:layout_weight="0.01"
-        android:text="|>" />
+        android:text="Play" />
 
     <Button
-        android:id="@+id/btn_add_music"
-        android:layout_width="31dp"
-        android:layout_height="27dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="56dp"
-        android:layout_marginStart="56dp"
-        android:text="v"
-        android:layout_alignTop="@+id/btn_play"
-        android:layout_alignBottom="@+id/btn_play" />
+        android:id="@+id/btn_search_music"
+        android:layout_width="70dp"
+        android:layout_height="30dp"
+        android:textSize="10sp"
+        android:text="search"
+        android:layout_alignTop="@+id/add"
+        android:layout_toRightOf="@+id/add" />
+
+    <EditText
+        android:id="@+id/et_search"
+        android:layout_width="250dp"
+        android:layout_height="30dp"
+        android:layout_alignTop="@+id/btn_search_music"
+        android:layout_toRightOf="@+id/btn_search_music"
+        android:layout_toEndOf="@+id/btn_search_music"
+        android:hint="search"
+        android:textSize="10dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -40,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="vertical"
-        android:layout_below="@+id/toolbar"
+        android:layout_below="@+id/add"
         android:scrollbars="none"/>
 
 </RelativeLayout>

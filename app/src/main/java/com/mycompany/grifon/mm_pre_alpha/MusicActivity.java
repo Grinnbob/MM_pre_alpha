@@ -52,8 +52,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         // создаём стену
         createWall();
 
-        findViewById(R.id.btn_add_music).setOnClickListener(this);
-        findViewById(R.id.btn_play).setOnClickListener(this);
+        findViewById(R.id.btn_search_music).setOnClickListener(this);
+        findViewById(R.id.add).setOnClickListener(this);
     }
 
     // создаём стену
@@ -68,7 +68,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         // добавить музыку
-        if(view.getId() == R.id.btn_add_music) {
+        if(view.getId() == R.id.btn_search_music) {
             // Выбираем файл на смартфоне и загружаем в Firebase storage and database
             Intent intent = new Intent();
             intent.setType("audio/*");
@@ -77,7 +77,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             startActivityForResult(intent, SELECT_MUSIC);
 
             // воспроизвести музыку ... хз что это делает, доделать
-        } else if(view.getId() == R.id.btn_play) {
+        } else if(view.getId() == R.id.add) {
 /*
             if (android.os.Build.VERSION.SDK_INT >= 15) {
                 Intent intent = Intent.makeMainSelectorActivity(Intent.ACTION_MAIN,
