@@ -1,5 +1,6 @@
 package com.mycompany.grifon.mm_pre_alpha.utils;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,53 +9,72 @@ import android.widget.TextView;
 
 import com.mycompany.grifon.mm_pre_alpha.R;
 
+import java.util.Collections;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>  {
 
-    private List<String> mDataset;
 
-    // класс view holder-а с помощью которого мы получаем ссылку на каждый элемент
-    // отдельного пункта списка
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        // наш пункт состоит только из одного TextView
-        public TextView mTextView;
-        // сюда добавлять другие вью
+    private List<String> mData = Collections.emptyList();
+    private LayoutInflater mInflater;
+    private ItemClickListener mClickListener;
 
-        public ViewHolder(View v) {
-            super(v);
-            mTextView = (TextView) v.findViewById(R.id.tv_recycler_item);
+    // data is passed into the constructor
+    public RecyclerViewAdapter(Context context, List<String> data) {
+        this.mInflater = LayoutInflater.from(context);
+        this.mData = data;
+    }
+
+    // inflates the row layout from xml when needed
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = mInflater.inflate(R.layout.recycler_item, parent, false);
+        ViewHolder viewHolder = new ViewHolder(view);
+        return viewHolder;
+    }
+
+    // binds the data to the textview in each row
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        String animal = mData.get(position);
+        holder.myTextView.setText(animal);
+    }
+
+    // total number of rows
+    @Override
+    public int getItemCount() {
+        return mData.size();
+    }
+
+
+    // stores and recycles views as they are scrolled off screen
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public TextView myTextView;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            myTextView = (TextView) itemView.findViewById(R.id.tv_recycler_item);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
         }
     }
 
-    // Конструктор
-    public RecyclerViewAdapter(List<String> dataset) {
-        mDataset = dataset;
+    // convenience method for getting data at click position
+    public String getItem(int id) {
+        return mData.get(id);
     }
 
-    // Создает новые views (вызывается layout manager-ом)
-    @Override
-    public RecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                         int viewType) {
-        // create a new view
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recycler_item, parent, false);
-
-        // тут можно программно менять атрибуты лэйаута (size, margins, paddings и др.)
-
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+    // allows clicks events to be caught
+    public void setClickListener(ItemClickListener itemClickListener) {
+        this.mClickListener = itemClickListener;
     }
 
-    // Заменяет контент отдельного view (вызывается layout manager-ом)
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mTextView.setText(mDataset.get(position));
-    }
-
-    // Возвращает размер данных (вызывается layout manager-ом)
-    @Override
-    public int getItemCount() {
-        return mDataset.size();
+    // parent activity will implement this method to respond to click events
+    public interface ItemClickListener {
+        void onItemClick(View view, int position);
     }
 }

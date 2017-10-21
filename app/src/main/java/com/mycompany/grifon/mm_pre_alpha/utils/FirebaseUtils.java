@@ -12,12 +12,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.mycompany.grifon.mm_pre_alpha.utils.json.SongInfo;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class FirebaseUtils {
@@ -41,12 +40,16 @@ public class FirebaseUtils {
     public void uploadFileInFirebase(final Uri uri, final String name) {
         // Создаем ссылку в Хранилище Firebase
         StorageReference myRef = storageRef.child("music").child(name);
-        // metadata (likes)
+        /*
+        // metadata
         StorageMetadata metadata = new StorageMetadata.Builder()
                 .setCustomMetadata("likes", "0")
                 .build();
+
         // создаем uploadTask посредством вызова метода putFile(), в качестве аргумента идет созданная нами ранее Uri
         UploadTask uploadTask = myRef.putFile(uri, metadata);
+        */
+        UploadTask uploadTask = myRef.putFile(uri);
         // устанавливаем 1ый слушатель прогресса
         // 2-й слушатель на uploadTask, который среагирует, если произойдет ошибка,
         // а также 3-й слушатель, который сработает в случае успеха операции
@@ -72,16 +75,15 @@ public class FirebaseUtils {
                 // добавляем URI в database
                 //DatabaseReference myRef = databaseRef.child("music").push();
                 // write in DB
-                writeNewInfoToDB(name, downloadUri.toString(), 0);
+                writeNewInfoInDB(name, downloadUri.toString());
                 //myRef.setValue(uri);
                 //Toast.makeText(FirebaseUtils.this, "Композиция загружена", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void writeNewInfoToDB(String name, String url, int likes) {
-        UploadInfo info = new UploadInfo(name, url, likes);
-
+    private void writeNewInfoInDB(String name, String url) {
+        SongInfo info = new SongInfo(name, url, 0);
         String key = databaseRef.push().getKey();
         databaseRef.child("music").child(key).setValue(info);
     }
@@ -89,23 +91,25 @@ public class FirebaseUtils {
     // получаем список хранящейся в Database музыки
     public List<String> getDataSet() {
         final List<String> mDataSet = new ArrayList<>();
-        // Create a storage reference from our app
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = database.getReference();
-        StorageReference storageRef = storage.getReference();
-        // Get reference to the files
-        StorageReference ref = storageRef.child("music");
 
-        databaseReference.child("music").addValueEventListener(new ValueEventListener() {
+        databaseRef.child("music").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                /*
+                // другой способ итерироваться по БД
                 Iterator<DataSnapshot> iter = dataSnapshot.getChildren().iterator();
                 while (iter.hasNext()) {
                     String audio = iter.next().getValue(String.class);
                     mDataSet.add(audio);
                 }
-            }
+                */
+                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                    //add result into array list
+                    //mDataSet.add(String.valueOf(dsp.getKey()));
+                    SongInfo songInfo = dsp.getValue(SongInfo.class);
+                    mDataSet.add(songInfo.getName());
+                }
+                }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {

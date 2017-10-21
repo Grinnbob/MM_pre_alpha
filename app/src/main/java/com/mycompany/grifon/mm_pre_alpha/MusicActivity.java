@@ -2,8 +2,6 @@ package com.mycompany.grifon.mm_pre_alpha;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
@@ -19,10 +17,6 @@ import android.view.View;
 import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapter;
 import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 public class MusicActivity extends AppCompatActivity implements View.OnClickListener {
@@ -37,7 +31,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     // для стены
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private RecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private String name = null;
@@ -48,6 +42,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -63,19 +59,9 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     // создаём стену
     private void createWall() {
         List<String> myDataset = firebaseUtils.getDataSet();
-
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
-        // если мы уверены, что изменения в контенте не изменят размер layout-а RecyclerView
-        // передаем параметр true - это увеличивает производительность
-        mRecyclerView.setHasFixedSize(true);
-
-        // используем linear layout manager
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        // создаем адаптер
-        mAdapter = new RecyclerViewAdapter(myDataset);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new RecyclerViewAdapter(this, myDataset);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -92,7 +78,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
             // воспроизвести музыку ... хз что это делает, доделать
         } else if(view.getId() == R.id.btn_play) {
-
+/*
             if (android.os.Build.VERSION.SDK_INT >= 15) {
                 Intent intent = Intent.makeMainSelectorActivity(Intent.ACTION_MAIN,
                         Intent.CATEGORY_APP_MUSIC);
@@ -101,7 +87,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             } else {
                 Intent intent = new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER); //"android.intent.action.MUSIC_PLAYER"
                 startActivity(intent);
-            }
+            }*/
         }
     }
 
