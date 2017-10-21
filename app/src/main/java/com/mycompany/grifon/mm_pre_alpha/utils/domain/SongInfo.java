@@ -1,4 +1,4 @@
-package com.mycompany.grifon.mm_pre_alpha.utils.json;
+package com.mycompany.grifon.mm_pre_alpha.utils.domain;
 
 // class that represents the data from Firebase
 // (for database)
