@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    tools:context="com.mycompany.grifon.mm_pre_alpha.ProfileActivity">
+
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
+
+    <ImageView
+        android:id="@+id/UserAvatar"
+        android:layout_width="67dp"
+        android:layout_height="80dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/toolbar"
+        android:src="@drawable/ic_supervisor_account" />
+
+
+    <TextView
+        android:id="@+id/UserName"
+        android:layout_width="67dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/UserAvatar"
+        android:text="User name" />
+
+    <TextView
+        android:id="@+id/NumberOfPublications"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_toRightOf="@+id/UserAvatar"
+        android:text="123" />
+    <!---->
+
+    <TextView
+        android:id="@+id/Publications"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/Subscribers"
+        android:layout_alignBottom="@+id/Subscribers"
+        android:layout_toEndOf="@+id/UserAvatar"
+        android:layout_toRightOf="@+id/UserAvatar"
+        android:text="publications" />
+
+    <TextView
+        android:id="@+id/NumberOfSubscribers"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_toRightOf="@+id/NumberOfPublications"
+        android:text="4412" />
+    <!---->
+
+    <TextView
+        android:id="@+id/Subscribers"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/NumberOfPublications"
+        android:layout_toRightOf="@+id/Publications"
+        android:text="subscribers" />
+
+    <TextView
+        android:id="@+id/NumberOfSubscriptions"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_toRightOf="@+id/NumberOfSubscribers"
+        android:text="123" />
+
+    <TextView
+        android:id="@+id/Subscriptions"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/Subscribers"
+        android:layout_alignBottom="@+id/Subscribers"
+        android:layout_toEndOf="@+id/NumberOfSubscribers"
+        android:layout_toRightOf="@+id/NumberOfSubscribers"
+        android:text="subscriptions" />
+
+    <Button
+        android:id="@+id/chatButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/UserName"
+        android:layout_below="@+id/Publications"
+        android:layout_toRightOf="@+id/UserAvatar"
+        android:text="chat" />
+
+    <CheckBox
+        android:id="@+id/subscribeCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/chatButton"
+        android:layout_below="@+id/Subscribers"
+        android:layout_toEndOf="@+id/Publications"
+        android:layout_toRightOf="@+id/Publications" />
+
+    <ProgressBar
+        android:id="@+id/progressBar5"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Subscriptions"
+        android:layout_marginTop="13dp"
+        android:layout_toEndOf="@+id/Subscribers"
+        android:layout_toRightOf="@+id/Subscribers" />
+
+    <TextView
+        android:id="@+id/userINfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/UserName"
+        android:text="Information about user" />
+
+    <ToggleButton
+        android:id="@+id/Mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/userINfo"
+        android:textOff="list"
+        android:textOn="albums" />
+
+</RelativeLayout>
