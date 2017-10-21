@@ -95,17 +95,7 @@ public class FirebaseUtils {
         databaseRef.child("music").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                /*
-                // другой способ итерироваться по БД
-                Iterator<DataSnapshot> iter = dataSnapshot.getChildren().iterator();
-                while (iter.hasNext()) {
-                    String audio = iter.next().getValue(String.class);
-                    mDataSet.add(audio);
-                }
-                */
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                    //add result into array list
-                    //mDataSet.add(String.valueOf(dsp.getKey()));
                     SongInfo songInfo = dsp.getValue(SongInfo.class);
                     mDataSet.add(songInfo.getName());
                 }
