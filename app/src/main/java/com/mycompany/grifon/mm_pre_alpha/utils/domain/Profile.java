@@ -1,6 +1,4 @@
-package com.mycompany.grifon.mm_pre_alpha;
-
-import com.google.firebase.database.DatabaseReference;
+package com.mycompany.grifon.mm_pre_alpha.utils.domain;
 
 import java.util.List;
 

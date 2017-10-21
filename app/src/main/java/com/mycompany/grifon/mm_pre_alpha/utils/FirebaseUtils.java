@@ -14,7 +14,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.mycompany.grifon.mm_pre_alpha.utils.json.SongInfo;
+import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,17 +95,7 @@ public class FirebaseUtils {
         databaseRef.child("music").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                /*
-                // другой способ итерироваться по БД
-                Iterator<DataSnapshot> iter = dataSnapshot.getChildren().iterator();
-                while (iter.hasNext()) {
-                    String audio = iter.next().getValue(String.class);
-                    mDataSet.add(audio);
-                }
-                */
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                    //add result into array list
-                    //mDataSet.add(String.valueOf(dsp.getKey()));
                     SongInfo songInfo = dsp.getValue(SongInfo.class);
                     mDataSet.add(songInfo.getName());
                 }
