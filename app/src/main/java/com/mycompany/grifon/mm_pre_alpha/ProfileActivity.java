@@ -14,7 +14,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private Toolbar toolbar;//recyclerwiew
     private Intent intentSubscribers;
     private Intent intentNews;
-    private Intent intentProfile;
+    private Intent intentMusic;
     private Intent intentChat;
     private View chatView;
     @Override
@@ -56,6 +56,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 this.finish();
                 break;
             case R.id.music:
+                intentMusic = new Intent(this, MusicActivity.class);
+                startActivity(intentMusic);
+                this.finish();
                 break;
             case R.id.news:
                 intentNews = new Intent(this, NewsActivity.class);
@@ -63,9 +66,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 this.finish();
                 break;
             case R.id.profile:
-                intentProfile = new Intent(this, ProfileActivity.class);
-                startActivity(intentProfile);
-                this.finish();
                 break;
             default:
                 return super.onOptionsItemSelected(item);

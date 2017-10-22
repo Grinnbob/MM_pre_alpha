@@ -19,7 +19,7 @@
         android:layout_height="80dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/toolbar"
-        android:src="@drawable/ic_supervisor_account" />
+        android:src="@drawable/ic_subscribers" />
 
 
     <TextView

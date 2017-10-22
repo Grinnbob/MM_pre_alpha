@@ -6,15 +6,13 @@
     android:padding="10dp"
     android:weightSum="1">
 
-    <ToggleButton
-        android:id="@+id/toggleButton"
+    <Button
         android:layout_width="60dp"
         android:layout_height="30dp"
         android:textSize="10sp"
-        android:textOff="Play"
-        android:textOn="Pause"
-        android:layout_weight="0.03" />
-
+        android:text="Play"
+        android:layout_weight="0.03"
+        android:id="@+id/btn_play"/>
 
     <TextView
         android:id="@+id/tv_recycler_item"

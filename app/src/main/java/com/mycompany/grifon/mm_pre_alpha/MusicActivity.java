@@ -19,6 +19,8 @@ import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
 
 import java.util.List;
 
+import static android.R.attr.id;
+
 public class MusicActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Toolbar toolbar;
@@ -27,12 +29,12 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private Intent intentProfile;
 
     private static final int SELECT_MUSIC = 1;
+    // не удалять!! не будет нихрена работать
     private String selectedAudioPath;
 
     // для стены
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     private String name = null;
     public FirebaseUtils firebaseUtils;
@@ -53,12 +55,13 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         createWall();
 
         findViewById(R.id.btn_search_music).setOnClickListener(this);
-        findViewById(R.id.add).setOnClickListener(this);
+        findViewById(R.id.btn_add_music).setOnClickListener(this);
     }
-
+    private static final String TAG = "myLogs";
+    String test;
     // создаём стену
     private void createWall() {
-        List<String> myDataset = firebaseUtils.getDataSet();
+        final List<String> myDataset = firebaseUtils.getDataSet();
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new RecyclerViewAdapter(this, myDataset);
@@ -68,7 +71,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         // добавить музыку
-        if(view.getId() == R.id.btn_search_music) {
+        if(view.getId() == R.id.btn_add_music) {
             // Выбираем файл на смартфоне и загружаем в Firebase storage and database
             Intent intent = new Intent();
             intent.setType("audio/*");
@@ -76,18 +79,9 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             startActivityForResult(intent, SELECT_MUSIC);
 
-            // воспроизвести музыку ... хз что это делает, доделать
-        } else if(view.getId() == R.id.add) {
-/*
-            if (android.os.Build.VERSION.SDK_INT >= 15) {
-                Intent intent = Intent.makeMainSelectorActivity(Intent.ACTION_MAIN,
-                        Intent.CATEGORY_APP_MUSIC);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Min SDK 15
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER); //"android.intent.action.MUSIC_PLAYER"
-                startActivity(intent);
-            }*/
+            // search music
+        } else if(view.getId() == R.id.btn_search_music) {
+
         }
     }
 

@@ -5,10 +5,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-/**
- * Created by Vlad on 20.10.2017.
- */
-
 public class FirebasePathHelper {
     private static volatile DatabaseReference root=null;
 
