@@ -7,12 +7,20 @@
     android:weightSum="1">
 
     <Button
+    android:layout_width="60dp"
+    android:layout_height="30dp"
+    android:textSize="10sp"
+    android:text="Play"
+    android:layout_weight="0.03"
+    android:id="@+id/btn_play"/>
+
+    <Button
         android:layout_width="60dp"
         android:layout_height="30dp"
         android:textSize="10sp"
-        android:text="Play"
+        android:text="Pause"
         android:layout_weight="0.03"
-        android:id="@+id/btn_play"/>
+        android:id="@+id/btn_pause"/>
 
     <TextView
         android:id="@+id/tv_recycler_item"

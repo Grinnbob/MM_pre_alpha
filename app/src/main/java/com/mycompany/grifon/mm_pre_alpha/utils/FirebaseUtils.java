@@ -82,6 +82,7 @@ public class FirebaseUtils {
         });
     }
 
+    // пишем в Database
     private void writeNewInfoInDB(String name, String url) {
         SongInfo info = new SongInfo(name, url, 0);
         String key = databaseRef.push().getKey();
@@ -89,17 +90,39 @@ public class FirebaseUtils {
     }
 
     // получаем список хранящейся в Database музыки
-    public List<String> getDataSet() {
-        final List<String> mDataSet = new ArrayList<>();
+    public List<SongInfo> getDataSet() {
+        final List<SongInfo> mDataSet = new ArrayList<>();
 
         databaseRef.child("music").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     SongInfo songInfo = dsp.getValue(SongInfo.class);
-                    mDataSet.add(songInfo.getName());
+                    mDataSet.add(songInfo);
                 }
                 }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+        return mDataSet;
+    }
+
+    // получаем список хранящейся в Database музыки
+    public List<SongInfo> getSearcedDataSet(final String searchedName) {
+        final List<SongInfo> mDataSet = new ArrayList<>();
+
+        databaseRef.child("music").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                    SongInfo songInfo = dsp.getValue(SongInfo.class);
+                    if(songInfo.getName().contains(searchedName))
+                        mDataSet.add(songInfo);
+                }
+            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {

@@ -39,7 +39,7 @@
             android:name=".ProfileActivity"
             android:label="@string/action_profile"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ChatActivity"></activity>
+        <activity android:name=".ChatActivity" />
     </application>
 
 </manifest>

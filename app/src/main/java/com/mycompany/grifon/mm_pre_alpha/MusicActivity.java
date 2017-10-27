@@ -16,17 +16,21 @@ import android.view.View;
 
 import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapter;
 import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
+import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
 
 import java.util.List;
 
-import static android.R.attr.id;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.media.MediaPlayer.OnPreparedListener;
+import android.widget.EditText;
 
-public class MusicActivity extends AppCompatActivity implements View.OnClickListener {
+public class MusicActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Toolbar toolbar;
     private Intent intentSubscribers;
     private Intent intentNews;
     private Intent intentProfile;
+    private static MusicActivity musicActivity;
 
     private static final int SELECT_MUSIC = 1;
     // не удалять!! не будет нихрена работать
@@ -36,13 +40,19 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mAdapter;
 
+    // song name to write in database and storage
     private String name = null;
     public FirebaseUtils firebaseUtils;
+
+    // song name for search
+    private EditText searchName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
+
+        musicActivity = this;
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         
@@ -51,17 +61,18 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         // подключаемся к Firebase
         firebaseUtils = new FirebaseUtils();
+        // получаем полный список, хранящихся в БД песен
+        List<SongInfo> myDataset = firebaseUtils.getDataSet();
         // создаём стену
-        createWall();
+        createWall(myDataset);
 
+        searchName = (EditText) findViewById(R.id.et_email);
         findViewById(R.id.btn_search_music).setOnClickListener(this);
         findViewById(R.id.btn_add_music).setOnClickListener(this);
     }
-    private static final String TAG = "myLogs";
-    String test;
+
     // создаём стену
-    private void createWall() {
-        final List<String> myDataset = firebaseUtils.getDataSet();
+    private void createWall(List<SongInfo> myDataset) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new RecyclerViewAdapter(this, myDataset);
@@ -82,6 +93,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             // search music
         } else if(view.getId() == R.id.btn_search_music) {
 
+            //createWall(firebaseUtils.getSearcedDataSet(searchName.getText().toString()));
         }
     }
 
@@ -152,5 +164,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         }
         return true;
     }
+
+    // ссылка на активити
+    public static MusicActivity getInstance() {return musicActivity;}
 }
 
