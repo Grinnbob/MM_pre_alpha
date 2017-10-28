@@ -1,24 +1,19 @@
 package com.mycompany.grifon.mm_pre_alpha.utils;
 
 import android.content.Context;
-import android.content.Intent;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.mycompany.grifon.mm_pre_alpha.MusicActivity;
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,8 +28,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private MediaPlayer mediaPlayer;
     private Player player;
 
-    private static final String TAG = "myLogs";
-
     // data is passed into the constructor
     public RecyclerViewAdapter(Context context, List<SongInfo> data) {
         this.mInflater = LayoutInflater.from(context);
@@ -46,7 +39,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.recycler_item, parent, false);
+        View view = mInflater.inflate(R.layout.recycler_music_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }

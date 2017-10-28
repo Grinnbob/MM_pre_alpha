@@ -13,16 +13,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import java.util.List;
+import android.widget.EditText;
 
 import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapter;
 import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
-
-import java.util.List;
-
-import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnPreparedListener;
-import android.widget.EditText;
 
 public class MusicActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -30,6 +26,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private Intent intentSubscribers;
     private Intent intentNews;
     private Intent intentProfile;
+    private Intent searchActivity;
     private static MusicActivity musicActivity;
 
     private static final int SELECT_MUSIC = 1;
@@ -42,10 +39,10 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     // song name to write in database and storage
     private String name = null;
-    public FirebaseUtils firebaseUtils;
+    private FirebaseUtils firebaseUtils;
 
     // song name for search
-    private EditText searchName;
+    private static EditText et_searchName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,20 +50,20 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_music);
 
         musicActivity = this;
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
         // подключаемся к Firebase
-        firebaseUtils = new FirebaseUtils();
+        firebaseUtils = NewsActivity.getFirebaseUtils();
         // получаем полный список, хранящихся в БД песен
         List<SongInfo> myDataset = firebaseUtils.getDataSet();
         // создаём стену
         createWall(myDataset);
 
-        searchName = (EditText) findViewById(R.id.et_email);
+        et_searchName = (EditText) findViewById(R.id.et_search);
         findViewById(R.id.btn_search_music).setOnClickListener(this);
         findViewById(R.id.btn_add_music).setOnClickListener(this);
     }
@@ -92,8 +89,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
             // search music
         } else if(view.getId() == R.id.btn_search_music) {
-
-            //createWall(firebaseUtils.getSearcedDataSet(searchName.getText().toString()));
+            searchActivity =  new Intent(this, SearchActivity.class);
+            startActivity(searchActivity);
         }
     }
 
@@ -113,7 +110,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    // получить абсолютный путь к выбранному файлу по uri
+    // получить абсолютный путь к выбранному файлу по uri и имя файла
     public String getPath(Uri uri) {
         String[] projection = { MediaStore.Audio.Media.DATA };
         @SuppressWarnings("deprecation")
@@ -167,5 +164,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     // ссылка на активити
     public static MusicActivity getInstance() {return musicActivity;}
+
+    // передаёт в поиск название песни
+    public static EditText getSearchedSongName() {return et_searchName;}
 }
 

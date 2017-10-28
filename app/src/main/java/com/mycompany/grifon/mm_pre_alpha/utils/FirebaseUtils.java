@@ -96,11 +96,12 @@ public class FirebaseUtils {
         databaseRef.child("music").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                SongInfo songInfo;
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                    SongInfo songInfo = dsp.getValue(SongInfo.class);
+                    songInfo = dsp.getValue(SongInfo.class);
                     mDataSet.add(songInfo);
                 }
-                }
+            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -111,15 +112,16 @@ public class FirebaseUtils {
     }
 
     // получаем список хранящейся в Database музыки
-    public List<SongInfo> getSearcedDataSet(final String searchedName) {
+    public List<SongInfo> getSearchedDataSet(final String searchedName) {
         final List<SongInfo> mDataSet = new ArrayList<>();
 
         databaseRef.child("music").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                SongInfo songInfo;
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                    SongInfo songInfo = dsp.getValue(SongInfo.class);
-                    if(songInfo.getName().contains(searchedName))
+                    songInfo = dsp.getValue(SongInfo.class);
+                    if(songInfo.getName().toLowerCase().contains(searchedName.toLowerCase()))
                         mDataSet.add(songInfo);
                 }
             }
