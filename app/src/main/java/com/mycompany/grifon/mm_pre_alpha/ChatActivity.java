@@ -50,7 +50,7 @@ public class ChatActivity extends AppCompatActivity {
     private void displayChat() {
 
         ListView listMessages = (ListView) findViewById(R.id.listView);
-        adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.item, FirebaseDatabase.getInstance().getReference().child("messages")) {
+        adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.message_item, FirebaseDatabase.getInstance().getReference().child("messages")) {
             @Override
             protected void populateView(View v, Message model, int position) {
 

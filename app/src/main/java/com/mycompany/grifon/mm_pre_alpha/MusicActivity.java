@@ -13,52 +13,63 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import java.util.List;
+import android.widget.EditText;
 
 import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapter;
 import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
+import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
 
-import java.util.List;
-
-public class MusicActivity extends AppCompatActivity implements View.OnClickListener {
+public class MusicActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Toolbar toolbar;
     private Intent intentSubscribers;
     private Intent intentNews;
     private Intent intentProfile;
+    private Intent searchActivity;
+    private static MusicActivity musicActivity;
 
     private static final int SELECT_MUSIC = 1;
+    // не удалять!! не будет нихрена работать
     private String selectedAudioPath;
 
     // для стены
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
+    // song name to write in database and storage
     private String name = null;
-    public FirebaseUtils firebaseUtils;
+    private FirebaseUtils firebaseUtils;
+
+    // song name for search
+    private static EditText et_searchName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        musicActivity = this;
         
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // подключаемся к Firebase
-        firebaseUtils = new FirebaseUtils();
-        // создаём стену
-        createWall();
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
+        // подключаемся к Firebase
+        firebaseUtils = NewsActivity.getFirebaseUtils();
+        // получаем полный список, хранящихся в БД песен
+        List<SongInfo> myDataset = firebaseUtils.getDataSet();
+        // создаём стену
+        createWall(myDataset);
+
+        et_searchName = (EditText) findViewById(R.id.et_search);
         findViewById(R.id.btn_search_music).setOnClickListener(this);
-        findViewById(R.id.add).setOnClickListener(this);
+        findViewById(R.id.btn_add_music).setOnClickListener(this);
     }
 
     // создаём стену
-    private void createWall() {
-        List<String> myDataset = firebaseUtils.getDataSet();
+    private void createWall(List<SongInfo> myDataset) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new RecyclerViewAdapter(this, myDataset);
@@ -68,7 +79,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         // добавить музыку
-        if(view.getId() == R.id.btn_search_music) {
+        if(view.getId() == R.id.btn_add_music) {
             // Выбираем файл на смартфоне и загружаем в Firebase storage and database
             Intent intent = new Intent();
             intent.setType("audio/*");
@@ -76,18 +87,10 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             startActivityForResult(intent, SELECT_MUSIC);
 
-            // воспроизвести музыку ... хз что это делает, доделать
-        } else if(view.getId() == R.id.add) {
-/*
-            if (android.os.Build.VERSION.SDK_INT >= 15) {
-                Intent intent = Intent.makeMainSelectorActivity(Intent.ACTION_MAIN,
-                        Intent.CATEGORY_APP_MUSIC);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Min SDK 15
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER); //"android.intent.action.MUSIC_PLAYER"
-                startActivity(intent);
-            }*/
+            // search music
+        } else if(view.getId() == R.id.btn_search_music) {
+            searchActivity =  new Intent(this, SearchActivity.class);
+            startActivity(searchActivity);
         }
     }
 
@@ -107,7 +110,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    // получить абсолютный путь к выбранному файлу по uri
+    // получить абсолютный путь к выбранному файлу по uri и имя файла
     public String getPath(Uri uri) {
         String[] projection = { MediaStore.Audio.Media.DATA };
         @SuppressWarnings("deprecation")
@@ -158,5 +161,11 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         }
         return true;
     }
+
+    // ссылка на активити
+    public static MusicActivity getInstance() {return musicActivity;}
+
+    // передаёт в поиск название песни
+    public static EditText getSearchedSongName() {return et_searchName;}
 }
 

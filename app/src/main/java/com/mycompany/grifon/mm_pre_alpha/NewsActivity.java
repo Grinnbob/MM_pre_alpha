@@ -3,9 +3,17 @@ package com.mycompany.grifon.mm_pre_alpha;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
+import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapter;
+import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
+
+import java.util.List;
 
 public class NewsActivity extends AppCompatActivity {
 
@@ -14,6 +22,12 @@ public class NewsActivity extends AppCompatActivity {
     private Intent intentMusic;
     private Intent intentProfile;
 
+    private static FirebaseUtils firebaseUtils;
+
+    // для стены
+    private RecyclerView mRecyclerView;
+    private RecyclerViewAdapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +35,23 @@ public class NewsActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        // подключаемся к Firebase
+        firebaseUtils = new FirebaseUtils();
+        // получаем полный список, хранящихся в БД песен
+        List<SongInfo> myDataset = firebaseUtils.getDataSet();
+        // создаём стену
+        createWall(myDataset);
+    }
+
+    // создаём стену
+    private void createWall(List<SongInfo> myDataset) {
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new RecyclerViewAdapter(this, myDataset);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -54,6 +85,8 @@ public class NewsActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    public static FirebaseUtils getFirebaseUtils(){return firebaseUtils;}
 }
 
 

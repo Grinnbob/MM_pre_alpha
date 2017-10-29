@@ -8,9 +8,8 @@
 
     <include layout="@layout/toolbar" />
 
-
     <Button
-        android:id="@+id/add"
+        android:id="@+id/btn_add_music"
         android:layout_width="50dp"
         android:layout_height="30dp"
         android:textSize="10sp"
@@ -21,7 +20,7 @@
         android:layout_marginStart="9dp"
         android:layout_marginTop="61dp"
         android:layout_weight="0.01"
-        android:text="Play" />
+        android:text="add" />
 
     <Button
         android:id="@+id/btn_search_music"
@@ -29,8 +28,8 @@
         android:layout_height="30dp"
         android:textSize="10sp"
         android:text="search"
-        android:layout_alignTop="@+id/add"
-        android:layout_toRightOf="@+id/add" />
+        android:layout_alignTop="@+id/btn_add_music"
+        android:layout_toRightOf="@+id/btn_add_music" />
 
     <EditText
         android:id="@+id/et_search"
@@ -48,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="vertical"
-        android:layout_below="@+id/add"
+        android:layout_below="@+id/btn_add_music"
         android:scrollbars="none"/>
 
 </RelativeLayout>
