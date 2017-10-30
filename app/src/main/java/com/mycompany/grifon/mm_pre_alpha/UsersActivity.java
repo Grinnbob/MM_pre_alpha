@@ -19,8 +19,11 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
-public class SubscribersActivity extends EBActivity {
+/**
+ * Created by Vlad on 29.10.2017.
+ */
 
+public class UsersActivity extends EBActivity {
     private Toolbar toolbar;
     private Intent intentMusic;
     private Intent intentNews;
@@ -42,7 +45,7 @@ public class SubscribersActivity extends EBActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         rvSubscribers.setLayoutManager(layoutManager);
         rvSubscribers.setAdapter(subscribersAdapter);
-        FirebasePathHelper.requestAllUsers();
+        FirebasePathHelper.requestMySubscribers();
     }
 
     @Override

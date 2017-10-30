@@ -109,7 +109,7 @@
     <string name="login_registration_success_toast_message">Регистрация успешна</string>
     <string name="login_registration_failed_toast_message">Регистрация провалена</string>
     <string name="action_music">music</string>
-    <string name="action_subscribers">subscribers</string>
+    <string name="action_subscribers">plainUsers</string>
     <string name="action_news">news</string>
     <string name="action_profile">profile</string>
 </resources>

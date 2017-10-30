@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mycompany.grifon.mm_pre_alpha.SubscribersActivity">
+    tools:context="com.mycompany.grifon.mm_pre_alpha.SubscribtionsActivity">
 
     <include
         android:id="@+id/toolbar"
@@ -29,8 +29,8 @@
         android:hint="search"
         android:textSize="10dp" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvSubscribers"
+    <ListView
+        android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/btn_search_subscribers"
