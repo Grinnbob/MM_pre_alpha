@@ -139,7 +139,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     public boolean onOptionsItemSelected(MenuItem item) {
         // Операции для выбранного пункта меню
         switch (item.getItemId()) {
-            case R.id.subscriptions:
+            case R.id.subscribers:
                 intentSubscribers = new Intent(this, SubscribersActivity.class);
                 startActivity(intentSubscribers);
                 this.finish();

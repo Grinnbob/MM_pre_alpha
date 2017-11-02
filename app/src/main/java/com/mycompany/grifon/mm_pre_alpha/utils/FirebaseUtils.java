@@ -2,6 +2,7 @@ package com.mycompany.grifon.mm_pre_alpha.utils;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -88,14 +89,20 @@ public class FirebaseUtils {
         String key = databaseRef.push().getKey();
         databaseRef.child("music").child(key).setValue(info);
     }
-
+    /*
+     1)плохо получать все данные в основном потоке
+     2)Не очень хорошо, что список mDataSet один для всех вызовов  onDataChange
+     Получается что listener держит полный dataset - это не очень правильно. Если я буду сидеть в этом Activity, а ты будет закачивать в это время музло, то всё будет добавляться в этот массив - будет утечка памяти, если так долго сидеть в этом активити то приложение упадёт из-за нехватки памяти.
+     3)getDataSet()может вернуть постой set - тут может быть ситуация что эта фунция вернёт пустой список, в которой загрузились ещё не все значения. Потому что onDataChange() вызывается не тогда когда мы прошлись по коду, а когда страницу обновили(обновление может случиться через несколько миллисекунд после того как вернулся этот список mDataSet )
+     */
     // получаем список хранящейся в Database музыки
     public List<SongInfo> getDataSet() {
-        final List<SongInfo> mDataSet = new ArrayList<>();
+        final List<SongInfo> mDataSet = new ArrayList<>();//не поддерживает многопоточность
 
         databaseRef.child("music").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("FB", "Current thread: "+Thread.currentThread().getName());
                 SongInfo songInfo;
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     songInfo = dsp.getValue(SongInfo.class);
@@ -107,9 +114,14 @@ public class FirebaseUtils {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-
+        Log.e("FB", "Music array size: "+mDataSet.size());
         return mDataSet;
     }
+
+    /*
+    *
+    Вроде тут можно не проводить фильтрацию на клиенте, а запросить фильтрованные данные.
+     */
 
     // получаем список хранящейся в Database музыки
     public List<SongInfo> getSearchedDataSet(final String searchedName) {
@@ -121,6 +133,7 @@ public class FirebaseUtils {
                 SongInfo songInfo;
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     songInfo = dsp.getValue(SongInfo.class);
+
                     if(songInfo.getName().toLowerCase().contains(searchedName.toLowerCase()))
                         mDataSet.add(songInfo);
                 }

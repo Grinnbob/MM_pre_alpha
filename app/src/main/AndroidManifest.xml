@@ -40,7 +40,8 @@
             android:label="@string/action_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ChatActivity" />
-        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".SearchActivity" />
+        <activity android:name=".SubscriptionsActivity"></activity>
     </application>
 
 </manifest>

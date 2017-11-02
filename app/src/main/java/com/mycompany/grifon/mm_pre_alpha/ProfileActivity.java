@@ -7,6 +7,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.ToggleButton;
+
+import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
@@ -17,6 +21,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private Intent intentMusic;
     private Intent intentChat;
     private View chatView;
+    private PlainUser plainUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +34,31 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         /*findViewById(R.id.btn_add_music).setOnClickListener(this);
         findViewById(R.id.btn_play).setOnClickListener(this);*/
+
+        ToggleButton toggleButton = (ToggleButton) findViewById(R.id.tg_Mode);
+        toggleButton.setOnCheckedChangeListener(toggleListener);
+    }
+
+    CompoundButton.OnCheckedChangeListener toggleListener =  new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if(isChecked){
+                // отписка
+            }else{
+                // подписка
+                //plainUser.
+              /*  String key = mDatabase.child("users").push().getKey();
+                Post post = new Post(userId, username, title, body);
+                Map<String, Object> postValues = post.toMap();*/
+            }
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        plainUser = (PlainUser) getIntent().getSerializableExtra("user");
+        // fill data
     }
 
     @Override
@@ -50,7 +80,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         // Операции для выбранного пункта меню
         switch (item.getItemId()) {
-            case R.id.subscriptions:
+            case R.id.subscribers:
                 intentSubscribers = new Intent(this, SubscribersActivity.class);
                 startActivity(intentSubscribers);
                 this.finish();
