@@ -18,6 +18,7 @@ import android.widget.EditText;
 
 import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapter;
 import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
+import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
 
 public class MusicActivity extends AppCompatActivity implements View.OnClickListener{
@@ -27,7 +28,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private Intent intentNews;
     private Intent intentProfile;
     private Intent searchActivity;
-    private static MusicActivity musicActivity;
 
     private static final int SELECT_MUSIC = 1;
     // не удалять!! не будет нихрена работать
@@ -48,8 +48,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
-
-        musicActivity = this;
         
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -87,6 +85,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             startActivityForResult(intent, SELECT_MUSIC);
 
+            // add music in profile
+            firebaseUtils.writeProfileDB(LoginActivity.getMyProfile());
             // search music
         } else if(view.getId() == R.id.btn_search_music) {
             searchActivity =  new Intent(this, SearchActivity.class);
@@ -161,9 +161,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         }
         return true;
     }
-
-    // ссылка на активити
-    public static MusicActivity getInstance() {return musicActivity;}
 
     // передаёт в поиск название песни
     public static EditText getSearchedSongName() {return et_searchName;}

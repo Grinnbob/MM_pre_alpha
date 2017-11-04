@@ -8,14 +8,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapter;
+import com.mycompany.grifon.mm_pre_alpha.utils.domain.Post;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
 
 import java.util.List;
 
-public class NewsActivity extends AppCompatActivity {
+public class NewsActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Toolbar toolbar;
     private Intent intentSubscribers;
@@ -23,6 +25,8 @@ public class NewsActivity extends AppCompatActivity {
     private Intent intentProfile;
 
     private static FirebaseUtils firebaseUtils;
+
+    private Post post;
 
     // для стены
     private RecyclerView mRecyclerView;
@@ -44,6 +48,9 @@ public class NewsActivity extends AppCompatActivity {
         List<SongInfo> myDataset = firebaseUtils.getDataSet();
         // создаём стену
         createWall(myDataset);
+
+        //create new post
+        findViewById(R.id.btn_add_post).setOnClickListener(this);
     }
 
     // создаём стену
@@ -52,6 +59,14 @@ public class NewsActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new RecyclerViewAdapter(this, myDataset);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onClick(View view) {
+        // добавить post
+        if(view.getId() == R.id.btn_add_post) {
+            //TODO: add new post
+        }
     }
 
     @Override
