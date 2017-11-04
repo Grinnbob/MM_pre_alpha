@@ -14,6 +14,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
+import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
 
 
 /**
@@ -29,6 +31,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText userName;
 
     private Intent intent;
+
+    public Profile myProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,8 +118,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                     }
                 });
+
+        //create new empty profile
+        FirebaseUtils firebaseUtils = new FirebaseUtils();
+        myProfile = new Profile(userName.getText().toString(), user.getUid());
+        firebaseUtils.writeProfileDB(myProfile);
+
         intent = new Intent(LoginActivity.this, NewsActivity.class);
         startActivity(intent);
     }
+
+    public static Profile getMyProfile(){return myProfile;}
 }
 

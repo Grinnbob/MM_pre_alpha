@@ -19,10 +19,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
-/**
- * Created by Vlad on 29.10.2017.
- */
-
 public class UsersActivity extends EBActivity {
     private Toolbar toolbar;
     private Intent intentMusic;
