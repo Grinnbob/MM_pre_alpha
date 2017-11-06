@@ -25,7 +25,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
-    private MediaPlayer mediaPlayer;
     private Player player;
 
     // data is passed into the constructor
