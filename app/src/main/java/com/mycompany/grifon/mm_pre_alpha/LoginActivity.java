@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     public static Profile myProfile;
     public static String uuid;
+    public static boolean newUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,16 +89,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
-
-                    FirebasePathHelper firebasePathHelper = new FirebasePathHelper();
-                    List<Profile> subscribers = Collections.emptyList();
-                    List<Profile> subscriptions = Collections.emptyList();
-                    List<Post> userPlayList = Collections.emptyList();
-                    List<Post> posts = Collections.emptyList();
-                    myProfile = new Profile(userName.getText().toString(), uuid, "Add information!", subscribers, subscriptions, userPlayList, posts);
-                    //firebasePathHelper.uploadProfileDB(myProfile);
-                    firebasePathHelper.writeNewProfileDB(myProfile);
-
+                    uuid = mAuth.getCurrentUser().getUid();
+                    //if there is no user in Database, we will add him
+                    if(newUser) {
+                        FirebasePathHelper firebasePathHelper = new FirebasePathHelper();
+                        List<Profile> subscribers = Collections.emptyList();
+                        List<Profile> subscriptions = Collections.emptyList();
+                        List<Post> userPlayList = Collections.emptyList();
+                        List<Post> posts = Collections.emptyList();
+                        myProfile = new Profile(userName.getText().toString(), uuid, "Add information!", subscribers, subscriptions, userPlayList, posts);
+                        //firebasePathHelper.uploadProfileDB(myProfile);
+                        firebasePathHelper.writeNewProfileDB(myProfile);
+                    }
                     Toast.makeText(LoginActivity.this, R.string.login_authorisation_success_toast_message, Toast.LENGTH_SHORT).show();
 
                     intent = new Intent(LoginActivity.this, NewsActivity.class);
@@ -115,8 +118,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
+                    newUser = true;
                     Toast.makeText(LoginActivity.this, R.string.login_registration_success_toast_message, Toast.LENGTH_SHORT).show();
-                    uuid = mAuth.getCurrentUser().getUid();
                 } else
                     Toast.makeText(LoginActivity.this, R.string.login_registration_failed_toast_message, Toast.LENGTH_SHORT).show();
             }

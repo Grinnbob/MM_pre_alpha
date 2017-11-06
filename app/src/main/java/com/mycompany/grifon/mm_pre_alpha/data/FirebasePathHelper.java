@@ -39,14 +39,7 @@ public class FirebasePathHelper {
 
     // пишем new profile в Database
     public void writeNewProfileDB(Profile info) {
-        String uuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Log.d(TAG, "!!!!!!!userID!!!!!!!!: " + uuid);
-        List<Profile> subscribers = Collections.emptyList();
-        List<Profile> subscriptions = Collections.emptyList();
-        List<Post> userPlayList = Collections.emptyList();
-        List<Post> posts = Collections.emptyList();
-        Profile myProfile = new Profile(info.getName(), uuid, "Add information!", subscribers, subscriptions, userPlayList, posts);
-        getRoot().child("users").child(uuid).setValue(myProfile);
+        getRoot().child("users").child(info.getUuid()).setValue(info);
     }
 
     // upload profile in Database
