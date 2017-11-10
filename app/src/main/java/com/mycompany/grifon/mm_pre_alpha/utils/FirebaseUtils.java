@@ -44,7 +44,7 @@ public class FirebaseUtils {
     }
 
     // загружает файл в Cloud Storage и его uri в Database
-    public void uploadFileInFirebase(final Uri uri, final String name) {
+    public void uploadFileInFirebase(final Uri uri, final String name, final String postText) {
         // Создаем ссылку в Storage Firebase
         StorageReference myRef = storageRef.child("music").child(name);
         /*
@@ -82,7 +82,7 @@ public class FirebaseUtils {
                 // добавляем URI в database
                 //DatabaseReference myRef = databaseRef.child("music").push();
                 // write in DB
-                writeSongInfoInDB(name, downloadUri.toString());
+                writeSongInfoInDB(name, downloadUri.toString(), postText);
                 //myRef.setValue(uri);
                 //Toast.makeText(FirebaseUtils.this, "Композиция загружена", Toast.LENGTH_SHORT).show();
             }
@@ -90,18 +90,18 @@ public class FirebaseUtils {
     }
 
     // пишем музыку в Database
-    private void writeSongInfoInDB(String name, String url) {
+    private void writeSongInfoInDB(String name, String url, String postText) {
         SongInfo info = new SongInfo(name, url, 0);
         String key = databaseRef.push().getKey();
         databaseRef.child("music").child(key).setValue(info);
 
         // add in profile the same
-        Post post = new Post("", info);
+        Post post = new Post(postText, info);
         List<Post> playList = LoginActivity.getMyProfile().getUserPlayList();
         playList.add(post);
         Profile profile = new Profile(LoginActivity.getMyProfile().getName(), LoginActivity.getMyProfile().getUuid(), LoginActivity.getMyProfile().getInformation(), LoginActivity.getMyProfile().getSubscribers(), LoginActivity.getMyProfile().getSubscriptions(), playList, LoginActivity.getMyProfile().getPosts());
         FirebasePathHelper firebasePathHelper = new FirebasePathHelper();
-        firebasePathHelper.uploadProfileDB(profile);
+        firebasePathHelper.writeNewProfileDB(profile);
     }
 
     /*

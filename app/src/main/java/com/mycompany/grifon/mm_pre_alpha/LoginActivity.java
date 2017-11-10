@@ -75,22 +75,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         if(view.getId() == R.id.btn_sign_in) {
             //signIn(email.getText().toString(), password.getText().toString());
-            signIn("1234@qwe.ru", "123456");
+            signIn("post@post.io", "123456");
         } else if (view.getId() == R.id.btn_registration) {
             registration(email.getText().toString(), password.getText().toString());
             signIn(email.getText().toString(), password.getText().toString());
         }
-
     }
 
     private void signIn(String email, String password){
-        //signIn after registration
+
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
                     uuid = mAuth.getCurrentUser().getUid();
-                    //if there is no user in Database, we will add him
+                    //signIn after registration
                     if(newUser) {
                         FirebasePathHelper firebasePathHelper = new FirebasePathHelper();
                         List<Profile> subscribers = Collections.emptyList();
@@ -99,6 +98,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         List<Post> posts = Collections.emptyList();
                         myProfile = new Profile(userName.getText().toString(), uuid, "Add information!", subscribers, subscriptions, userPlayList, posts);
                         //firebasePathHelper.uploadProfileDB(myProfile);
+                        //if there is no user in Database, we will add him
                         firebasePathHelper.writeNewProfileDB(myProfile);
                     }
                     Toast.makeText(LoginActivity.this, R.string.login_authorisation_success_toast_message, Toast.LENGTH_SHORT).show();

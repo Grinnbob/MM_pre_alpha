@@ -29,7 +29,7 @@
         android:layout_alignTop="@+id/btn_add_post"
         android:layout_toRightOf="@+id/btn_add_post"
         android:layout_toEndOf="@+id/btn_add_post"
-        android:hint="enter your comments"
+        android:hint="enter your post text"
         android:textSize="10dp" />
 
     <android.support.v7.widget.RecyclerView
