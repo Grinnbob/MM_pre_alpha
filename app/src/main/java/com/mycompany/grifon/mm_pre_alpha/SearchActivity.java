@@ -39,9 +39,9 @@ public class SearchActivity extends AppCompatActivity{
         // получаем полный список, хранящихся в БД песен
         searchName = MusicActivity.getSearchedSongName();
         Log.d(LOG_TAG, searchName.getText().toString() + "!!!!!!!!");
-        List<SongInfo> myDataset = firebaseUtils.getSearchedDataSet(searchName.getText().toString());
+        //List<SongInfo> myDataset = firebaseUtils.getSearchedDataSet(searchName.getText().toString());
         // создаём стену
-        createWall(myDataset);
+        //createWall(myDataset);
     }
 
     // создаём стену

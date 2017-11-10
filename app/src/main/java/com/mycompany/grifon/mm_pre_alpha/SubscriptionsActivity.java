@@ -8,7 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
-import com.mycompany.grifon.mm_pre_alpha.events.SubscribersEvent;
+import com.mycompany.grifon.mm_pre_alpha.events.Events;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -38,11 +38,11 @@ public class SubscriptionsActivity extends AppCompatActivity {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(SubscribersEvent event) {
-        List<PlainUser> myPlainUsers = event.getPlainUsers();
+   /* @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGetSubscriptionsEvent(Events.SubscribersEvent event) {
+        List<PlainUser> myPlainUsers = event.getArg();
         //ListViewAdapter.updateData();
-    };
+    };*/
 
 
 

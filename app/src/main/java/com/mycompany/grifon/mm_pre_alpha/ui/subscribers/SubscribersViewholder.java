@@ -12,6 +12,8 @@ import com.mycompany.grifon.mm_pre_alpha.ProfileActivity;
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 
+import java.io.Serializable;
+
 /**
  * Created by Vlad on 29.10.2017.
  */
@@ -35,12 +37,26 @@ public class SubscribersViewholder extends RecyclerView.ViewHolder implements Vi
 
 
     @Override
-    public void onClick(View v) {
-        Context c = v.getContext();
-        Toast.makeText(c,"I am pressed!",Toast.LENGTH_SHORT).show();
-        Intent i = new Intent(c, ProfileActivity.class);
+    public void onClick(View view) {
+        Context c = view.getContext();
+        Toast.makeText(c, plainUser.getName(), Toast.LENGTH_SHORT).show();
+        /*Intent i = new Intent(c, ProfileActivity.class);
         Bundle b = new Bundle();
-        b.putSerializable("user", plainUser);
+        b.putSerializable("user", (Serializable) plainUser);
+        i.putExtra("BUNDLE", b);
+        c.startActivity(i);*/
+
+        /*Intent intent = new Intent(Current.class, Transfer.class);
+        Bundle args = new Bundle();
+        args.putSerializable("ARRAYLIST",(Serializable)object);
+        intent.putExtra("BUNDLE",args);
+        startActivity(intent);*/
+
+
+        Intent i = new Intent(c, ProfileActivity.class);
+        i.putExtra("user", plainUser);
         c.startActivity(i);
+        /*Intent intent = new Intent(SourceActivity.this, TargetActivity.class);
+        intent.putExtra("QuestionListExtra", ArrayList<Question>mQuestionList);*/
     }
 }
