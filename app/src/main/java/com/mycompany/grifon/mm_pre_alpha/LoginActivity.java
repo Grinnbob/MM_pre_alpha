@@ -15,11 +15,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mycompany.grifon.mm_pre_alpha.data.FirebasePathHelper;
+import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.Post;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -75,11 +78,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         if(view.getId() == R.id.btn_sign_in) {
             //signIn(email.getText().toString(), password.getText().toString());
-            signIn("post@post.io", "123456");
+            signIn("1234@qwe.ru", "123456");
+            //signIn("best@yandex.ru", "123456");
         } else if (view.getId() == R.id.btn_registration) {
             registration(email.getText().toString(), password.getText().toString());
             signIn(email.getText().toString(), password.getText().toString());
         }
+
     }
 
     private void signIn(String email, String password){
@@ -92,7 +97,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     //signIn after registration
                     if(newUser) {
                         FirebasePathHelper firebasePathHelper = new FirebasePathHelper();
-                        List<Profile> subscribers = Collections.emptyList();
+                        Map<String, PlainUser> subscribers = new HashMap<>();
                         List<Profile> subscriptions = Collections.emptyList();
                         List<Post> userPlayList = Collections.emptyList();
                         List<Post> posts = Collections.emptyList();

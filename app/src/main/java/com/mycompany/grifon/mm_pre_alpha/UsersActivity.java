@@ -10,7 +10,6 @@ import android.view.MenuItem;
 
 import com.mycompany.grifon.mm_pre_alpha.data.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
-import com.mycompany.grifon.mm_pre_alpha.events.SubscribersEvent;
 import com.mycompany.grifon.mm_pre_alpha.ui.subscribers.SubscribersAdapter;
 import com.mycompany.grifon.mm_pre_alpha.utils.EBActivity;
 
@@ -41,7 +40,7 @@ public class UsersActivity extends EBActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         rvSubscribers.setLayoutManager(layoutManager);
         rvSubscribers.setAdapter(subscribersAdapter);
-        FirebasePathHelper.requestMySubscribers();
+        //FirebasePathHelper.requestMySubscribers();
     }
 
     @Override
@@ -51,11 +50,11 @@ public class UsersActivity extends EBActivity {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    /*@Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(SubscribersEvent event) {
         List<PlainUser> myPlainUsers = event.getPlainUsers();
         subscribersAdapter.replaceData(myPlainUsers);
-    };
+    };*/
 
 
 

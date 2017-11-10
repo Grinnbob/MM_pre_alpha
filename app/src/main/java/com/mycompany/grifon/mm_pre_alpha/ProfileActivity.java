@@ -2,18 +2,30 @@ package com.mycompany.grifon.mm_pre_alpha;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ToggleButton;
+import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.mycompany.grifon.mm_pre_alpha.data.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
+import com.mycompany.grifon.mm_pre_alpha.events.UserProfileEvent;
+import com.mycompany.grifon.mm_pre_alpha.events.MyProfileEvent;
+import com.mycompany.grifon.mm_pre_alpha.utils.EBActivity;
+import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import java.util.HashMap;
+import java.util.Map;
 
 
-public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
+public class ProfileActivity extends EBActivity implements View.OnClickListener {
 
     private Toolbar toolbar;//recyclerwiew
     private Intent intentSubscribers;
@@ -21,49 +33,118 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private Intent intentMusic;
     private Intent intentChat;
     private View chatView;
-    private PlainUser plainUser;
+    private PlainUser plainUser;//либо я, либо тот чел на которого ткнули чтобы посмотреть
+    private TextView tv_userName;
+    private TextView tv_numberOfSubscribers;
+    private CheckBox checkBox;
+    FirebaseUser user;
+    Profile profile;//тот чел на которого ткнули чтобы посмотреть
+    Profile myProfile;//наш профиль
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         findViewById(R.id.chatButton).setOnClickListener(this);
+        checkBox = (CheckBox) findViewById(R.id.subscribeCheckBox);
+        checkBox.setOnCheckedChangeListener(checkBoxListener);
 
-        /*findViewById(R.id.btn_add_music).setOnClickListener(this);
-        findViewById(R.id.btn_play).setOnClickListener(this);*/
-
-        ToggleButton toggleButton = (ToggleButton) findViewById(R.id.tg_Mode);
-        toggleButton.setOnCheckedChangeListener(toggleListener);
+        tv_userName = (TextView) findViewById(R.id.tv_userName);
+        tv_numberOfSubscribers = (TextView) findViewById(R.id.tv_numberOfSubscribers);
+        user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
-    CompoundButton.OnCheckedChangeListener toggleListener =  new CompoundButton.OnCheckedChangeListener() {
+
+    CompoundButton.OnCheckedChangeListener checkBoxListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if(isChecked){
+            if (!isChecked) {
                 // отписка
-            }else{
+                if (profile.getSubscribers().size() > 0) {
+                    profile.getSubscribers().remove(user.getUid());
+                    FirebasePathHelper.writeNewProfileDB(profile);
+                }
+            } else {
                 // подписка
-                //plainUser.
-              /*  String key = mDatabase.child("users").push().getKey();
-                Post post = new Post(userId, username, title, body);
-                Map<String, Object> postValues = post.toMap();*/
+                Map<String, PlainUser> subscribers = profile.getSubscribers();
+                if (subscribers == null) {
+                    subscribers = new HashMap<>();
+                }
+                subscribers.put(user.getUid(), new PlainUser(user));
+                FirebasePathHelper.writeNewProfileDB(profile);
             }
         }
     };
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMyProfileData(MyProfileEvent evt) {
+     //   plainUser = new PlainUser(user.getDisplayName(), user.getUid());
+        myProfile = evt.getProfile();
+        if (myProfile != null && myProfile.getUuid().equals(plainUser.getUuid())) {
+            tv_userName.setText(myProfile.getName());
+            tv_numberOfSubscribers.setText(String.valueOf(myProfile.getSubscribers().size()));
+        }
+        setControls();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUserProfileData(UserProfileEvent evt) {
+        if (plainUser == null) {
+            plainUser = new PlainUser(user);
+        }
+        profile = evt.getProfile();
+        if (profile != null && profile.getUuid().equals(plainUser.getUuid())) {
+            tv_userName.setText(profile.getName());
+            tv_numberOfSubscribers.setText(String.valueOf(profile.getSubscribers().size()));
+        }
+        setControls();
+    }
+
+    void setControls() {
+        boolean isMine = myProfile!=null && profile != null && myProfile.getUuid().equals(profile.getUuid());
+        if (isMine) {
+            //chatView.setVisibility(View.INVISIBLE);//later
+            checkBox.setVisibility(View.INVISIBLE);
+        } else {
+            //chatView.setVisibility(View.VISIBLE);
+            checkBox.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /*@Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSubscribersData(SubscribersEvent evt) {
+        if (plainUser == null) {
+            plainUser = new PlainUser(user.getDisplayName(), user.getUid());
+        }
+        subscribers = evt.getSubscribers();
+        if (subscribers == null) {
+            subscribers = new HashMap<>();
+        }
+        //profile.setSubscribers(evt.getSubscribers());
+      *//*  if (profile != null) {
+            tv_subscribers.setText(profile.getSubscribers().size());
+        }*//*
+    }*/
+
+
     @Override
     protected void onResume() {
         super.onResume();
-        plainUser = (PlainUser) getIntent().getSerializableExtra("user");
-        // fill data
+        Intent intent = getIntent();
+        plainUser = (PlainUser) intent.getSerializableExtra("user");
+        if (plainUser == null) { //попали сюда не ткнув на какого-то пользователя, а ткнули на свой профиль просто
+            plainUser = new PlainUser(user.getDisplayName(), user.getUid());
+        }
+        FirebasePathHelper.getMyProfile(user.getUid());
+        FirebasePathHelper.getUserProfile(plainUser.getUuid());
     }
+
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.chatButton) {
+        if (view.getId() == R.id.chatButton) {
             intentChat = new Intent(ProfileActivity.this, ChatActivity.class);
             startActivity(intentChat);
         }
@@ -72,7 +153,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_profile, menu);
-
         return true;
     }
 
