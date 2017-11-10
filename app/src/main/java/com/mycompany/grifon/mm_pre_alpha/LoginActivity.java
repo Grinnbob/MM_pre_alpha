@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -13,9 +14,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
+import com.mycompany.grifon.mm_pre_alpha.data.FirebasePathHelper;
+import com.mycompany.grifon.mm_pre_alpha.utils.domain.Post;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
+
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -32,7 +36,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private Intent intent;
 
-    public Profile myProfile;
+    public static Profile myProfile;
+    public static String uuid;
+    public static boolean newUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +54,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 //user.getUid() -- key
                 if (user != null) {
                     // User is signed in
-
+                    uuid = mAuth.getCurrentUser().getUid();
                 } else {
                     // User is signed out
 
@@ -72,17 +78,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             signIn("1234@qwe.ru", "123456");
         } else if (view.getId() == R.id.btn_registration) {
             registration(email.getText().toString(), password.getText().toString());
+            signIn(email.getText().toString(), password.getText().toString());
         }
 
     }
 
-    public void signIn(String email, String password)
-    {
-        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+    private void signIn(String email, String password){
+        //signIn after registration
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
+                    uuid = mAuth.getCurrentUser().getUid();
+                    //if there is no user in Database, we will add him
+                    if(newUser) {
+                        FirebasePathHelper firebasePathHelper = new FirebasePathHelper();
+                        List<Profile> subscribers = Collections.emptyList();
+                        List<Profile> subscriptions = Collections.emptyList();
+                        List<Post> userPlayList = Collections.emptyList();
+                        List<Post> posts = Collections.emptyList();
+                        myProfile = new Profile(userName.getText().toString(), uuid, "Add information!", subscribers, subscriptions, userPlayList, posts);
+                        //firebasePathHelper.uploadProfileDB(myProfile);
+                        firebasePathHelper.writeNewProfileDB(myProfile);
+                    }
                     Toast.makeText(LoginActivity.this, R.string.login_authorisation_success_toast_message, Toast.LENGTH_SHORT).show();
+
                     intent = new Intent(LoginActivity.this, NewsActivity.class);
                     startActivity(intent);
                 } else
@@ -98,36 +118,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
+                    newUser = true;
                     Toast.makeText(LoginActivity.this, R.string.login_registration_success_toast_message, Toast.LENGTH_SHORT).show();
                 } else
                     Toast.makeText(LoginActivity.this, R.string.login_registration_failed_toast_message, Toast.LENGTH_SHORT).show();
             }
         });
-        //add user name
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(userName.getText().toString())
-                .build();
-
-        user.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            // user root updated
-                        }
-                    }
-                });
-
-        //create new empty profile
-        FirebaseUtils firebaseUtils = new FirebaseUtils();
-        myProfile = new Profile(userName.getText().toString(), user.getUid());
-        firebaseUtils.writeProfileDB(myProfile);
-
-        intent = new Intent(LoginActivity.this, NewsActivity.class);
-        startActivity(intent);
     }
 
     public static Profile getMyProfile(){return myProfile;}
+
 }
 

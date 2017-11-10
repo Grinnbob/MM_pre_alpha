@@ -16,6 +16,7 @@ import android.view.View;
 import java.util.List;
 import android.widget.EditText;
 
+import com.mycompany.grifon.mm_pre_alpha.data.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapter;
 import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
@@ -32,6 +33,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private static final int SELECT_MUSIC = 1;
     // не удалять!! не будет нихрена работать
     private String selectedAudioPath;
+    private Uri selectedAudioUri;
 
     // для стены
     private RecyclerView mRecyclerView;
@@ -40,6 +42,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     // song name to write in database and storage
     private String name = null;
     private FirebaseUtils firebaseUtils;
+    private FirebasePathHelper firebasePathHelper;
 
     // song name for search
     private static EditText et_searchName;
@@ -56,6 +59,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         // подключаемся к Firebase
         firebaseUtils = NewsActivity.getFirebaseUtils();
+        firebasePathHelper = new FirebasePathHelper();
         // получаем полный список, хранящихся в БД песен
         List<SongInfo> myDataset = firebaseUtils.getDataSet();
         // создаём стену
@@ -85,8 +89,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             startActivityForResult(intent, SELECT_MUSIC);
 
-            // add music in profile
-            firebaseUtils.writeProfileDB(LoginActivity.getMyProfile());
             // search music
         } else if(view.getId() == R.id.btn_search_music) {
             searchActivity =  new Intent(this, SearchActivity.class);
@@ -96,12 +98,11 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     // выбирает файл
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_MUSIC)
             {
-                Uri selectedAudioUri = data.getData();
+                selectedAudioUri = data.getData();
                 selectedAudioPath = getPath(selectedAudioUri);
 
                 // загружаем в бд музыку

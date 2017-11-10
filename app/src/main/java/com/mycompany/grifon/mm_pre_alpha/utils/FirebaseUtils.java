@@ -15,6 +15,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.mycompany.grifon.mm_pre_alpha.LoginActivity;
+import com.mycompany.grifon.mm_pre_alpha.data.FirebasePathHelper;
+import com.mycompany.grifon.mm_pre_alpha.utils.domain.Post;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
 
@@ -91,21 +94,14 @@ public class FirebaseUtils {
         SongInfo info = new SongInfo(name, url, 0);
         String key = databaseRef.push().getKey();
         databaseRef.child("music").child(key).setValue(info);
-    }
 
-    // пишем new profile в Database
-    public void writeProfileDB(Profile info) {
-        //String key = databaseRef.push().getKey();
-        databaseRef.child("users").child(info.getUuid()).setValue(info);
-    }
-
-    // пишем new profile в Database
-    public void uploadProfileDB(Profile info) {
-        String key = databaseRef.push().getKey();
-        Map<String, Object> childUpdates = new HashMap<>();
-        //childUpdates.put("/posts/" + key, postValues);
-        //childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
-        databaseRef.child("users").child(info.getUuid()).updateChildren(childUpdates);
+        // add in profile the same
+        Post post = new Post("", info);
+        List<Post> playList = LoginActivity.getMyProfile().getUserPlayList();
+        playList.add(post);
+        Profile profile = new Profile(LoginActivity.getMyProfile().getName(), LoginActivity.getMyProfile().getUuid(), LoginActivity.getMyProfile().getInformation(), LoginActivity.getMyProfile().getSubscribers(), LoginActivity.getMyProfile().getSubscriptions(), playList, LoginActivity.getMyProfile().getPosts());
+        FirebasePathHelper firebasePathHelper = new FirebasePathHelper();
+        firebasePathHelper.uploadProfileDB(profile);
     }
 
     /*

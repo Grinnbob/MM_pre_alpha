@@ -10,19 +10,26 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mycompany.grifon.mm_pre_alpha.events.SubscribersEvent;
+import com.mycompany.grifon.mm_pre_alpha.utils.domain.Post;
+import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FirebasePathHelper {
-    private static volatile DatabaseReference root=null;
+
+    private static final String TAG = "!!!!!myLog????";
+    private static volatile DatabaseReference root = null;
 
     public static DatabaseReference getRoot(){
-        if(root==null)
+        if(root == null)
         synchronized (FirebasePathHelper.class){
-            if(root==null){
+            if(root == null){
                 DatabaseReference local = FirebaseDatabase.getInstance().getReference();
                 root = local;
             }
@@ -30,28 +37,24 @@ public class FirebasePathHelper {
         return root;
     }
 
-    private void writeNewUser(String userId, String username, String title) {
-        // Create new post at /user-posts/$userid/$postid and at
-        // /posts/$postid simultaneously
-        PlainUser s = new PlainUser(username,userId);
-        getRoot().child("users").child(userId).setValue(s);
-        //Post post = new Post(userId, username, title, body);
-        //Map<String, Object> postValues = post.toMap();
-
-        //Map<String, Object> childUpdates = new HashMap<>();
-        //childUpdates.put("/posts/" + key, postValues);
-        //childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
-
-        //mDatabase.updateChildren(childUpdates);
+    // пишем new profile в Database
+    public void writeNewProfileDB(Profile info) {
+        getRoot().child("users").child(info.getUuid()).setValue(info);
     }
 
+    // upload profile in Database
+    public void uploadProfileDB(Profile info) {
+        Map<String, Object> childUpdates = new HashMap<>();
 
-
+        childUpdates.put("users/" + info.getUuid(), info.toMap());
+        getRoot().updateChildren(childUpdates);
+    }
 
     private static DatabaseReference getUserData(String path){
-        FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         return getRoot().child("users").child(user.getUid()).child(path);
     }
+
     public static void requestMySubscribers(){
         getUserData("subscribers").addValueEventListener(new ValueEventListener() {
             @Override
