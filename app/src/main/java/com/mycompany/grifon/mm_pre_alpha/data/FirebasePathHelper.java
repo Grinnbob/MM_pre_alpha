@@ -9,14 +9,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mycompany.grifon.mm_pre_alpha.events.AllMyUsersEvent;
+import com.mycompany.grifon.mm_pre_alpha.events.UserProfileEvent;
+import com.mycompany.grifon.mm_pre_alpha.events.MyProfileEvent;
 import com.mycompany.grifon.mm_pre_alpha.events.SubscribersEvent;
-import com.mycompany.grifon.mm_pre_alpha.utils.domain.Post;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,10 +38,7 @@ public class FirebasePathHelper {
         return root;
     }
 
-    // пишем new profile в Database
-    public void writeNewProfileDB(Profile info) {
-        getRoot().child("users").child(info.getUuid()).setValue(info);
-    }
+
 
     // upload profile in Database
     public void uploadProfileDB(Profile info) {
@@ -50,19 +48,19 @@ public class FirebasePathHelper {
         getRoot().updateChildren(childUpdates);
     }
 
-    private static DatabaseReference getUserData(String path){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private static DatabaseReference getUserData(String path) {
+        FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
         return getRoot().child("users").child(user.getUid()).child(path);
     }
-
-    public static void requestMySubscribers(){
-        getUserData("subscribers").addValueEventListener(new ValueEventListener() {
+    public static void requestSubscribers(String uuid){
+        //getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
+            getRoot().child("users").child(uuid).child("subscribers").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<PlainUser> plainUsers = new ArrayList<>();
+                Map<String, PlainUser> plainUsers = new HashMap<>();
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                 PlainUser plainUser = postSnapshot.getValue(PlainUser.class);
-                    plainUsers.add(plainUser);
+                    plainUsers.put(plainUser.getUuid(), plainUser);
                     Log.e("Get Data", plainUser.toString());
                 }
                 //event fired!
@@ -75,7 +73,7 @@ public class FirebasePathHelper {
         });
     }
 
-    public static void requestAllUsers(){
+    public static void requestAllUsers() {
         getRoot().child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -86,7 +84,7 @@ public class FirebasePathHelper {
                     Log.e("Get Data", plainUser.toString());
                 }
                 //event fired!
-                EventBus.getDefault().post(new SubscribersEvent(plainUsers));
+                EventBus.getDefault().post(new AllMyUsersEvent(plainUsers));
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -94,6 +92,48 @@ public class FirebasePathHelper {
             }
         });
     }
+
+    public static void getMyProfile(String uuid) {
+        //return getRoot().child(String.valueOf(R.string.users_path)).child(user.getUid()).child(path);
+        getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Profile profile=dataSnapshot.getValue(Profile.class);
+                //event fired!
+                EventBus.getDefault().post(new MyProfileEvent(profile));
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public static void getUserProfile(String uuid) {
+        //return getRoot().child(String.valueOf(R.string.users_path)).child(user.getUid()).child(path);
+        getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Profile profile=dataSnapshot.getValue(Profile.class);
+                //event fired!
+                EventBus.getDefault().post(new UserProfileEvent(profile));
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    // пишем new profile в Database
+    public static void writeNewProfileDB(Profile info) {
+        //public Profile(String name, String uuid, String information, List<Profile> subscribers, List<Profile> subscriptions, List<SongInfo> userPlayList, List<Post> posts) {
+      //  Profile newProfile = new Profile(info.getName(), info.getUuid(), info.getInformation(), subscribers, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+        getRoot().child("users").child(info.getUuid()).setValue(info);
+    }
+
+
     public DatabaseReference getMyMusic(){
         return getUserData("music");
     }
@@ -104,9 +144,4 @@ public class FirebasePathHelper {
         FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
         return getRoot().child(user.getUid());
     }
-    /*public DatabaseReference getChatsData(){
-        getMyChats().
-        return getRoot().child("chats").user.getUid()).child(path);
-    }*/
-
 }

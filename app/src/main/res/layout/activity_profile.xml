@@ -23,7 +23,7 @@
 
 
     <TextView
-        android:id="@+id/UserName"
+        android:id="@+id/tv_userName"
         android:layout_width="67dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -45,14 +45,14 @@
         android:id="@+id/Publications"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/Subscribers"
-        android:layout_alignBottom="@+id/Subscribers"
+        android:layout_alignBaseline="@+id/tv_subscribers"
+        android:layout_alignBottom="@+id/tv_subscribers"
         android:layout_toEndOf="@+id/UserAvatar"
         android:layout_toRightOf="@+id/UserAvatar"
         android:text="publications" />
 
     <TextView
-        android:id="@+id/NumberOfSubscribers"
+        android:id="@+id/tv_numberOfSubscribers"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
@@ -61,36 +61,36 @@
     <!---->
 
     <TextView
-        android:id="@+id/Subscribers"
+        android:id="@+id/tv_subscribers"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/NumberOfPublications"
         android:layout_toRightOf="@+id/Publications"
-        android:text="plainUsers" />
+        android:text="subscribers" />
 
     <TextView
-        android:id="@+id/NumberOfSubscriptions"
+        android:id="@+id/tv_numberOfSubscriptions"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
-        android:layout_toRightOf="@+id/NumberOfSubscribers"
+        android:layout_toRightOf="@+id/tv_numberOfSubscribers"
         android:text="123" />
 
     <TextView
         android:id="@+id/Subscriptions"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/Subscribers"
-        android:layout_alignBottom="@+id/Subscribers"
-        android:layout_toEndOf="@+id/NumberOfSubscribers"
-        android:layout_toRightOf="@+id/NumberOfSubscribers"
+        android:layout_alignBaseline="@+id/tv_subscribers"
+        android:layout_alignBottom="@+id/tv_subscribers"
+        android:layout_toEndOf="@+id/tv_numberOfSubscribers"
+        android:layout_toRightOf="@+id/tv_numberOfSubscribers"
         android:text="subscriptions" />
 
     <Button
         android:id="@+id/chatButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/UserName"
+        android:layout_above="@+id/tv_userName"
         android:layout_below="@+id/Publications"
         android:layout_toRightOf="@+id/UserAvatar"
         android:text="chat" />
@@ -100,7 +100,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/chatButton"
-        android:layout_below="@+id/Subscribers"
+        android:layout_below="@+id/tv_subscribers"
         android:layout_toEndOf="@+id/Publications"
         android:layout_toRightOf="@+id/Publications" />
 
@@ -111,8 +111,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/Subscriptions"
         android:layout_marginTop="13dp"
-        android:layout_toEndOf="@+id/Subscribers"
-        android:layout_toRightOf="@+id/Subscribers" />
+        android:layout_toEndOf="@+id/tv_subscribers"
+        android:layout_toRightOf="@+id/tv_subscribers" />
 
     <TextView
         android:id="@+id/userINfo"
@@ -122,7 +122,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/UserName"
+        android:layout_below="@+id/tv_userName"
         android:text="Information about user" />
 
     <ToggleButton

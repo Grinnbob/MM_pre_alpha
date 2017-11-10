@@ -3,20 +3,20 @@ package com.mycompany.grifon.mm_pre_alpha.events;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Vlad on 06.11.2017.
  */
 
-public class SubscribersEvent {
-    final private Map<String, PlainUser> plainUsers;
+public class AllMyUsersEvent  {
+    final private List<PlainUser> plainUsers;
 
-    public SubscribersEvent(Map<String, PlainUser> plainUsers) {
+    public AllMyUsersEvent(List<PlainUser> plainUsers) {
         this.plainUsers = plainUsers;
     }
 
-    public Map<String, PlainUser> getSubscribers() {
+    public List<PlainUser> getPlainUsers() {
         return plainUsers;
     }
 }
+
