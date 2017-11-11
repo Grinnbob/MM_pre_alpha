@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.StreamDownloadTask;
 import com.mycompany.grifon.mm_pre_alpha.data.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.Post;
@@ -98,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if(newUser) {
                         FirebasePathHelper firebasePathHelper = new FirebasePathHelper();
                         Map<String, PlainUser> subscribers = new HashMap<>();
-                        List<Profile> subscriptions = Collections.emptyList();
+                        Map<String, PlainUser> subscriptions = new HashMap<>();
                         List<Post> userPlayList = Collections.emptyList();
                         List<Post> posts = Collections.emptyList();
                         myProfile = new Profile(userName.getText().toString(), uuid, "Add information!", subscribers, subscriptions, userPlayList, posts);
