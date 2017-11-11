@@ -150,6 +150,11 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intentProfile);
                 this.finish();
                 break;
+            case R.id.all_users:
+                Intent intentAllUsers = new Intent(this, AllUsersActivity.class);
+                startActivity(intentAllUsers);
+                this.finish();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }

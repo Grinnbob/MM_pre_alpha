@@ -26,4 +26,10 @@
         android:orderInCategory="4"
         android:title="@string/action_profile"
         app:showAsAction="always" />
+    <item
+        android:icon="@android:drawable/ic_menu_gallery"
+        android:id="@+id/all_users"
+        android:orderInCategory="5"
+        android:title="@string/action_subscribers"
+        app:showAsAction="always" />
 </menu>

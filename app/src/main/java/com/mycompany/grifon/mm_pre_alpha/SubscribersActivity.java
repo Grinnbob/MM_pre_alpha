@@ -43,7 +43,8 @@ public class SubscribersActivity extends EBActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
         rvSubscribers.setLayoutManager(layoutManager);
         rvSubscribers.setAdapter(subscribersAdapter);
-        FirebasePathHelper.requestAllUsers();
+        //FirebasePathHelper.requestAllUsers();
+
     }
 
     @Override
@@ -81,6 +82,11 @@ public class SubscribersActivity extends EBActivity {
             case R.id.profile:
                 intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
+                this.finish();
+                break;
+            case R.id.all_users:
+                Intent intentAllUsers = new Intent(this, AllUsersActivity.class);
+                startActivity(intentAllUsers);
                 this.finish();
                 break;
             default:

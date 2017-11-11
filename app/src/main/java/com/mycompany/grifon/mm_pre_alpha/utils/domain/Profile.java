@@ -4,7 +4,6 @@ import com.google.firebase.database.Exclude;
 
 import java.util.HashMap;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
-import com.mycompany.grifon.mm_pre_alpha.utils.Player;
 
 import java.io.Serializable;
 import java.util.HashMap;
