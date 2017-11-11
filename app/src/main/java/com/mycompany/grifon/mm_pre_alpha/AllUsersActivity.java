@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import com.mycompany.grifon.mm_pre_alpha.data.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
+import com.mycompany.grifon.mm_pre_alpha.events.AllMyUsersEvent;
 import com.mycompany.grifon.mm_pre_alpha.ui.subscribers.SubscribersAdapter;
 import com.mycompany.grifon.mm_pre_alpha.utils.EBActivity;
 
@@ -18,11 +19,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
-public class UsersActivity extends EBActivity {
+public class AllUsersActivity extends EBActivity {
+
     private Toolbar toolbar;
-    private Intent intentMusic;
-    private Intent intentNews;
-    private Intent intentProfile;
 
     RecyclerView rvSubscribers;
     SubscribersAdapter subscribersAdapter;
@@ -37,24 +36,24 @@ public class UsersActivity extends EBActivity {
 
         rvSubscribers = (RecyclerView) findViewById(R.id.rvSubscribers);
         subscribersAdapter= new SubscribersAdapter(this);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
         rvSubscribers.setLayoutManager(layoutManager);
         rvSubscribers.setAdapter(subscribersAdapter);
-        //FirebasePathHelper.requestMySubscribers();
+        FirebasePathHelper.requestAllUsers();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_subscribers, menu);
+        getMenuInflater().inflate(R.menu.menu_all_users, menu);
         return true;
     }
 
 
-    /*@Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(SubscribersEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(AllMyUsersEvent event) {
         List<PlainUser> myPlainUsers = event.getPlainUsers();
         subscribersAdapter.replaceData(myPlainUsers);
-    };*/
+    };
 
 
 
@@ -64,21 +63,26 @@ public class UsersActivity extends EBActivity {
         // Операции для выбранного пункта меню
         switch (item.getItemId()) {
             case R.id.subscribers:
+                Intent intentSubscribers = new Intent(this, SubscribersActivity.class);
+                startActivity(intentSubscribers);
+                this.finish();
                 break;
             case R.id.music:
-                intentMusic = new Intent(this, MusicActivity.class);
+                Intent intentMusic = new Intent(this, MusicActivity.class);
                 startActivity(intentMusic);
                 this.finish();
                 break;
             case R.id.news:
-                intentNews = new Intent(this, NewsActivity.class);
+                Intent intentNews = new Intent(this, NewsActivity.class);
                 startActivity(intentNews);
                 this.finish();
                 break;
             case R.id.profile:
-                intentProfile = new Intent(this, ProfileActivity.class);
+                Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
                 this.finish();
+                break;
+            case R.id.all_users:
                 break;
             default:
                 return super.onOptionsItemSelected(item);

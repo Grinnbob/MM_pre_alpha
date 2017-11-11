@@ -15,8 +15,8 @@ import java.util.List;
  * Created by Vlad on 29.10.2017.
  */
 
-public class SubscribersAdapter  extends RecyclerView.Adapter<SubscribersViewholder> {
-    
+public class SubscribersAdapter extends RecyclerView.Adapter<SubscribersViewholder> {
+
     private final LayoutInflater inflater;
     private final Context context;
     private final List<PlainUser> currentPlainUsers = new ArrayList<>();
@@ -26,15 +26,17 @@ public class SubscribersAdapter  extends RecyclerView.Adapter<SubscribersViewhol
         context = c;
     }
 
-    public void replaceData(List<PlainUser> newData){
+    public void replaceData(List<PlainUser> newData) {
         currentPlainUsers.clear();
         currentPlainUsers.addAll(newData);
         notifyDataSetChanged();
-    };
+    }
+
+    ;
 
     @Override
     public SubscribersViewholder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new SubscribersViewholder(inflater.inflate(R.layout.recycler_subscribers_item,parent,false));
+        return new SubscribersViewholder(inflater.inflate(R.layout.recycler_subscribers_item, parent, false));
     }
 
     @Override

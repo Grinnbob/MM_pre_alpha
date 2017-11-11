@@ -19,7 +19,6 @@ import android.widget.EditText;
 import com.mycompany.grifon.mm_pre_alpha.data.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapter;
 import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
-import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
 
 public class MusicActivity extends AppCompatActivity implements View.OnClickListener{
@@ -141,20 +140,25 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         // Операции для выбранного пункта меню
         switch (item.getItemId()) {
             case R.id.subscribers:
-                intentSubscribers = new Intent(this, SubscribersActivity.class);
+                Intent intentSubscribers = new Intent(this, SubscribersActivity.class);
                 startActivity(intentSubscribers);
                 this.finish();
                 break;
             case R.id.music:
                 break;
             case R.id.news:
-                intentNews = new Intent(this, NewsActivity.class);
+                Intent intentNews = new Intent(this, NewsActivity.class);
                 startActivity(intentNews);
                 this.finish();
                 break;
             case R.id.profile:
-                intentProfile = new Intent(this, ProfileActivity.class);
+                Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
+                this.finish();
+                break;
+            case R.id.all_users:
+                Intent intentAllUsers = new Intent(this, AllUsersActivity.class);
+                startActivity(intentAllUsers);
                 this.finish();
                 break;
             default:

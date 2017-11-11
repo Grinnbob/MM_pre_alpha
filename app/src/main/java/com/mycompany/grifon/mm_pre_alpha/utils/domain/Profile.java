@@ -16,7 +16,7 @@ public class Profile /*implements Serializable*/{
     private String information;
     private Map<String, PlainUser> subscribers = new HashMap<>();//чтобы не падало это getSubscribers() если сабскрайберов нет у данного пользователя
     //private Map<String, PlainUser> subscribers;
-    private List<Profile> subscriptions;
+    private Map<String, PlainUser> subscriptions = new HashMap<>();
     private List<Post> userPlayList;
     private List<Post> posts;
 
@@ -24,7 +24,7 @@ public class Profile /*implements Serializable*/{
     }
 
 
-    public Profile(String name, String uuid, String information, Map<String, PlainUser> subscribers, List<Profile> subscriptions, List<Post> userPlayList, List<Post> posts) {
+    public Profile(String name, String uuid, String information, Map<String, PlainUser> subscribers, Map<String, PlainUser> subscriptions, List<Post> userPlayList, List<Post> posts) {
         this.name = name;
         this.uuid = uuid;
         this.information = information;
@@ -64,7 +64,7 @@ public class Profile /*implements Serializable*/{
     public String getInformation(){return information;}
     public Map<String, PlainUser> getSubscribers(){return subscribers;}
     //public Map<String, PlainUser> getSubscribers(){return subscribers;}
-    public List<Profile> getSubscriptions(){return subscriptions;}
+    public Map<String, PlainUser> getSubscriptions(){return subscriptions;}
     public List<Post> getUserPlayList(){return userPlayList;}
     public List<Post> getPosts(){return posts;}
 

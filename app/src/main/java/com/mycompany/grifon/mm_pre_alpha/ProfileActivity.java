@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -36,10 +37,12 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     private PlainUser plainUser;//либо я, либо тот чел на которого ткнули чтобы посмотреть
     private TextView tv_userName;
     private TextView tv_numberOfSubscribers;
+    private TextView tv_numberOfSubscriptions;
     private CheckBox checkBox;
     FirebaseUser user;
     Profile profile;//тот чел на которого ткнули чтобы посмотреть
     Profile myProfile;//наш профиль
+    private Button chatButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +50,15 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         setContentView(R.layout.activity_profile);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        findViewById(R.id.chatButton).setOnClickListener(this);
+        chatButton = (Button) findViewById(R.id.chatButton);
+        chatButton.setOnClickListener(this);
         checkBox = (CheckBox) findViewById(R.id.subscribeCheckBox);
         checkBox.setOnCheckedChangeListener(checkBoxListener);
 
         tv_userName = (TextView) findViewById(R.id.tv_userName);
         tv_numberOfSubscribers = (TextView) findViewById(R.id.tv_numberOfSubscribers);
+        tv_numberOfSubscriptions = (TextView) findViewById(R.id.tv_numberOfSubscriptions);
+
         user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
@@ -66,6 +72,12 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                     profile.getSubscribers().remove(user.getUid());
                     FirebasePathHelper.writeNewProfileDB(profile);
                 }
+
+                if (myProfile.getSubscriptions().size() > 0) {
+                    myProfile.getSubscriptions().remove(plainUser.getUuid());
+                    FirebasePathHelper.writeNewProfileDB(myProfile);
+                }
+
             } else {
                 // подписка
                 Map<String, PlainUser> subscribers = profile.getSubscribers();
@@ -74,6 +86,10 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 }
                 subscribers.put(user.getUid(), new PlainUser(user));
                 FirebasePathHelper.writeNewProfileDB(profile);
+
+                Map<String, PlainUser> subscriptions = myProfile.getSubscriptions();
+                subscriptions.put(plainUser.getUuid(), plainUser);
+                FirebasePathHelper.writeNewProfileDB(myProfile);
             }
         }
     };
@@ -85,8 +101,10 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         if (myProfile != null && myProfile.getUuid().equals(plainUser.getUuid())) {
             tv_userName.setText(myProfile.getName());
             tv_numberOfSubscribers.setText(String.valueOf(myProfile.getSubscribers().size()));
+            tv_numberOfSubscriptions.setText(String.valueOf(myProfile.getSubscriptions().size()));
+            setControls();
         }
-        setControls();
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -98,8 +116,10 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         if (profile != null && profile.getUuid().equals(plainUser.getUuid())) {
             tv_userName.setText(profile.getName());
             tv_numberOfSubscribers.setText(String.valueOf(profile.getSubscribers().size()));
+            tv_numberOfSubscriptions.setText(String.valueOf(profile.getSubscriptions().size()));
+            setControls();
         }
-        setControls();
+
     }
 
     void setControls() {
@@ -107,9 +127,11 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         if (isMine) {
             //chatView.setVisibility(View.INVISIBLE);//later
             checkBox.setVisibility(View.INVISIBLE);
+            chatButton.setVisibility(View.INVISIBLE);
         } else {
             //chatView.setVisibility(View.VISIBLE);
             checkBox.setVisibility(View.VISIBLE);
+            chatButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -145,8 +167,12 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.chatButton) {
-            intentChat = new Intent(ProfileActivity.this, ChatActivity.class);
+            Intent intentChat = new Intent(ProfileActivity.this, ChatActivity.class);
             startActivity(intentChat);
+        }
+        if (view.getId() == R.id.tv_numberOfSubscribers) {
+            Intent intentSubscribers = new Intent(ProfileActivity.this, SubscribersActivity.class);
+            startActivity(intentSubscribers);
         }
     }
 
@@ -161,18 +187,23 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         // Операции для выбранного пункта меню
         switch (item.getItemId()) {
             case R.id.subscribers:
-                intentSubscribers = new Intent(this, SubscribersActivity.class);
+                Intent intentSubscribers = new Intent(this, SubscribersActivity.class);
                 startActivity(intentSubscribers);
                 this.finish();
                 break;
             case R.id.music:
-                intentMusic = new Intent(this, MusicActivity.class);
+                Intent intentMusic = new Intent(this, MusicActivity.class);
                 startActivity(intentMusic);
                 this.finish();
                 break;
             case R.id.news:
-                intentNews = new Intent(this, NewsActivity.class);
+                Intent intentNews = new Intent(this, NewsActivity.class);
                 startActivity(intentNews);
+                this.finish();
+                break;
+            case R.id.all_users:
+                Intent intentAllUsers = new Intent(this, AllUsersActivity.class);
+                startActivity(intentAllUsers);
                 this.finish();
                 break;
             case R.id.profile:

@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if(newUser) {
                         FirebasePathHelper firebasePathHelper = new FirebasePathHelper();
                         Map<String, PlainUser> subscribers = new HashMap<>();
-                        List<Profile> subscriptions = Collections.emptyList();
+                        Map<String, PlainUser> subscriptions = new HashMap<>();
                         List<Post> userPlayList = Collections.emptyList();
                         List<Post> posts = Collections.emptyList();
                         myProfile = new Profile(userName.getText().toString(), uuid, "Add information!", subscribers, subscriptions, userPlayList, posts);

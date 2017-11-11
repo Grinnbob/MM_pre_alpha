@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="10dp"
     android:weightSum="1">
 
+    <TextView
+        android:id="@+id/tv_text_post_item"
+        android:layout_width="wrap_content"
+        android:layout_height="15dp"
+        android:textSize="10sp" />
+
     <Button
         android:layout_width="60dp"
         android:layout_height="30dp"
         android:textSize="10sp"
+        android:layout_below="@+id/tv_text_post_item"
         android:text="Play"
         android:layout_weight="0.03"
         android:id="@+id/btn_play"/>
@@ -19,13 +26,49 @@
         android:layout_height="30dp"
         android:textSize="10sp"
         android:text="Pause"
+        android:layout_below="@+id/tv_text_post_item"
+        android:layout_toRightOf="@+id/btn_play"
         android:layout_weight="0.03"
         android:id="@+id/btn_pause"/>
 
     <TextView
         android:id="@+id/tv_recycler_item"
         android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/btn_pause"
         android:layout_height="15dp"
         android:textSize="10sp" />
 
-</LinearLayout>
+    <CheckBox
+        android:id="@+id/checkBox4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CheckBox"
+        android:layout_below="@+id/tv_recycler_item"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="52dp"
+        android:layout_marginEnd="52dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_recycler_item"
+        android:layout_alignLeft="@+id/checkBox4"
+        android:layout_alignStart="@+id/checkBox4"
+        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
+        android:text="TextView" />
+
+    <Button
+        android:id="@+id/btn_repost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:layout_marginStart="80dp"
+        android:layout_below="@+id/textView"
+        android:text="Repost"
+        android:layout_alignLeft="@+id/checkBox4"
+        android:layout_alignStart="@+id/checkBox4" />
+
+</RelativeLayout>
