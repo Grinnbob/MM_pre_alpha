@@ -37,15 +37,15 @@ public class PlainUser implements Serializable {
         this.uuid = uuid;
     }
 */
-    public PlainUser(String name, String uuid/*, String information*/) {
+    public PlainUser(String name, String uuid/*, String information*/) { //Праивльно вызывать так: myProfile.getName(), user.getUid())
         this.name = name;
         this.uuid = uuid;
         //this.information = information;
         //this.subscribers = subscribers;
     }
 
-    public PlainUser(FirebaseUser user) {
-        this(user.getDisplayName(),user.getUid());
+    public PlainUser(FirebaseUser user) { //TODO: check all usages
+        this(user.getDisplayName(), user.getUid());
     }
 /*
    public String getInformation() {

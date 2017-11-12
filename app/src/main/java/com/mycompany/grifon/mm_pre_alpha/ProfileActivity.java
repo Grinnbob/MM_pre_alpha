@@ -57,6 +57,8 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
 
         tv_userName = (TextView) findViewById(R.id.tv_userName);
         tv_numberOfSubscribers = (TextView) findViewById(R.id.tv_numberOfSubscribers);
+        tv_numberOfSubscribers.setOnClickListener(this);
+
         tv_numberOfSubscriptions = (TextView) findViewById(R.id.tv_numberOfSubscriptions);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -84,7 +86,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 if (subscribers == null) {
                     subscribers = new HashMap<>();
                 }
-                subscribers.put(user.getUid(), new PlainUser(user));
+                subscribers.put(user.getUid(), new PlainUser(myProfile.getName(), user.getUid()));
                 FirebasePathHelper.writeNewProfileDB(profile);
 
                 Map<String, PlainUser> subscriptions = myProfile.getSubscriptions();
@@ -104,7 +106,6 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             tv_numberOfSubscriptions.setText(String.valueOf(myProfile.getSubscriptions().size()));
             setControls();
         }
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -157,7 +158,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         Intent intent = getIntent();
         plainUser = (PlainUser) intent.getSerializableExtra("user");
         if (plainUser == null) { //попали сюда не ткнув на какого-то пользователя, а ткнули на свой профиль просто
-            plainUser = new PlainUser(user.getDisplayName(), user.getUid());
+            plainUser = new PlainUser(user);
         }
         FirebasePathHelper.getMyProfile(user.getUid());
         FirebasePathHelper.getUserProfile(plainUser.getUuid());
@@ -172,6 +173,14 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         }
         if (view.getId() == R.id.tv_numberOfSubscribers) {
             Intent intentSubscribers = new Intent(ProfileActivity.this, SubscribersActivity.class);
+            intentSubscribers.putExtra("user", plainUser);
+            startActivity(intentSubscribers);
+        }
+        if (view.getId() == R.id.tv_numberOfSubscriptions) {
+            Intent intentSubscribers = new Intent(ProfileActivity.this, SubscriptionsActivity.class);
+            //Intent i = new Intent(c, ProfileActivity.class);
+            //intentSubscribers.putExtra("user", plainUser);
+            //c.startActivity(i);
             startActivity(intentSubscribers);
         }
     }
