@@ -1,9 +1,10 @@
 package com.mycompany.grifon.mm_pre_alpha.utils.domain;
 
 public class Post {
-    final String text;
-    final SongInfo song;
-    //TODO: add time
+    private String text;
+    private SongInfo song;
+
+    public Post(){}
 
     public Post(String text, SongInfo song){
         this.text = text;

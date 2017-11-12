@@ -8,16 +8,17 @@ import android.util.Log;
 import android.widget.EditText;
 
 import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
-import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapter;
+import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapterMusic;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
 
 import java.util.List;
 
+// search music
 public class SearchActivity extends AppCompatActivity{
 
     // для стены
     private RecyclerView mRecyclerView;
-    private RecyclerViewAdapter mAdapter;
+    private RecyclerViewAdapterMusic mAdapter;
 
     // song name to write in database and storage
     private FirebaseUtils firebaseUtils;
@@ -38,17 +39,17 @@ public class SearchActivity extends AppCompatActivity{
         firebaseUtils = NewsActivity.getFirebaseUtils();
         // получаем полный список, хранящихся в БД песен
         searchName = MusicActivity.getSearchedSongName();
-        Log.d(LOG_TAG, searchName.getText().toString() + "!!!!!!!!");
-        //List<SongInfo> myDataset = firebaseUtils.getSearchedDataSet(searchName.getText().toString());
+        //Log.d(LOG_TAG, searchName.getText().toString() + "!!!!!!!!");
+        List<SongInfo> myDataset = firebaseUtils.getSearchedDataSet(searchName.getText().toString());
         // создаём стену
-        //createWall(myDataset);
+        createWall(myDataset);
     }
 
     // создаём стену
     private void createWall(List<SongInfo> myDataset) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new RecyclerViewAdapter(this, myDataset);
+        mAdapter = new RecyclerViewAdapterMusic(this, myDataset);
         mRecyclerView.setAdapter(mAdapter);
     }
 }

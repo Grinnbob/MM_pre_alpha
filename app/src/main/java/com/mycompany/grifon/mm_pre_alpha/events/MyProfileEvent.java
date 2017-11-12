@@ -5,9 +5,6 @@ import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
 
 import java.util.List;
 
-/**
- * Created by Vlad on 06.11.2017.
- */
 public class MyProfileEvent {
     final private Profile profile;
 

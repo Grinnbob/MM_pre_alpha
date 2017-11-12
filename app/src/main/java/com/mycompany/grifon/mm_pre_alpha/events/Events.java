@@ -5,10 +5,6 @@ import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
 
 import java.util.List;
 
-/**
- * Created by Vlad on 05.11.2017.
- */
-
 public class Events {
     public static class NamesEvent extends EventWithSingleArg<List<PlainUser>> {
         public NamesEvent(List<PlainUser> arg) {

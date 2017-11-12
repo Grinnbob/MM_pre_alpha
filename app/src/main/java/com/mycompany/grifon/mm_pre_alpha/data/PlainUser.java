@@ -8,10 +8,6 @@ import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Created by Vlad on 25.10.2017.
- */
-
 public class PlainUser implements Serializable {
     private String name;
     private String uuid;

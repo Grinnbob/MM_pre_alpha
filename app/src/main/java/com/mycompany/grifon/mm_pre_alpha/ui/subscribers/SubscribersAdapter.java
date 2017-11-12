@@ -11,10 +11,6 @@ import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Vlad on 29.10.2017.
- */
-
 public class SubscribersAdapter extends RecyclerView.Adapter<SubscribersViewholder> {
 
     private final LayoutInflater inflater;

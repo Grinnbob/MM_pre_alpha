@@ -77,26 +77,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.btn_sign_in) {
+        if (view.getId() == R.id.btn_sign_in) {
             //signIn(email.getText().toString(), password.getText().toString());
-            signIn("1234@qwe.ru", "123456");
-            //signIn("best@yandex.ru", "123456");
-        } else if (view.getId() == R.id.btn_registration) {
-            registration(email.getText().toString(), password.getText().toString());
-            signIn(email.getText().toString(), password.getText().toString());
-        }
 
+            //signIn("1234@qwe.ru", "123456");
+            signIn("post@test.io", "123456");
+            //signIn("best@yandex.ru", "123456");
+
+        } else if (view.getId() == R.id.btn_registration) {
+            if (registration(email.getText().toString(), password.getText().toString()))
+                signIn(email.getText().toString(), password.getText().toString());
+        }
     }
 
-    private void signIn(String email, String password){
+    private void signIn(String email, String password) {
 
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()) {
+                if (task.isSuccessful()) {
                     uuid = mAuth.getCurrentUser().getUid();
                     //signIn after registration
-                    if(newUser) {
+                    if (newUser) {
                         FirebasePathHelper firebasePathHelper = new FirebasePathHelper();
                         Map<String, PlainUser> subscribers = new HashMap<>();
                         Map<String, PlainUser> subscriptions = new HashMap<>();
@@ -118,21 +120,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    public void registration (String email, String password){
+    public boolean registration(String email, String password) {
 
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()) {
-                    newUser = true;
-                    Toast.makeText(LoginActivity.this, R.string.login_registration_success_toast_message, Toast.LENGTH_SHORT).show();
-                } else
-                    Toast.makeText(LoginActivity.this, R.string.login_registration_failed_toast_message, Toast.LENGTH_SHORT).show();
-            }
-        });
+        if (!userName.getText().toString().equals("")) {
+            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful() && !userName.getText().toString().equals("")) {
+                        newUser = true;
+                        Toast.makeText(LoginActivity.this, R.string.login_registration_success_toast_message, Toast.LENGTH_SHORT).show();
+                    } else
+                        Toast.makeText(LoginActivity.this, R.string.login_registration_failed_toast_message, Toast.LENGTH_SHORT).show();
+                }
+            });
+            return true;
+        } else {
+            Toast.makeText(LoginActivity.this, "Введиде никнейм", Toast.LENGTH_SHORT).show();
+            return false;
+        }
     }
-
-    public static Profile getMyProfile(){return myProfile;}
 
 }
 

@@ -1,9 +1,6 @@
 package com.mycompany.grifon.mm_pre_alpha.utils;
 
 import android.content.Context;
-import android.media.MediaPlayer;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +16,7 @@ import java.util.List;
 
 //https://ru.stackoverflow.com/questions/549695/%D1%80%D0%B0%D1%81%D1%81%D1%82%D0%BE%D1%8F%D0%BD%D0%B8%D0%B5-%D0%BC%D0%B5%D0%B6%D0%B4%D1%83-%D0%B0%D0%B9%D1%82%D0%B5%D0%BC%D0%B0%D0%BC%D0%B8-recyclerview
 //чтобы задать отступ между message_item
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>  {
+public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewAdapterMusic.ViewHolder>  {
 
     private List<SongInfo> mData = Collections.emptyList();
     private LayoutInflater mInflater;
@@ -28,7 +25,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private Player player;
 
     // data is passed into the constructor
-    public RecyclerViewAdapter(Context context, List<SongInfo> data) {
+    public RecyclerViewAdapterMusic(Context context, List<SongInfo> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
 
@@ -75,7 +72,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             itemView.setOnClickListener(this);
         }
 
-        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onClick(View view) {
             // хз что это, возможно не нужно

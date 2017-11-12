@@ -20,9 +20,7 @@ public class Profile /*implements Serializable*/{
     private List<Post> userPlayList;
     private List<Post> posts;
 
-    Profile() {
-    }
-
+    public Profile() {}
 
     public Profile(String name, String uuid, String information, Map<String, PlainUser> subscribers, Map<String, PlainUser> subscriptions, List<Post> userPlayList, List<Post> posts) {
         this.name = name;

@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +34,9 @@ public class FirebaseUtils {
     private StorageReference storageRef;
     private DatabaseReference databaseRef;
 
+    public String myUuid;
+    public Profile myProfile;
+
     public FirebaseUtils(){
         // Получаем доступ к Хранилищу storage
         storage = FirebaseStorage.getInstance();
@@ -41,6 +45,11 @@ public class FirebaseUtils {
         // Создаем ссылки на руты
         storageRef = storage.getReference();
         databaseRef = database.getReference();
+
+        // my uuid
+        myUuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        // my profile
+        getMyProfile();
     }
 
     // загружает файл в Cloud Storage и его uri в Database
@@ -94,14 +103,31 @@ public class FirebaseUtils {
         SongInfo info = new SongInfo(name, url, 0);
         String key = databaseRef.push().getKey();
         databaseRef.child("music").child(key).setValue(info);
+        Log.d("MyLog", "post text: " + postText);
+        if(!postText.equals("none"))
+            updatePostsProfile(info, postText);
+    }
 
+    // пишем post в Database in my profile
+    private void updatePostsProfile(SongInfo info, String postText) {
         // add in profile the same
         Post post = new Post(postText, info);
-        List<Post> playList = LoginActivity.getMyProfile().getUserPlayList();
+        Log.d("MyLog", "my uuid: " + myUuid);
+        Log.d("MyLog", "my name: " + myProfile.getName());
+        List<Post> posts;
+        List<Post> playList;
+        if(myProfile.getPosts() != null) {
+            posts = myProfile.getPosts();
+        } else posts = new ArrayList<>();
+        if(myProfile.getUserPlayList() != null) {
+            playList = myProfile.getUserPlayList();
+        } else playList = new ArrayList<>();
         playList.add(post);
-        Profile profile = new Profile(LoginActivity.getMyProfile().getName(), LoginActivity.getMyProfile().getUuid(), LoginActivity.getMyProfile().getInformation(), LoginActivity.getMyProfile().getSubscribers(), LoginActivity.getMyProfile().getSubscriptions(), playList, LoginActivity.getMyProfile().getPosts());
-        FirebasePathHelper firebasePathHelper = new FirebasePathHelper();
-        firebasePathHelper.writeNewProfileDB(profile);
+        posts.add(post);
+        Profile profile = new Profile(myProfile.getName(), myProfile.getUuid(), myProfile.getInformation(), myProfile.getSubscribers(), myProfile.getSubscriptions(), playList, posts);
+        FirebasePathHelper.writeNewProfileDB(profile);
+        //TODO: writeNewProfileDB -> writeNewPostDB by key
+        //todo: add likes
     }
 
     /*
@@ -111,7 +137,7 @@ public class FirebaseUtils {
      Если я буду сидеть в этом Activity, а ты будет закачивать в это время музло,
      то всё будет добавляться в этот массив - будет утечка памяти,
      если так долго сидеть в этом активити то приложение упадёт из-за нехватки памяти.
-     3)getDataSet() может вернуть пустой set - тут может быть ситуация,
+     3)getMusicSet() может вернуть пустой set - тут может быть ситуация,
      что эта фунция вернёт пустой список,
      в которой загрузились ещё не все значения.
      Потому что onDataChange() вызывается не тогда когда мы прошлись по коду,
@@ -119,7 +145,7 @@ public class FirebaseUtils {
      как вернулся этот список mDataSet)
      */
     // получаем список хранящейся в Database музыки
-    public List<SongInfo> getDataSet() {
+    public List<SongInfo> getMusicSet() {
         final List<SongInfo> mDataSet = new ArrayList<>();//не поддерживает многопоточность
 
         databaseRef.child("music").addValueEventListener(new ValueEventListener() {
@@ -138,6 +164,29 @@ public class FirebaseUtils {
             }
         });
         Log.e("FB", "Music array size: " + mDataSet.size());
+        return mDataSet;
+    }
+
+    // получаем список хранящиеся в Database посты текущего пользователя
+    public List<Post> getMyPostSet() {
+        final List<Post> mDataSet = new ArrayList<>();//не поддерживает многопоточность
+
+        databaseRef.child("users").child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("FB", "Current thread: " + Thread.currentThread().getName());
+                Post post;
+                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                    post = dsp.getValue(Post.class);
+                    mDataSet.add(post);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        Log.e("FB", "Posts array size: " + mDataSet.size());
         return mDataSet;
     }
 
@@ -167,5 +216,20 @@ public class FirebaseUtils {
         });
 
         return mDataSet;
+    }
+
+    public void getMyProfile() {
+        //return getRoot().child(String.valueOf(R.string.users_path)).child(user.getUid()).child(path);
+        databaseRef.child("users").child(myUuid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                myProfile = dataSnapshot.getValue(Profile.class);
+                //event fired!
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

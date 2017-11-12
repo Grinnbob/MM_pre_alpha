@@ -38,9 +38,7 @@ public class FirebasePathHelper {
         return root;
     }
 
-
-
-    // upload profile in Database
+    // upload profile in Database (alternative)
     public void uploadProfileDB(Profile info) {
         Map<String, Object> childUpdates = new HashMap<>();
 
@@ -49,9 +47,10 @@ public class FirebasePathHelper {
     }
 
     private static DatabaseReference getUserData(String path) {
-        FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         return getRoot().child("users").child(user.getUid()).child(path);
     }
+
     public static void requestSubscribers(String uuid){
         //getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
             getRoot().child("users").child(uuid).child("subscribers").addValueEventListener(new ValueEventListener() {
@@ -98,7 +97,7 @@ public class FirebasePathHelper {
         getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Profile profile=dataSnapshot.getValue(Profile.class);
+                Profile profile = dataSnapshot.getValue(Profile.class);
                 //event fired!
                 EventBus.getDefault().post(new MyProfileEvent(profile));
             }
@@ -114,7 +113,7 @@ public class FirebasePathHelper {
         getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Profile profile=dataSnapshot.getValue(Profile.class);
+                Profile profile = dataSnapshot.getValue(Profile.class);
                 //event fired!
                 EventBus.getDefault().post(new UserProfileEvent(profile));
             }
@@ -125,14 +124,12 @@ public class FirebasePathHelper {
         });
     }
 
-
     // пишем new profile в Database
     public static void writeNewProfileDB(Profile info) {
         //public Profile(String name, String uuid, String information, List<Profile> subscribers, List<Profile> subscriptions, List<SongInfo> userPlayList, List<Post> posts) {
-      //  Profile newProfile = new Profile(info.getName(), info.getUuid(), info.getInformation(), subscribers, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+        //Profile newProfile = new Profile(info.getName(), info.getUuid(), info.getInformation(), subscribers, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
         getRoot().child("users").child(info.getUuid()).setValue(info);
     }
-
 
     public DatabaseReference getMyMusic(){
         return getUserData("music");

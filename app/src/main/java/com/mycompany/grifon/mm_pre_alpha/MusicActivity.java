@@ -17,7 +17,7 @@ import java.util.List;
 import android.widget.EditText;
 
 import com.mycompany.grifon.mm_pre_alpha.data.FirebasePathHelper;
-import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapter;
+import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapterMusic;
 import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
 
@@ -36,7 +36,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     // для стены
     private RecyclerView mRecyclerView;
-    private RecyclerViewAdapter mAdapter;
+    private RecyclerViewAdapterMusic mAdapter;
 
     // song name to write in database and storage
     private String name = null;
@@ -60,7 +60,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         firebaseUtils = NewsActivity.getFirebaseUtils();
         firebasePathHelper = new FirebasePathHelper();
         // получаем полный список, хранящихся в БД песен
-        List<SongInfo> myDataset = firebaseUtils.getDataSet();
+        List<SongInfo> myDataset = firebaseUtils.getMusicSet();
         // создаём стену
         createWall(myDataset);
 
@@ -73,7 +73,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private void createWall(List<SongInfo> myDataset) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new RecyclerViewAdapter(this, myDataset);
+        mAdapter = new RecyclerViewAdapterMusic(this, myDataset);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -105,7 +105,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 selectedAudioPath = getPath(selectedAudioUri);
 
                 // загружаем в бд музыку и создаём пустой пост в профайле
-                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, "");
+                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, "none");
             }
         }
     }

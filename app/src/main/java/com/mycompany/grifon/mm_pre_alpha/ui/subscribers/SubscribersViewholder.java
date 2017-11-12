@@ -14,10 +14,6 @@ import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 
 import java.io.Serializable;
 
-/**
- * Created by Vlad on 29.10.2017.
- */
-
 public class SubscribersViewholder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     private final TextView tv_subscriber_name;

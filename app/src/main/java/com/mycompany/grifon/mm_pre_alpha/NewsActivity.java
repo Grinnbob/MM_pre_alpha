@@ -10,16 +10,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-import com.mycompany.grifon.mm_pre_alpha.data.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
-import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapter;
+import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapterPosts;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.Post;
-import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
 
 import java.util.List;
@@ -31,7 +30,6 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
     private Intent intentMusic;
     private Intent intentProfile;
 
-    private Post post;
     private EditText postText;
     // song name to write in database and storage
     private String name = null;
@@ -44,7 +42,7 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
 
     // для стены
     private RecyclerView mRecyclerView;
-    private RecyclerViewAdapter mAdapter;
+    private RecyclerViewAdapterPosts mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +57,13 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
         // подключаемся к Firebase
         firebaseUtils = new FirebaseUtils();
         // получаем полный список, хранящихся в БД песен
-        List<SongInfo> myDataset = firebaseUtils.getDataSet();
+        List<Post> myDataset = firebaseUtils.getMyPostSet();
+        Log.d("MY LOG:", "POSTS SET: " + myDataset);
+        if(myDataset.isEmpty()) {
+            Log.d("MY LOG:", "POSTS SET is empty ");
+            //Post emptyPost = new Post("none", new SongInfo("none", "none", 0));
+            //myDataset.add(emptyPost);
+        }
         // создаём стену
         createWall(myDataset);
 
@@ -69,11 +73,11 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // создаём стену
-    private void createWall(List<SongInfo> myDataset) {
+    private void createWall(List<Post> myDataset) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new RecyclerViewAdapter(this, myDataset);
+        mAdapter = new RecyclerViewAdapterPosts(this, myDataset);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
@@ -137,6 +141,7 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.subscribers:
                 intentSubscribers = new Intent(this, SubscribersActivity.class);
                 startActivity(intentSubscribers);
+                this.finish();
                 break;
             case R.id.music:
                 intentMusic = new Intent(this, MusicActivity.class);
