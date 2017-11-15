@@ -19,7 +19,6 @@ import android.widget.EditText;
 import com.mycompany.grifon.mm_pre_alpha.utils.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.utils.RecyclerViewAdapterPosts;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.Post;
-import com.mycompany.grifon.mm_pre_alpha.utils.domain.SongInfo;
 
 import java.util.List;
 
@@ -57,7 +56,7 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
         // подключаемся к Firebase
         firebaseUtils = new FirebaseUtils();
         // получаем полный список, хранящихся в БД песен
-        List<Post> myDataset = firebaseUtils.getMyPostSet();
+        List<Post> myDataset = firebaseUtils.getPostSet(false);
         Log.d("MY LOG:", "POSTS SET: " + myDataset);
         if(myDataset.isEmpty()) {
             Log.d("MY LOG:", "POSTS SET is empty ");
@@ -103,7 +102,8 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
                 selectedAudioPath = getPath(selectedAudioUri);
 
                 // загружаем в бд музыку
-                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, postText.getText().toString());
+                // и создаём свой пост,
+                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, postText.getText().toString(), true);
             }
         }
     }

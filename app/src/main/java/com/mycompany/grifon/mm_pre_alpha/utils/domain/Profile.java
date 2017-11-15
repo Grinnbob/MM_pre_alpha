@@ -17,18 +17,18 @@ public class Profile /*implements Serializable*/{
     private Map<String, PlainUser> subscribers = new HashMap<>();//чтобы не падало это getSubscribers() если сабскрайберов нет у данного пользователя
     //private Map<String, PlainUser> subscribers;
     private Map<String, PlainUser> subscriptions;
-    private List<Post> userPlayList;
-    private List<Post> posts;
+    //private List<Post> userPlayList;
+    private Map<String, Post> posts;
 
     public Profile() {}
 
-    public Profile(String name, String uuid, String information, Map<String, PlainUser> subscribers, Map<String, PlainUser> subscriptions, List<Post> userPlayList, List<Post> posts) {
+    public Profile(String name, String uuid, String information, Map<String, PlainUser> subscribers, Map<String, PlainUser> subscriptions, Map<String, Post> posts) {
         this.name = name;
         this.uuid = uuid;
         this.information = information;
         this.subscribers = subscribers;
         this.subscriptions = subscriptions;
-        this.userPlayList = userPlayList;
+        //this.userPlayList = userPlayList;
         this.posts = posts;
     }
 
@@ -39,7 +39,7 @@ public class Profile /*implements Serializable*/{
         this.information = "Add information!";
         this.subscribers = null;
         this.subscriptions = null;
-        this.userPlayList = null;
+        //this.userPlayList = null;
         this.posts = null;
     }
 
@@ -51,7 +51,7 @@ public class Profile /*implements Serializable*/{
         result.put("information", information);
         result.put("subscribers", subscribers);
         result.put("subscriptions", subscriptions);
-        result.put("userPlayList", userPlayList);
+        //result.put("userPlayList", userPlayList);
         result.put("posts", posts);
 
         return result;
@@ -63,8 +63,8 @@ public class Profile /*implements Serializable*/{
     public Map<String, PlainUser> getSubscribers(){return subscribers;}
     //public Map<String, PlainUser> getSubscribers(){return subscribers;}
     public Map<String, PlainUser> getSubscriptions(){return subscriptions;}
-    public List<Post> getUserPlayList(){return userPlayList;}
-    public List<Post> getPosts(){return posts;}
+    //public List<Post> getUserPlayList(){return userPlayList;}
+    public Map<String, Post> getPosts(){return posts;}
 
     public void setSubscribers(Map<String, PlainUser> subscribers){this.subscribers = subscribers;}
 

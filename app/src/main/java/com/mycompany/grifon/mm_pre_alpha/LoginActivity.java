@@ -80,7 +80,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (view.getId() == R.id.btn_sign_in) {
             //signIn(email.getText().toString(), password.getText().toString());
 
-            //signIn("1234@qwe.ru", "123456");
             signIn("post@test.io", "123456");
             //signIn("best@yandex.ru", "123456");
 
@@ -98,15 +97,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (task.isSuccessful()) {
                     uuid = mAuth.getCurrentUser().getUid();
                     //signIn after registration
+                    //if there is no user in Database, we will add him
                     if (newUser) {
                         FirebasePathHelper firebasePathHelper = new FirebasePathHelper();
                         Map<String, PlainUser> subscribers = new HashMap<>();
                         Map<String, PlainUser> subscriptions = new HashMap<>();
-                        List<Post> userPlayList = Collections.emptyList();
-                        List<Post> posts = Collections.emptyList();
-                        myProfile = new Profile(userName.getText().toString(), uuid, "Add information!", subscribers, subscriptions, userPlayList, posts);
+                        //List<Post> userPlayList = Collections.emptyList();
+                        Map<String, Post> posts = new HashMap<>();
+                        myProfile = new Profile(userName.getText().toString(), uuid, "Add information!", subscribers, subscriptions, posts);
                         //firebasePathHelper.uploadProfileDB(myProfile);
-                        //if there is no user in Database, we will add him
                         firebasePathHelper.writeNewProfileDB(myProfile);
                     }
                     Toast.makeText(LoginActivity.this, R.string.login_authorisation_success_toast_message, Toast.LENGTH_SHORT).show();

@@ -13,6 +13,7 @@ import com.mycompany.grifon.mm_pre_alpha.events.AllMyUsersEvent;
 import com.mycompany.grifon.mm_pre_alpha.events.UserProfileEvent;
 import com.mycompany.grifon.mm_pre_alpha.events.MyProfileEvent;
 import com.mycompany.grifon.mm_pre_alpha.events.SubscribersEvent;
+import com.mycompany.grifon.mm_pre_alpha.utils.domain.Post;
 import com.mycompany.grifon.mm_pre_alpha.utils.domain.Profile;
 
 import org.greenrobot.eventbus.EventBus;
@@ -129,6 +130,12 @@ public class FirebasePathHelper {
         //public Profile(String name, String uuid, String information, List<Profile> subscribers, List<Profile> subscriptions, List<SongInfo> userPlayList, List<Post> posts) {
         //Profile newProfile = new Profile(info.getName(), info.getUuid(), info.getInformation(), subscribers, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
         getRoot().child("users").child(info.getUuid()).setValue(info);
+    }
+
+    // пишем new post в Database in my profile
+    public static void writeNewPostDB(String uuid, Post post) {
+        String key = getRoot().push().getKey();
+        getRoot().child("users").child(uuid).child("posts").child(key).setValue(post);
     }
 
     public DatabaseReference getMyMusic(){

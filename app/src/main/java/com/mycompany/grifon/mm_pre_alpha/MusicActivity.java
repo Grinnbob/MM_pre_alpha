@@ -105,7 +105,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 selectedAudioPath = getPath(selectedAudioUri);
 
                 // загружаем в бд музыку и создаём пустой пост в профайле
-                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, "none");
+                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, "none", true);
             }
         }
     }

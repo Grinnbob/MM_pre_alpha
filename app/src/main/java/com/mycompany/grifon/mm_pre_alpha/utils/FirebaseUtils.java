@@ -37,7 +37,7 @@ public class FirebaseUtils {
     public String myUuid;
     public Profile myProfile;
 
-    public FirebaseUtils(){
+    public FirebaseUtils() {
         // Получаем доступ к Хранилищу storage
         storage = FirebaseStorage.getInstance();
         // Получаем доступ к Хранилищу database
@@ -50,10 +50,11 @@ public class FirebaseUtils {
         myUuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         // my profile
         getMyProfile();
+        Log.d("MyLog", "my uuid: " + myUuid);
     }
 
     // загружает файл в Cloud Storage и его uri в Database
-    public void uploadFileInFirebase(final Uri uri, final String name, final String postText) {
+    public void uploadFileInFirebase(final Uri uri, final String name, final String postText, final boolean postType) {
         // Создаем ссылку в Storage Firebase
         StorageReference myRef = storageRef.child("music").child(name);
         /*
@@ -91,7 +92,7 @@ public class FirebaseUtils {
                 // добавляем URI в database
                 //DatabaseReference myRef = databaseRef.child("music").push();
                 // write in DB
-                writeSongInfoInDB(name, downloadUri.toString(), postText);
+                writeSongInfoInDB(name, downloadUri.toString(), postText, postType);
                 //myRef.setValue(uri);
                 //Toast.makeText(FirebaseUtils.this, "Композиция загружена", Toast.LENGTH_SHORT).show();
             }
@@ -99,35 +100,18 @@ public class FirebaseUtils {
     }
 
     // пишем музыку в Database
-    private void writeSongInfoInDB(String name, String url, String postText) {
+    private void writeSongInfoInDB(String name, String url, String postText, boolean postType) {
         SongInfo info = new SongInfo(name, url, 0);
         String key = databaseRef.push().getKey();
         databaseRef.child("music").child(key).setValue(info);
         Log.d("MyLog", "post text: " + postText);
-        if(!postText.equals("none"))
-            updatePostsProfile(info, postText);
-    }
-
-    // пишем post в Database in my profile
-    private void updatePostsProfile(SongInfo info, String postText) {
-        // add in profile the same
-        Post post = new Post(postText, info);
-        Log.d("MyLog", "my uuid: " + myUuid);
-        Log.d("MyLog", "my name: " + myProfile.getName());
-        List<Post> posts;
-        List<Post> playList;
-        if(myProfile.getPosts() != null) {
-            posts = myProfile.getPosts();
-        } else posts = new ArrayList<>();
-        if(myProfile.getUserPlayList() != null) {
-            playList = myProfile.getUserPlayList();
-        } else playList = new ArrayList<>();
-        playList.add(post);
-        posts.add(post);
-        Profile profile = new Profile(myProfile.getName(), myProfile.getUuid(), myProfile.getInformation(), myProfile.getSubscribers(), myProfile.getSubscriptions(), playList, posts);
-        FirebasePathHelper.writeNewProfileDB(profile);
-        //TODO: writeNewProfileDB -> writeNewPostDB by key
-        //todo: add likes
+        // "none" ключевое слово, означает, что только добавляем музыку в бд без создания поста
+        if (!postText.equals("none")) {
+            Post post = new Post(postText, info, postType);
+            // пишем post в Database in my profile
+            FirebasePathHelper.writeNewPostDB(myUuid, post);
+            //todo: add likes
+        }
     }
 
     /*
@@ -167,25 +151,46 @@ public class FirebaseUtils {
         return mDataSet;
     }
 
-    // получаем список хранящиеся в Database посты текущего пользователя
-    public List<Post> getMyPostSet() {
+    // получаем список хранящиеся в Database посты
+    // true - мои посты, false - все
+    public List<Post> getPostSet(boolean postType) {
         final List<Post> mDataSet = new ArrayList<>();//не поддерживает многопоточность
-
-        databaseRef.child("users").child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.e("FB", "Current thread: " + Thread.currentThread().getName());
-                Post post;
-                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                    post = dsp.getValue(Post.class);
-                    mDataSet.add(post);
+        // all posts
+        if (!postType) {
+            databaseRef.child("users").child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.e("FB", "Current thread: " + Thread.currentThread().getName());
+                    Post post;
+                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                        post = dsp.getValue(Post.class);
+                        mDataSet.add(post);
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        } else {
+            // my posts
+            databaseRef.child("users").child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.e("FB", "Current thread: " + Thread.currentThread().getName());
+                    Post post;
+                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                        post = dsp.getValue(Post.class);
+                        if(post.getType())
+                            mDataSet.add(post);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        }
         Log.e("FB", "Posts array size: " + mDataSet.size());
         return mDataSet;
     }
@@ -205,7 +210,7 @@ public class FirebaseUtils {
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     songInfo = dsp.getValue(SongInfo.class);
 
-                    if(songInfo.getName().toLowerCase().contains(searchedName.toLowerCase()))
+                    if (songInfo.getName().toLowerCase().contains(searchedName.toLowerCase()))
                         mDataSet.add(songInfo);
                 }
             }
@@ -219,13 +224,14 @@ public class FirebaseUtils {
     }
 
     public void getMyProfile() {
-        //return getRoot().child(String.valueOf(R.string.users_path)).child(user.getUid()).child(path);
         databaseRef.child("users").child(myUuid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 myProfile = dataSnapshot.getValue(Profile.class);
+                Log.d("MyLog", "my name: " + myProfile.getName());
                 //event fired!
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
