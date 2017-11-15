@@ -1,9 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mycompany.grifon.mm_pre_alpha.SubscriptionsActivity">
+    tools:context="com.mycompany.grifon.mm_pre_alpha.ui.SubscribersActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"/>
+
+    <Button
+        android:id="@+id/btn_search_subscribers"
+        android:layout_width="70dp"
+        android:layout_height="30dp"
+        android:layout_below="@id/toolbar"
+        android:textSize="10sp"
+        android:text="search" />
+
+    <EditText
+        android:id="@+id/et_search"
+        android:layout_width="250dp"
+        android:layout_height="30dp"
+        android:layout_alignTop="@+id/btn_search_subscribers"
+        android:layout_toRightOf="@+id/btn_search_subscribers"
+        android:layout_toEndOf="@+id/btn_search_subscribers"
+        android:hint="search"
+        android:textSize="10dp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvSubscribers"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/btn_search_subscribers"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>

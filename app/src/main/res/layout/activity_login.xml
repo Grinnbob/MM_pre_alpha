@@ -5,7 +5,7 @@
     android:id="@+id/activity_authentication"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mycompany.grifon.mm_pre_alpha.LoginActivity">
+    tools:context="com.mycompany.grifon.mm_pre_alpha.ui.LoginActivity">
 
     <EditText
         android:id="@+id/et_userName"
