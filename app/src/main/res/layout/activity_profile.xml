@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    tools:context="com.mycompany.grifon.mm_pre_alpha.ProfileActivity">
+    tools:context="com.mycompany.grifon.mm_pre_alpha.ui.ProfileActivity">
 
 
     <include
