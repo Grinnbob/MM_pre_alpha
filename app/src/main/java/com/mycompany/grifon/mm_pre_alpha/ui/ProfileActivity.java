@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mycompany.grifon.mm_pre_alpha.R;
+import com.mycompany.grifon.mm_pre_alpha.data.Chat;
+import com.mycompany.grifon.mm_pre_alpha.data.PlainChat;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 import com.mycompany.grifon.mm_pre_alpha.data.events.profile.UserProfileEvent;
@@ -24,8 +26,13 @@ import com.mycompany.grifon.mm_pre_alpha.data.Profile;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 
 public class ProfileActivity extends EBActivity implements View.OnClickListener {
@@ -172,6 +179,13 @@ private static final String TAG = ProfileActivity.class.getSimpleName();
     public void onClick(View view) {
         if (view.getId() == R.id.chatButton) {
             Intent intentChat = new Intent(ProfileActivity.this, ChatActivity.class);
+            PlainChat pc;
+            pc=myProfile.getPlainChatWithUser(plainUser);
+            if(pc==null) {
+                pc = new PlainChat(myProfile.getName()+" with "+plainUser.getName(), UUID.randomUUID().toString(), Arrays.asList(myProfile.toPlain(),plainUser));
+                FirebasePathHelper.createChat(pc);
+            }
+            intentChat.putExtra("chat",(Serializable)pc);
             startActivity(intentChat);
         }
         if (view.getId() == R.id.tv_numberOfSubscribers) {

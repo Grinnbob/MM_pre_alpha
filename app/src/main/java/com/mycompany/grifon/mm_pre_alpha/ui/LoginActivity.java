@@ -16,6 +16,7 @@ import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseAuthHelper;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -24,6 +25,7 @@ public class LoginActivity extends EBActivity implements View.OnClickListener {
     private EditText email;
     private EditText password;
     private EditText userName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class LoginActivity extends EBActivity implements View.OnClickListener {
             if (TextUtils.isEmpty(em) || TextUtils.isEmpty(pass)) {
                 //FirebaseAuthHelper.getInstance().signIn("best@yandex.ru", "123456", "");
                 FirebaseAuthHelper.getInstance().signIn("post@test.io", "123456", "");
+                //FirebaseAuthHelper.getInstance().signIn("morge@yandex.ru", "123456", "");
             } else {
                 FirebaseAuthHelper.getInstance().signIn(em, pass, "");
             }
@@ -60,6 +63,7 @@ public class LoginActivity extends EBActivity implements View.OnClickListener {
                 Toast.makeText(LoginActivity.this, "Empty Password", Toast.LENGTH_SHORT).show();
             else FirebaseAuthHelper.getInstance().registration(em, pass, name);
         }
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

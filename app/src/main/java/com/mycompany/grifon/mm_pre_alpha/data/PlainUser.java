@@ -20,6 +20,14 @@ public class PlainUser implements Serializable {
     }
 
 
+    @Override
+    public String toString() {
+        return "PlainUser{" +
+                "name='" + name + '\'' +
+                ", uuid='" + uuid + '\'' +
+                '}';
+    }
+
     public PlainUser(){
 
     }
@@ -38,6 +46,25 @@ public class PlainUser implements Serializable {
 
     public PlainUser(FirebaseUser user) { //TODO: check all usages
         this(user.getDisplayName(), user.getUid());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PlainUser plainUser = (PlainUser) o;
+
+        if (name != null ? !name.equals(plainUser.name) : plainUser.name != null) return false;
+        return uuid.equals(plainUser.uuid);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + uuid.hashCode();
+        return result;
     }
 /*
    public String getInformation() {

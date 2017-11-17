@@ -18,7 +18,7 @@ public class Profile {
     private final Map<String, PlainUser> subscriptions = new HashMap<>();
     //private final List<Post> userPlayList = new ArrayList<>(); // пока убрал свой плейлист, всё через посты
     private Map<String, Post> posts;
-    private final List<PlainChat> plainChat = new ArrayList<>();
+    private final Map<String,PlainChat> chats = new HashMap<>();
 
     public Profile() {}
 
@@ -30,13 +30,13 @@ public class Profile {
         this.subscriptions.putAll(subscriptions);
         //this.userPlayList.addAll(userPlayList);
         this.posts.putAll(posts);
-        this.plainChat.addAll(plainChat);
+        this.chats.putAll(chats);
     }
-
-    public Profile(@NonNull String name, @NonNull String uuid, String information) {
+    public Profile(@NonNull String name,@NonNull String uuid, String information) {
         this.name = name;
         this.uuid = uuid;
         this.information = information;
+
     }
 
     //empty profile
@@ -44,6 +44,7 @@ public class Profile {
         this.name = name;
         this.uuid = uuid;
         this.information = "Add information!";
+
     }
 
     @Exclude
@@ -60,6 +61,10 @@ public class Profile {
         return result;
     }
 
+    public PlainUser toPlain(){
+        return new PlainUser(name,uuid);
+    }
+
     public String getName(){return name;}
     public String getUuid(){return uuid;}
     public String getInformation(){return information;}
@@ -74,12 +79,20 @@ public class Profile {
     }
 
 
-    public List<PlainChat> getPlainChat() {
-        return plainChat;
+    public Map<String,PlainChat> getChats() {
+        return chats;
     }
+    public PlainChat getPlainChatWithUser(PlainUser user) {
+        for(PlainChat chat: chats.values()){
+            if(chat.getUsers().contains(user)){
+                return chat;
+            }
+        }
+        return null;
+    }
+    public void setChats(Map<String,PlainChat> chats) {
 
-    public void setPlainChat( List<PlainChat> plainChat) {
-        this.plainChat.clear();
-        this.plainChat.addAll(plainChat);
+        this.chats.clear();
+        this.chats.putAll(chats);
     }
 }

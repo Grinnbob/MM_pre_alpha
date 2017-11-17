@@ -1,21 +1,30 @@
 package com.mycompany.grifon.mm_pre_alpha.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Chat {
     private String name;
     private String uuid;
-    private Map<String,PlainUser> users;
-    private Map<String,Message> messages;
+    private final  Map<String,PlainUser> users=new HashMap<>();
+    private final  Map<String,Message> messages=new HashMap<>();
 
     public Chat() {
+    }
+
+    public Chat(PlainChat plainChat) {
+        this.name = plainChat.getName();
+        this.uuid = plainChat.getUuid();
+        for(PlainUser user:plainChat.getUsers()){
+            users.put(user.getUuid(),user);
+        }
     }
 
     public Chat(String name, String uuid, Map<String,PlainUser> users, Map<String,Message> messages) {
         this.name = name;
         this.uuid = uuid;
-        this.users = users;
-        this.messages = messages;
+        this.users.putAll(users);
+        this.messages.putAll(messages);
     }
 
     public String getName() {
@@ -39,7 +48,8 @@ public class Chat {
     }
 
     public void setUsers(Map<String,PlainUser> users) {
-        this.users = users;
+        this.users.clear();
+        this.users.putAll(users);
     }
 
     public Map<String,Message> getMessages() {
@@ -47,6 +57,7 @@ public class Chat {
     }
 
     public void setMessages(Map<String,Message> messages) {
-        this.messages = messages;
+        this.messages.clear();
+        this.messages.putAll(messages);
     }
 }

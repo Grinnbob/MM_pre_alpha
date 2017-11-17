@@ -200,10 +200,16 @@ public class FirebasePathHelper {
     }
 
     // пишем new profile в Database
-    public static void createChat(Profile first, PlainUser second, Chat chat) {
-
-        getRoot().child("users").child(first.getUuid()).child("chats").child(chat.getUuid()).setValue(new PlainChat(chat));
-        getRoot().child("users").child(second.getUuid()).child("chats").child(chat.getUuid()).setValue(new PlainChat(chat));
+    public static void createChat(PlainChat plainChat) {
+        Chat chat = new Chat(plainChat);
+        createChat(chat);
+    }
+    // пишем new profile в Database
+    public static void createChat(Chat chat) {
+        //getRoot().getDatabase()
+        for (PlainUser user : chat.getUsers().values()){
+            getRoot().child("users").child(user.getUuid()).child("chats").child(chat.getUuid()).setValue(new PlainChat(chat));
+        }
         getRoot().child("chats").child(chat.getUuid()).setValue(chat);
     }
 
