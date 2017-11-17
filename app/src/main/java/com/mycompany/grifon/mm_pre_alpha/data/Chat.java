@@ -2,10 +2,6 @@ package com.mycompany.grifon.mm_pre_alpha.data;
 
 import java.util.Map;
 
-/**
- * Created by Vlad on 13.11.2017.
- */
-
 public class Chat {
     private String name;
     private String uuid;

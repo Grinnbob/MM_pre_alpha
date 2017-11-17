@@ -4,10 +4,6 @@ import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 
 import java.util.Map;
 
-/**
- * Created by Vlad on 06.11.2017.
- */
-
 public class SubscribersEvent {
     final private Map<String, PlainUser> plainUsers;
 

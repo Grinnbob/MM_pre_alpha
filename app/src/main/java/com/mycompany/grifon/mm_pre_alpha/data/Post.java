@@ -1,15 +1,19 @@
 package com.mycompany.grifon.mm_pre_alpha.data;
 
 public class Post {
-    final String text;
-    final SongInfo song;
-    //TODO: add time
+    private String text;
+    private SongInfo song;
+    private boolean type; //true = my post; false = not my
 
-    public Post(String text, SongInfo song){
+    public Post(){}
+
+    public Post(String text, SongInfo song, boolean type){
         this.text = text;
         this.song = song;
+        this.type = type;
     }
 
     public String getText() {return text;}
     public SongInfo getSong() {return song;}
+    public boolean getType() {return type;}
 }

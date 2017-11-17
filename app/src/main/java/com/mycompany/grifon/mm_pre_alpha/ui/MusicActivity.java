@@ -16,9 +16,9 @@ import android.view.View;
 import java.util.List;
 import android.widget.EditText;
 
+import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapter;
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
-import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapter;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.data.SongInfo;
 
@@ -105,8 +105,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 selectedAudioUri = data.getData();
                 selectedAudioPath = getPath(selectedAudioUri);
 
-                // загружаем в бд музыку
-                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name);
+                // загружаем в бд музыку и создаём пустой пост в профайле
+                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, "none", true);
             }
         }
     }

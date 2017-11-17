@@ -4,10 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Vlad on 13.11.2017.
- */
-
 public class PlainChat implements Serializable{
     private String name;
     private String uuid;
