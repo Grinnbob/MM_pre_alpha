@@ -14,6 +14,7 @@ import com.mycompany.grifon.mm_pre_alpha.data.Chat;
 import com.mycompany.grifon.mm_pre_alpha.data.Message;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainChat;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
+import com.mycompany.grifon.mm_pre_alpha.data.Post;
 import com.mycompany.grifon.mm_pre_alpha.data.Profile;
 import com.mycompany.grifon.mm_pre_alpha.data.events.users.AllMyUsersEvent;
 import com.mycompany.grifon.mm_pre_alpha.data.events.profile.UserProfileEvent;
@@ -47,9 +48,7 @@ public class FirebasePathHelper {
         return root;
     }
 
-
-
-    // upload profile in Database
+    // upload profile in Database (alternative)
     public static void uploadProfileDB(Profile info) {
         Map<String, Object> childUpdates = new HashMap<>();
 
@@ -58,9 +57,10 @@ public class FirebasePathHelper {
     }
 
     private static DatabaseReference getUserData(String path) {
-        FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         return getRoot().child("users").child(user.getUid()).child(path);
     }
+
     public static void requestSubscribers(String uuid){
         //getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
             getRoot().child("users").child(uuid).child("subscribers").addValueEventListener(new ValueEventListener() {
@@ -107,7 +107,7 @@ public class FirebasePathHelper {
         getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Profile profile=dataSnapshot.getValue(Profile.class);
+                Profile profile = dataSnapshot.getValue(Profile.class);
                 //event fired!
                 EventBus.getDefault().post(new MyProfileEvent(profile));
             }
@@ -123,7 +123,7 @@ public class FirebasePathHelper {
         getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Profile profile=dataSnapshot.getValue(Profile.class);
+                Profile profile = dataSnapshot.getValue(Profile.class);
                 //event fired!
                 EventBus.getDefault().post(new UserProfileEvent(profile));
             }
@@ -187,29 +187,33 @@ public class FirebasePathHelper {
             }
         });
     }
+
     // пишем new profile в Database
     public static void writeNewProfileDB(Profile info) {
         getRoot().child("users").child(info.getUuid()).setValue(info);
     }
+
+    // пишем new post в Database in my profile
+    public static void writeNewPostDB(String uuid, Post post) {
+        String key = getRoot().push().getKey();
+        getRoot().child("users").child(uuid).child("posts").child(key).setValue(post);
+    }
+
     // пишем new profile в Database
     public static void createChat(Profile first, PlainUser second, Chat chat) {
 
         getRoot().child("users").child(first.getUuid()).child("chats").child(chat.getUuid()).setValue(new PlainChat(chat));
         getRoot().child("users").child(second.getUuid()).child("chats").child(chat.getUuid()).setValue(new PlainChat(chat));
         getRoot().child("chats").child(chat.getUuid()).setValue(chat);
-
     }
+
     public static void updateChat(Chat chat) {
         //public Profile(String name, String uuid, String information, List<Profile> subscribers, List<Profile> subscriptions, List<SongInfo> userPlayList, List<Post> posts) {
         //  Profile newProfile = new Profile(info.getName(), info.getUuid(), info.getInformation(), subscribers, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
         getRoot().child("chats").child(chat.getUuid()).setValue(chat);
-
     }
     public static void addMessageToChat(String chatUUID,Message message) {
-        //public Profile(String name, String uuid, String information, List<Profile> subscribers, List<Profile> subscriptions, List<SongInfo> userPlayList, List<Post> posts) {
-        //  Profile newProfile = new Profile(info.getName(), info.getUuid(), info.getInformation(), subscribers, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
         getRoot().child("chats").child(chatUUID).child("messages").child(message.getUuid()).setValue(message);
-
     }
 
     public DatabaseReference getMyMusic(){

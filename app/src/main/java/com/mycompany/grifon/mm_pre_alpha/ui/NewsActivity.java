@@ -1,20 +1,25 @@
 package com.mycompany.grifon.mm_pre_alpha.ui;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
-import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapter;
+import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapterPosts;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
-import com.mycompany.grifon.mm_pre_alpha.data.SongInfo;
 
 import java.util.List;
 
@@ -25,13 +30,19 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
     private Intent intentMusic;
     private Intent intentProfile;
 
+    private EditText postText;
+    // song name to write in database and storage
+    private String name = null;
     private static FirebaseUtils firebaseUtils;
 
-    private Post post;
+    private static final int SELECT_MUSIC = 1;
+    // не удалять!! не будет нихрена работать
+    private String selectedAudioPath;
+    private Uri selectedAudioUri;
 
     // для стены
     private RecyclerView mRecyclerView;
-    private RecyclerViewAdapter mAdapter;
+    private RecyclerViewAdapterPosts mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,29 +57,77 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
         // подключаемся к Firebase
         firebaseUtils = new FirebaseUtils();
         // получаем полный список, хранящихся в БД песен
-        List<SongInfo> myDataset = firebaseUtils.getDataSet();
+        List<Post> myDataset = firebaseUtils.getPostSet(false);
+        Log.d("MY LOG:", "POSTS SET: " + myDataset);
+        if(myDataset.isEmpty()) {
+            Log.d("MY LOG:", "POSTS SET is empty ");
+            //Post emptyPost = new Post("none", new SongInfo("none", "none", 0));
+            //myDataset.add(emptyPost);
+        }
         // создаём стену
         createWall(myDataset);
 
         //create new post
         findViewById(R.id.btn_add_post).setOnClickListener(this);
+        postText = (EditText) findViewById(R.id.et_postText);
     }
 
     // создаём стену
-    private void createWall(List<SongInfo> myDataset) {
+    private void createWall(List<Post> myDataset) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new RecyclerViewAdapter(this, myDataset);
+        mAdapter = new RecyclerViewAdapterPosts(this, myDataset);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
     public void onClick(View view) {
         // добавить post
         if(view.getId() == R.id.btn_add_post) {
-            //TODO: add new post
+            // Выбираем файл на смартфоне и загружаем в Firebase storage and database
+            Intent intent = new Intent();
+            intent.setType("audio/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(intent, SELECT_MUSIC);
         }
     }
+
+    // выбирает файл
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_MUSIC)
+            {
+                selectedAudioUri = data.getData();
+                selectedAudioPath = getPath(selectedAudioUri);
+
+                // загружаем в бд музыку
+                // и создаём свой пост,
+                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, postText.getText().toString(), true);
+            }
+        }
+    }
+
+    // получить абсолютный путь к выбранному файлу по uri и имя файла
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Audio.Media.DATA };
+        @SuppressWarnings("deprecation")
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
+        cursor.moveToFirst();
+
+        // get name of file
+        Cursor returnCursor =
+                getContentResolver().query(uri, null, null, null, null);
+        int name_index = returnCursor
+                .getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        returnCursor.moveToFirst();
+        name = returnCursor.getString(name_index);
+        return cursor.getString(column_index);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -83,6 +142,7 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.subscribers:
                 intentSubscribers = new Intent(this, SubscribersActivity.class);
                 startActivity(intentSubscribers);
+                this.finish();
                 break;
             case R.id.music:
                 intentMusic = new Intent(this, MusicActivity.class);
