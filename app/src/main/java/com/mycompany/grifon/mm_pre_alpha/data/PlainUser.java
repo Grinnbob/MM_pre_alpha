@@ -4,10 +4,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
 
-/**
- * Created by Vlad on 25.10.2017.
- */
-
 public class PlainUser implements Serializable {
     private String name;
     private String uuid;

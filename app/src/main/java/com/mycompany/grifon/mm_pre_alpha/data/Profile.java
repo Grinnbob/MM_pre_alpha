@@ -14,25 +14,22 @@ public class Profile {
     private String name;
     private String uuid;
     private String information;
-    private final Map<String, PlainUser> subscribers = new HashMap<>();//чтобы не падало это getSubscribers() если сабскрайберов нет у данного пользователя
+    private final Map<String, PlainUser> subscribers = new HashMap<>(); //чтобы не падало это getSubscribers() если сабскрайберов нет у данного пользователя
     private final Map<String, PlainUser> subscriptions = new HashMap<>();
-    private final List<Post> userPlayList= new ArrayList<>();
-    private final List<Post> posts= new ArrayList<>();
+    //private final List<Post> userPlayList = new ArrayList<>(); // пока убрал свой плейлист, всё через посты
+    private Map<String, Post> posts;
     private final Map<String,PlainChat> chats = new HashMap<>();
 
-    public Profile() {
-    }
+    public Profile() {}
 
-
-    public Profile(String name, String uuid, String information, Map<String, PlainUser> subscribers, Map<String, PlainUser> subscriptions, List<Post> userPlayList, List<Post> posts, Map<String,PlainChat> chats) {
+    public Profile(String name, String uuid, String information, Map<String, PlainUser> subscribers, Map<String, PlainUser> subscriptions, Map<String, Post> posts, List<PlainChat> plainChat) {
         this.name = name;
         this.uuid = uuid;
         this.information = information;
         this.subscribers.putAll(subscribers);
         this.subscriptions.putAll(subscriptions);
-        this.userPlayList.addAll(userPlayList);
-        this.posts.addAll(posts);
-
+        //this.userPlayList.addAll(userPlayList);
+        this.posts.putAll(posts);
         this.chats.putAll(chats);
     }
     public Profile(@NonNull String name,@NonNull String uuid, String information) {
@@ -43,7 +40,7 @@ public class Profile {
     }
 
     //empty profile
-    public Profile(@NonNull String name,@NonNull String uuid){
+    public Profile(@NonNull String name, @NonNull String uuid){
         this.name = name;
         this.uuid = uuid;
         this.information = "Add information!";
@@ -58,7 +55,7 @@ public class Profile {
         result.put("information", information);
         result.put("subscribers", subscribers);
         result.put("subscriptions", subscriptions);
-        result.put("userPlayList", userPlayList);
+        //result.put("userPlayList", userPlayList);
         result.put("posts", posts);
 
         return result;
@@ -72,10 +69,9 @@ public class Profile {
     public String getUuid(){return uuid;}
     public String getInformation(){return information;}
     public Map<String, PlainUser> getSubscribers(){return subscribers;}
-
     public Map<String, PlainUser> getSubscriptions(){return subscriptions;}
-    public List<Post> getUserPlayList(){return userPlayList;}
-    public List<Post> getPosts(){return posts;}
+    //public List<Post> getUserPlayList(){return userPlayList;}
+    public Map<String, Post> getPosts(){return posts;}
 
     public void setSubscribers(Map<String, PlainUser> subscribers){
         this.subscribers.clear();

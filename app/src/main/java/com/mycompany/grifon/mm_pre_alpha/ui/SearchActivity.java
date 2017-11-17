@@ -4,16 +4,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.EditText;
 
 import com.mycompany.grifon.mm_pre_alpha.R;
-import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapter;
+import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.data.SongInfo;
 
 import java.util.List;
 
+// search music
 public class SearchActivity extends AppCompatActivity{
 
     // для стены
@@ -39,10 +39,10 @@ public class SearchActivity extends AppCompatActivity{
         firebaseUtils = NewsActivity.getFirebaseUtils();
         // получаем полный список, хранящихся в БД песен
         searchName = MusicActivity.getSearchedSongName();
-        Log.d(LOG_TAG, searchName.getText().toString() + "!!!!!!!!");
-        //List<SongInfo> myDataset = firebaseUtils.getSearchedDataSet(searchName.getText().toString());
+        //Log.d(LOG_TAG, searchName.getText().toString() + "!!!!!!!!");
+        List<SongInfo> myDataset = firebaseUtils.getSearchedDataSet(searchName.getText().toString());
         // создаём стену
-        //createWall(myDataset);
+        createWall(myDataset);
     }
 
     // создаём стену

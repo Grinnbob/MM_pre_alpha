@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -15,13 +16,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.mycompany.grifon.mm_pre_alpha.ui.LoginActivity;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
 import com.mycompany.grifon.mm_pre_alpha.data.Profile;
 import com.mycompany.grifon.mm_pre_alpha.data.SongInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FirebaseUtils {
 
@@ -30,7 +32,10 @@ public class FirebaseUtils {
     private StorageReference storageRef;
     private DatabaseReference databaseRef;
 
-    public FirebaseUtils(){
+    public String myUuid;
+    public Profile myProfile;
+
+    public FirebaseUtils() {
         // Получаем доступ к Хранилищу storage
         storage = FirebaseStorage.getInstance();
         // Получаем доступ к Хранилищу database
@@ -38,10 +43,18 @@ public class FirebaseUtils {
         // Создаем ссылки на руты
         storageRef = storage.getReference();
         databaseRef = database.getReference();
+
+        // my uuid
+        myUuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        // my profile
+        getMyProfile();
+        //or?
+        //Profile profile = FirebaseAuthHelper.getInstance().getProfile();
+        Log.d("MyLog", "my uuid: " + myUuid);
     }
 
     // загружает файл в Cloud Storage и его uri в Database
-    public void uploadFileInFirebase(final Uri uri, final String name) {
+    public void uploadFileInFirebase(final Uri uri, final String name, final String postText, final boolean postType) {
         // Создаем ссылку в Storage Firebase
         StorageReference myRef = storageRef.child("music").child(name);
         /*
@@ -79,7 +92,7 @@ public class FirebaseUtils {
                 // добавляем URI в database
                 //DatabaseReference myRef = databaseRef.child("music").push();
                 // write in DB
-                writeSongInfoInDB(name, downloadUri.toString());
+                writeSongInfoInDB(name, downloadUri.toString(), postText, postType);
                 //myRef.setValue(uri);
                 //Toast.makeText(FirebaseUtils.this, "Композиция загружена", Toast.LENGTH_SHORT).show();
             }
@@ -87,17 +100,18 @@ public class FirebaseUtils {
     }
 
     // пишем музыку в Database
-    private void writeSongInfoInDB(String name, String url) {
+    private void writeSongInfoInDB(String name, String url, String postText, boolean postType) {
         SongInfo info = new SongInfo(name, url, 0);
         String key = databaseRef.push().getKey();
         databaseRef.child("music").child(key).setValue(info);
-
-        // add in profile the same
-        Post post = new Post("", info);
-        Profile profile =FirebaseAuthHelper.getInstance().getProfile();
-        List<Post> playList = profile.getUserPlayList();
-        playList.add(post);
-        FirebasePathHelper.uploadProfileDB(profile);
+        Log.d("MyLog", "post text: " + postText);
+        // "none" ключевое слово, означает, что только добавляем музыку в бд без создания поста
+        if (!postText.equals("none")) {
+            Post post = new Post(postText, info, postType);
+            // пишем post в Database in my profile
+            FirebasePathHelper.writeNewPostDB(myUuid, post);
+            //todo: add likes
+        }
     }
 
     /*
@@ -137,6 +151,50 @@ public class FirebaseUtils {
         return mDataSet;
     }
 
+    // получаем список хранящиеся в Database посты
+    // true - мои посты, false - все
+    public List<Post> getPostSet(boolean postType) {
+        final List<Post> mDataSet = new ArrayList<>();//не поддерживает многопоточность
+        // all posts
+        if (!postType) {
+            databaseRef.child("users").child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.e("FB", "Current thread: " + Thread.currentThread().getName());
+                    Post post;
+                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                        post = dsp.getValue(Post.class);
+                        mDataSet.add(post);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        } else {
+            // my posts
+            databaseRef.child("users").child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.e("FB", "Current thread: " + Thread.currentThread().getName());
+                    Post post;
+                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                        post = dsp.getValue(Post.class);
+                        if(post.getType())
+                            mDataSet.add(post);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        }
+        Log.e("FB", "Posts array size: " + mDataSet.size());
+        return mDataSet;
+    }
+
     /*
     Вроде тут можно не проводить фильтрацию на клиенте, а запросить фильтрованные данные.
      */
@@ -163,5 +221,21 @@ public class FirebaseUtils {
         });
 
         return mDataSet;
+    }
+
+    public void getMyProfile() {
+        databaseRef.child("users").child(myUuid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                myProfile = dataSnapshot.getValue(Profile.class);
+                Log.d("MyLog", "my name: " + myProfile.getName());
+                //event fired!
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

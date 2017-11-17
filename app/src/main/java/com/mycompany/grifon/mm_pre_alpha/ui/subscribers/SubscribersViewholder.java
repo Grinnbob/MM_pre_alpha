@@ -2,18 +2,17 @@ package com.mycompany.grifon.mm_pre_alpha.ui.subscribers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mycompany.grifon.mm_pre_alpha.ui.ProfileActivity;
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
+import com.mycompany.grifon.mm_pre_alpha.ui.ProfileActivity;
 
-/**
- * Created by Vlad on 29.10.2017.
- */
+import java.io.Serializable;
 
 public class SubscribersViewholder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
