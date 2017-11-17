@@ -58,7 +58,8 @@ public class LoginActivity extends EBActivity implements View.OnClickListener {
         String pass =password.getText().toString();
         if (view.getId() == R.id.btn_sign_in) {
             if(TextUtils.isEmpty(em)||TextUtils.isEmpty(pass)) {
-                FirebaseAuthHelper.getInstance().signIn("best@yandex.ru", "123456");
+                //FirebaseAuthHelper.getInstance().signIn("best@yandex.ru", "123456");
+                FirebaseAuthHelper.getInstance().signIn("morge@yandex.ru", "123456");
             }else{
                 FirebaseAuthHelper.getInstance().signIn(em,pass);
             }

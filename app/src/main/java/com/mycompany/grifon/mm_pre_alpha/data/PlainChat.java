@@ -25,7 +25,7 @@ public class PlainChat implements Serializable{
     public PlainChat(String name, String uuid, List<PlainUser> users) {
         this.name = name;
         this.uuid = uuid;
-        this.users = users;
+        this.users =new ArrayList<>(users);
     }
 
     public String getName() {

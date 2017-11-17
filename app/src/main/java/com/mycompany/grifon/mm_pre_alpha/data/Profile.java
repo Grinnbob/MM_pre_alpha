@@ -18,13 +18,13 @@ public class Profile {
     private final Map<String, PlainUser> subscriptions = new HashMap<>();
     private final List<Post> userPlayList= new ArrayList<>();
     private final List<Post> posts= new ArrayList<>();
-    private final List<PlainChat> plainChat= new ArrayList<>();
+    private final Map<String,PlainChat> chats = new HashMap<>();
 
     public Profile() {
     }
 
 
-    public Profile(String name, String uuid, String information, Map<String, PlainUser> subscribers, Map<String, PlainUser> subscriptions, List<Post> userPlayList, List<Post> posts, List<PlainChat> plainChat) {
+    public Profile(String name, String uuid, String information, Map<String, PlainUser> subscribers, Map<String, PlainUser> subscriptions, List<Post> userPlayList, List<Post> posts, Map<String,PlainChat> chats) {
         this.name = name;
         this.uuid = uuid;
         this.information = information;
@@ -32,7 +32,8 @@ public class Profile {
         this.subscriptions.putAll(subscriptions);
         this.userPlayList.addAll(userPlayList);
         this.posts.addAll(posts);
-        this.plainChat.addAll(plainChat);
+
+        this.chats.putAll(chats);
     }
     public Profile(@NonNull String name,@NonNull String uuid, String information) {
         this.name = name;
@@ -63,6 +64,10 @@ public class Profile {
         return result;
     }
 
+    public PlainUser toPlain(){
+        return new PlainUser(name,uuid);
+    }
+
     public String getName(){return name;}
     public String getUuid(){return uuid;}
     public String getInformation(){return information;}
@@ -78,13 +83,20 @@ public class Profile {
     }
 
 
-    public List<PlainChat> getPlainChat() {
-        return plainChat;
+    public Map<String,PlainChat> getChats() {
+        return chats;
     }
+    public PlainChat getPlainChatWithUser(PlainUser user) {
+        for(PlainChat chat: chats.values()){
+            if(chat.getUsers().contains(user)){
+                return chat;
+            }
+        }
+        return null;
+    }
+    public void setChats(Map<String,PlainChat> chats) {
 
-    public void setPlainChat( List<PlainChat> plainChat) {
-
-        this.plainChat.clear();
-        this.plainChat.addAll(plainChat);
+        this.chats.clear();
+        this.chats.putAll(chats);
     }
 }
