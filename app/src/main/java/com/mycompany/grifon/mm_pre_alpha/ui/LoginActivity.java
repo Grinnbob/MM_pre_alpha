@@ -12,6 +12,7 @@ import com.mycompany.grifon.mm_pre_alpha.data.events.login.LoginEvent;
 import com.mycompany.grifon.mm_pre_alpha.data.events.login.RegistrationEvent;
 import com.mycompany.grifon.mm_pre_alpha.engine.eventbus.EBActivity;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseAuthHelper;
+import com.mycompany.grifon.mm_pre_alpha.ui.splash.SplashActivity;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -70,7 +71,7 @@ public class LoginActivity extends EBActivity implements View.OnClickListener {
     public void onSignIn(LoginEvent event) {
         if (event.isSucceed()) {
             Toast.makeText(LoginActivity.this, R.string.login_authorisation_success_toast_message, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(LoginActivity.this, NewsActivity.class);
+            Intent intent = new Intent(LoginActivity.this, SplashActivity.class);
             startActivity(intent);
         } else {
             Toast.makeText(LoginActivity.this, R.string.login_authorisation_failed_toast_message, Toast.LENGTH_SHORT).show();

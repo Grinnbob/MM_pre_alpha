@@ -52,6 +52,10 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //for splash
+        //Intent intent = getIntent();
+        //List<Post> dataSet = intent.getStringExtra("data");
+
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         // подключаемся к Firebase
@@ -127,7 +131,6 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
         name = returnCursor.getString(name_index);
         return cursor.getString(column_index);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

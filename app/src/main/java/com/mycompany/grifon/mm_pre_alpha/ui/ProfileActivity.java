@@ -1,7 +1,13 @@
 package com.mycompany.grifon.mm_pre_alpha.ui;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -10,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,12 +24,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.data.Chat;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainChat;
+import com.mycompany.grifon.mm_pre_alpha.data.Post;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 import com.mycompany.grifon.mm_pre_alpha.data.events.profile.UserProfileEvent;
 import com.mycompany.grifon.mm_pre_alpha.data.events.profile.MyProfileEvent;
 import com.mycompany.grifon.mm_pre_alpha.engine.eventbus.EBActivity;
 import com.mycompany.grifon.mm_pre_alpha.data.Profile;
+import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
+import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapterPosts;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -31,6 +41,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -53,6 +64,20 @@ private static final String TAG = ProfileActivity.class.getSimpleName();
     Profile myProfile;//наш профиль
     private Button chatButton;
 
+    private EditText postText;
+    // song name to write in database and storage
+    private String name = null;
+    private static FirebaseUtils firebaseUtils;
+
+    private static final int SELECT_MUSIC = 1;
+    // не удалять!! не будет нихрена работать
+    private String selectedAudioPath;
+    private Uri selectedAudioUri;
+
+    // для стены
+    private RecyclerView mRecyclerView;
+    private RecyclerViewAdapterPosts mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +97,29 @@ private static final String TAG = ProfileActivity.class.getSimpleName();
         tv_numberOfSubscriptions.setOnClickListener(this);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        // подключаемся к Firebase
+        firebaseUtils = new FirebaseUtils();
+        // получаем полный список, хранящихся в БД песен
+        List<Post> myDataset = firebaseUtils.getPostSet(false);
+        Log.d("MY LOG:", "POSTS SET: " + myDataset);
+        if(myDataset.isEmpty()) {
+            Log.d("MY LOG:", "POSTS SET is empty ");
+            //Post emptyPost = new Post("none", new SongInfo("none", "none", 0));
+            //myDataset.add(emptyPost);
+        }
+        // создаём стену
+        createWall(myDataset);
     }
 
+    // создаём стену
+    private void createWall(List<Post> myDataset) {
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mAdapter = new RecyclerViewAdapterPosts(this, myDataset);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
 
     CompoundButton.OnCheckedChangeListener checkBoxListener = new CompoundButton.OnCheckedChangeListener() {
         @Override

@@ -16,7 +16,7 @@ import android.view.View;
 import java.util.List;
 import android.widget.EditText;
 
-import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapter;
+import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapterMusic;
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
@@ -37,7 +37,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     // для стены
     private RecyclerView mRecyclerView;
-    private RecyclerViewAdapter mAdapter;
+    private RecyclerViewAdapterMusic mAdapter;
 
     // song name to write in database and storage
     private String name = null;
@@ -74,7 +74,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private void createWall(List<SongInfo> myDataset) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new RecyclerViewAdapter(this, myDataset);
+        mAdapter = new RecyclerViewAdapterMusic(this, myDataset);
         mRecyclerView.setAdapter(mAdapter);
     }
 

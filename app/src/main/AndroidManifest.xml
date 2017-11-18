@@ -41,12 +41,17 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.ChatActivity" />
         <activity android:name=".ui.SearchActivity" />
-        <activity android:name=".ui.SubscriptionsActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".ui.SubscriptionsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.AllUsersActivity"
             android:label="@string/title_activity_all_users"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.splash.SplashActivity"
+            android:theme="@style/SplashTheme">
+        </activity>
     </application>
 
 </manifest>
