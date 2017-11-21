@@ -99,15 +99,11 @@ public class SubscribersActivity extends EBActivity {
         return true;
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(AllMyUsersEvent event) {
         List<PlainUser> myPlainUsers = event.getPlainUsers();
         subscribersAdapter.replaceData(myPlainUsers);
     };
-
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

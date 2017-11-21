@@ -1,11 +1,8 @@
 package com.mycompany.grifon.mm_pre_alpha.ui;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +19,6 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mycompany.grifon.mm_pre_alpha.R;
-import com.mycompany.grifon.mm_pre_alpha.data.Chat;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainChat;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
@@ -39,7 +35,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +42,7 @@ import java.util.UUID;
 
 
 public class ProfileActivity extends EBActivity implements View.OnClickListener {
-private static final String TAG = ProfileActivity.class.getSimpleName();
+    private static final String TAG = ProfileActivity.class.getSimpleName();
     private Toolbar toolbar;//recyclerwiew
     private Intent intentSubscribers;
     private Intent intentNews;
@@ -64,15 +59,7 @@ private static final String TAG = ProfileActivity.class.getSimpleName();
     Profile myProfile;//наш профиль
     private Button chatButton;
 
-    private EditText postText;
-    // song name to write in database and storage
-    private String name = null;
     private static FirebaseUtils firebaseUtils;
-
-    private static final int SELECT_MUSIC = 1;
-    // не удалять!! не будет нихрена работать
-    private String selectedAudioPath;
-    private Uri selectedAudioUri;
 
     // для стены
     private RecyclerView mRecyclerView;
@@ -92,25 +79,24 @@ private static final String TAG = ProfileActivity.class.getSimpleName();
         tv_userName = (TextView) findViewById(R.id.tv_userName);
         tv_numberOfSubscribers = (TextView) findViewById(R.id.tv_numberOfSubscribers);
         tv_numberOfSubscribers.setOnClickListener(this);
-        Log.i(TAG,"All is up!");
+        Log.i(TAG, "All is up!");
         tv_numberOfSubscriptions = (TextView) findViewById(R.id.tv_numberOfSubscriptions);
         tv_numberOfSubscriptions.setOnClickListener(this);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        // подключаемся к Firebase
-        firebaseUtils = new FirebaseUtils();
-        // получаем полный список, хранящихся в БД песен
-        List<Post> myDataset = firebaseUtils.getPostSet(false);
-        Log.d("MY LOG:", "POSTS SET: " + myDataset);
-        if(myDataset.isEmpty()) {
-            Log.d("MY LOG:", "POSTS SET is empty ");
-            //Post emptyPost = new Post("none", new SongInfo("none", "none", 0));
-            //myDataset.add(emptyPost);
+
+
+       /*Intent intent = getIntent();
+        plainUser = (PlainUser) intent.getSerializableExtra("user");
+        if (plainUser == null) { //попали сюда не ткнув на какого-то пользователя, а ткнули на свой профиль просто
+            plainUser = new PlainUser(user);
         }
-        // создаём стену
-        createWall(myDataset);
+
+        FirebasePathHelper.getMyProfile(user.getUid());
+        FirebasePathHelper.getUserProfile(plainUser.getUuid());*/
+
     }
 
     // создаём стену
@@ -136,6 +122,9 @@ private static final String TAG = ProfileActivity.class.getSimpleName();
                     FirebasePathHelper.writeNewProfileDB(myProfile);
                 }
 
+                // delete posts from wall
+                firebaseUtils.deletePostToSubscribersDB(plainUser);
+
             } else {
                 // подписка
                 Map<String, PlainUser> subscribers = profile.getSubscribers();
@@ -148,13 +137,16 @@ private static final String TAG = ProfileActivity.class.getSimpleName();
                 Map<String, PlainUser> subscriptions = myProfile.getSubscriptions();
                 subscriptions.put(plainUser.getUuid(), plainUser);
                 FirebasePathHelper.writeNewProfileDB(myProfile);
+
+                // add all posts to current user
+                firebaseUtils.addPostToSubscribersDB(plainUser);
             }
         }
     };
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMyProfileData(MyProfileEvent evt) {
-     //   plainUser = new PlainUser(user.getDisplayName(), user.getUid());
+        //   plainUser = new PlainUser(user.getDisplayName(), user.getUid());
         myProfile = evt.getProfile();
         if (myProfile != null && myProfile.getUuid().equals(plainUser.getUuid())) {
             tv_userName.setText(myProfile.getName());
@@ -180,7 +172,7 @@ private static final String TAG = ProfileActivity.class.getSimpleName();
     }
 
     void setControls() {
-        boolean isMine = myProfile!=null && profile != null && myProfile.getUuid().equals(profile.getUuid());
+        boolean isMine = myProfile != null && profile != null && myProfile.getUuid().equals(profile.getUuid());
         if (isMine) {
             //chatView.setVisibility(View.INVISIBLE);//later
             checkBox.setVisibility(View.INVISIBLE);
@@ -218,6 +210,28 @@ private static final String TAG = ProfileActivity.class.getSimpleName();
         }
         FirebasePathHelper.getMyProfile(user.getUid());
         FirebasePathHelper.getUserProfile(plainUser.getUuid());
+
+        try {
+            // подключаемся к Firebase
+            firebaseUtils = new FirebaseUtils();
+            // получаем полный список своих постов
+            String currentUuid;
+            boolean isMine = user != null && plainUser != null && user.getUid().equals(plainUser.getUuid());
+            if (isMine) {
+                currentUuid = user.getUid();
+            } else {
+                currentUuid = plainUser.getUuid();
+            }
+            // my posts
+            List<Post> myDataset = firebaseUtils.getPostSet(currentUuid, true);
+            if (myDataset.isEmpty())
+                Log.d("MY LOG:", "POSTS SET is empty ");
+
+            // создаём стену
+            createWall(myDataset);
+        } catch (NullPointerException e) {
+            Log.d("MY LOG:", "NPE: " + e);
+        }
     }
 
 
@@ -226,12 +240,12 @@ private static final String TAG = ProfileActivity.class.getSimpleName();
         if (view.getId() == R.id.chatButton) {
             Intent intentChat = new Intent(ProfileActivity.this, ChatActivity.class);
             PlainChat pc;
-            pc=myProfile.getPlainChatWithUser(plainUser);
-            if(pc==null) {
-                pc = new PlainChat(myProfile.getName()+" with "+plainUser.getName(), UUID.randomUUID().toString(), Arrays.asList(myProfile.toPlain(),plainUser));
+            pc = myProfile.getPlainChatWithUser(plainUser);
+            if (pc == null) {
+                pc = new PlainChat(myProfile.getName() + " with " + plainUser.getName(), UUID.randomUUID().toString(), Arrays.asList(myProfile.toPlain(), plainUser));
                 FirebasePathHelper.createChat(pc);
             }
-            intentChat.putExtra("chat",(Serializable)pc);
+            intentChat.putExtra("chat", (Serializable) pc);
             startActivity(intentChat);
         }
         if (view.getId() == R.id.tv_numberOfSubscribers) {

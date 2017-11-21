@@ -50,7 +50,8 @@ public class LoginActivity extends EBActivity implements View.OnClickListener {
             // временная заглушка
             if (TextUtils.isEmpty(em) || TextUtils.isEmpty(pass)) {
                 //FirebaseAuthHelper.getInstance().signIn("best@yandex.ru", "123456", "");
-                FirebaseAuthHelper.getInstance().signIn("post@test.io", "123456", "");
+                //FirebaseAuthHelper.getInstance().signIn("post@test.io", "123456", "");
+                FirebaseAuthHelper.getInstance().signIn("post2@test.io", "123456", "");
                 //FirebaseAuthHelper.getInstance().signIn("morge@yandex.ru", "123456", "");
             } else {
                 FirebaseAuthHelper.getInstance().signIn(em, pass, "");

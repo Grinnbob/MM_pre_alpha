@@ -17,7 +17,7 @@ public class Profile {
     private final Map<String, PlainUser> subscribers = new HashMap<>(); //чтобы не падало это getSubscribers() если сабскрайберов нет у данного пользователя
     private final Map<String, PlainUser> subscriptions = new HashMap<>();
     //private final List<Post> userPlayList = new ArrayList<>(); // пока убрал свой плейлист, всё через посты
-    private Map<String, Post> posts;
+    private Map<String, Post> posts = new HashMap<>();
     private final Map<String,PlainChat> chats = new HashMap<>();
 
     public Profile() {}

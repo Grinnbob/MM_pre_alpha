@@ -1,5 +1,6 @@
 package com.mycompany.grifon.mm_pre_alpha.ui;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,9 +39,10 @@ public class SearchActivity extends AppCompatActivity{
         // подключаемся к Firebase
         firebaseUtils = NewsActivity.getFirebaseUtils();
         // получаем полный список, хранящихся в БД песен
-        searchName = MusicActivity.getSearchedSongName();
+        Intent intent = getIntent();
+        String songName = intent.getStringExtra("data");
         //Log.d(LOG_TAG, searchName.getText().toString() + "!!!!!!!!");
-        List<SongInfo> myDataset = firebaseUtils.getSearchedDataSet(searchName.getText().toString());
+        List<SongInfo> myDataset = firebaseUtils.getSearchedDataSet(songName);
         // создаём стену
         createWall(myDataset);
     }

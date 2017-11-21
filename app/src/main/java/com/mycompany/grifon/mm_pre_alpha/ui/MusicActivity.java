@@ -92,6 +92,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             // search music
         } else if(view.getId() == R.id.btn_search_music) {
             searchActivity =  new Intent(this, SearchActivity.class);
+            searchActivity.putExtra("data", et_searchName.getText().toString());
             startActivity(searchActivity);
         }
     }
@@ -106,7 +107,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 selectedAudioPath = getPath(selectedAudioUri);
 
                 // загружаем в бд музыку и создаём пустой пост в профайле
-                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, "none", true);
+                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, "none");
             }
         }
     }
@@ -127,6 +128,12 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 .getColumnIndex(OpenableColumns.DISPLAY_NAME);
         returnCursor.moveToFirst();
         name = returnCursor.getString(name_index);
+        // отрезаем .mp3
+        if(name.contains(".mp3")){
+            name = name.replaceAll(".mp3", "");
+        } else if(name.contains(".wma")){
+            name = name.replaceAll(".wma", "");
+        }
         return cursor.getString(column_index);
     }
 
@@ -168,7 +175,5 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         return true;
     }
 
-    // передаёт в поиск название песни
-    public static EditText getSearchedSongName() {return et_searchName;}
 }
 

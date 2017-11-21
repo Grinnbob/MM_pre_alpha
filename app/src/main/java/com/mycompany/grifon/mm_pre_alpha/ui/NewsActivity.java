@@ -15,7 +15,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapterPosts;
@@ -58,18 +60,21 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-        // подключаемся к Firebase
-        firebaseUtils = new FirebaseUtils();
-        // получаем полный список, хранящихся в БД песен
-        List<Post> myDataset = firebaseUtils.getPostSet(false);
-        Log.d("MY LOG:", "POSTS SET: " + myDataset);
-        if(myDataset.isEmpty()) {
-            Log.d("MY LOG:", "POSTS SET is empty ");
-            //Post emptyPost = new Post("none", new SongInfo("none", "none", 0));
-            //myDataset.add(emptyPost);
+        try {
+            // подключаемся к Firebase
+            firebaseUtils = new FirebaseUtils();
+            // получаем полный список всех постов
+            String myUuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            Log.d("MY LOG:", "my uuid: " + myUuid);
+            // all users posts
+            List<Post> myDataset = firebaseUtils.getPostSet(myUuid, false);
+            if (myDataset.isEmpty())
+                Log.d("MY LOG:", "POSTS SET is empty ");
+            // создаём стену
+            createWall(myDataset);
+        } catch (NullPointerException e) {
+            Log.d("MY LOG:", "NPE: " + e);
         }
-        // создаём стену
-        createWall(myDataset);
 
         //create new post
         findViewById(R.id.btn_add_post).setOnClickListener(this);
@@ -87,7 +92,7 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         // добавить post
-        if(view.getId() == R.id.btn_add_post) {
+        if (view.getId() == R.id.btn_add_post) {
             // Выбираем файл на смартфоне и загружаем в Firebase storage and database
             Intent intent = new Intent();
             intent.setType("audio/*");
@@ -101,21 +106,20 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_MUSIC)
-            {
+            if (requestCode == SELECT_MUSIC) {
                 selectedAudioUri = data.getData();
                 selectedAudioPath = getPath(selectedAudioUri);
 
                 // загружаем в бд музыку
                 // и создаём свой пост,
-                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, postText.getText().toString(), true);
+                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, postText.getText().toString());
             }
         }
     }
 
     // получить абсолютный путь к выбранному файлу по uri и имя файла
     public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Audio.Media.DATA };
+        String[] projection = {MediaStore.Audio.Media.DATA};
         @SuppressWarnings("deprecation")
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         int column_index = cursor
@@ -129,6 +133,12 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
                 .getColumnIndex(OpenableColumns.DISPLAY_NAME);
         returnCursor.moveToFirst();
         name = returnCursor.getString(name_index);
+        // отрезаем .mp3
+        if(name.contains(".mp3")){
+            name = name.replaceAll(".mp3", "");
+        } else if(name.contains(".wma")){
+            name = name.replaceAll(".wma", "");
+        }
         return cursor.getString(column_index);
     }
 
@@ -170,7 +180,9 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-    public static FirebaseUtils getFirebaseUtils(){return firebaseUtils;}
+    public static FirebaseUtils getFirebaseUtils() {
+        return firebaseUtils;
+    }
 }
 
 

@@ -44,7 +44,7 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(newsIntent);
                 finish();
             }
-        }, 1*100);
+        }, 1*500);
 
     }
 }
