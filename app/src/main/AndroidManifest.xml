@@ -9,9 +9,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_change_history_black_48dp"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_change_history_black_48dp"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -41,12 +41,17 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.ChatActivity" />
         <activity android:name=".ui.SearchActivity" />
-        <activity android:name=".ui.SubscriptionsActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".ui.SubscriptionsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.AllUsersActivity"
             android:label="@string/title_activity_all_users"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.splash.SplashActivity"
+            android:theme="@style/SplashTheme">
+        </activity>
     </application>
 
 </manifest>

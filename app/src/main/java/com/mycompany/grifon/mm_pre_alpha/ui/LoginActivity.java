@@ -12,6 +12,7 @@ import com.mycompany.grifon.mm_pre_alpha.data.events.login.LoginEvent;
 import com.mycompany.grifon.mm_pre_alpha.data.events.login.RegistrationEvent;
 import com.mycompany.grifon.mm_pre_alpha.engine.eventbus.EBActivity;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseAuthHelper;
+import com.mycompany.grifon.mm_pre_alpha.ui.splash.SplashActivity;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -49,7 +50,8 @@ public class LoginActivity extends EBActivity implements View.OnClickListener {
             // временная заглушка
             if (TextUtils.isEmpty(em) || TextUtils.isEmpty(pass)) {
                 //FirebaseAuthHelper.getInstance().signIn("best@yandex.ru", "123456", "");
-                FirebaseAuthHelper.getInstance().signIn("post@test.io", "123456", "");
+                //FirebaseAuthHelper.getInstance().signIn("post@test.io", "123456", "");
+                FirebaseAuthHelper.getInstance().signIn("post2@test.io", "123456", "");
                 //FirebaseAuthHelper.getInstance().signIn("morge@yandex.ru", "123456", "");
             } else {
                 FirebaseAuthHelper.getInstance().signIn(em, pass, "");
@@ -70,7 +72,7 @@ public class LoginActivity extends EBActivity implements View.OnClickListener {
     public void onSignIn(LoginEvent event) {
         if (event.isSucceed()) {
             Toast.makeText(LoginActivity.this, R.string.login_authorisation_success_toast_message, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(LoginActivity.this, NewsActivity.class);
+            Intent intent = new Intent(LoginActivity.this, SplashActivity.class);
             startActivity(intent);
         } else {
             Toast.makeText(LoginActivity.this, R.string.login_authorisation_failed_toast_message, Toast.LENGTH_SHORT).show();

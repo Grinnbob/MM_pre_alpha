@@ -22,6 +22,8 @@
         android:layout_marginStart="9dp"
         android:layout_marginTop="61dp"
         android:layout_weight="0.01"
+        android:drawableLeft="@drawable/ic_backup_black_18dp"
+        android:padding="0.1dp"
         android:text="add" />
 
     <EditText

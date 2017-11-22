@@ -135,4 +135,13 @@
         android:textOff="list"
         android:textOn="albums" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:layout_below="@+id/tg_Mode"
+        android:scrollbars="none"/>
+
 </RelativeLayout>

@@ -7,16 +7,25 @@
     android:weightSum="1">
 
     <TextView
-        android:id="@+id/tv_text_post_item"
+        android:id="@+id/tv_author_name"
         android:layout_width="wrap_content"
         android:layout_height="15dp"
+        android:text="Author"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tv_text_post_item"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/tv_author_name"
+        android:layout_height="15dp"
+        android:text="text"
         android:textSize="10sp" />
 
     <Button
         android:layout_width="60dp"
         android:layout_height="30dp"
         android:textSize="10sp"
-        android:layout_below="@+id/tv_text_post_item"
+        android:layout_below="@+id/tv_author_name"
         android:text="Play"
         android:layout_weight="0.03"
         android:id="@+id/btn_play"/>
@@ -26,7 +35,7 @@
         android:layout_height="30dp"
         android:textSize="10sp"
         android:text="Pause"
-        android:layout_below="@+id/tv_text_post_item"
+        android:layout_below="@+id/tv_author_name"
         android:layout_toRightOf="@+id/btn_play"
         android:layout_weight="0.03"
         android:id="@+id/btn_pause"/>
@@ -64,11 +73,10 @@
         android:id="@+id/btn_repost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="80dp"
-        android:layout_marginStart="80dp"
-        android:layout_below="@+id/tv_likes"
         android:text="Repost"
-        android:layout_alignLeft="@+id/checkBox_like"
-        android:layout_alignStart="@+id/checkBox_like" />
+        android:textSize="10sp"
+        android:layout_below="@+id/checkBox_like"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

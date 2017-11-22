@@ -48,10 +48,18 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             Log.d("MY LOG:", "POSTS SET is correct ");
             String songName = mData.get(position).getSong().getName();
             String postText = mData.get(position).getText();
+            String authorName = null;
+            if(mData.get(position).getAuthor() != null) {
+                authorName = mData.get(position).getAuthor().getName();
+                holder.tv_authorName.setText(authorName);
+            }
+            Log.d("MY LOG:", "Author name: " + authorName);
             int likes = mData.get(position).getSong().getLikes();
             holder.tv_songName.setText(songName);
             holder.tv_post_text.setText(postText);
             holder.tv_likes.setText(String.valueOf(likes));
+
+
         } else {
             Log.d("MY LOG:", "POSTS SET is empty or null");
             holder.tv_songName.setText("no songs");
@@ -71,6 +79,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
         public TextView tv_songName;
         public TextView tv_likes;
         public TextView tv_post_text;
+        public TextView tv_authorName;
         public Button btnv_play;
         public Button btnv_pause;
         public Button btnv_repost;
@@ -81,6 +90,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             tv_songName = (TextView) itemView.findViewById(R.id.tv_recycler_item);
             tv_likes = (TextView) itemView.findViewById(R.id.tv_likes);
             tv_post_text = (TextView) itemView.findViewById(R.id.tv_text_post_item);
+            tv_authorName = (TextView) itemView.findViewById(R.id.tv_author_name);
             btnv_play = (Button) itemView.findViewById(R.id.btn_play);
             btnv_pause = (Button) itemView.findViewById(R.id.btn_pause);
             btnv_repost = (Button) itemView.findViewById(R.id.btn_repost);

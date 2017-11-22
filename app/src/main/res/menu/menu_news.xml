@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.mycompany.grifon.mm_pre_alpha.ui.NewsActivity">
     <item
-        android:icon="@android:drawable/ic_dialog_email"
+        android:icon="@drawable/ic_home_white_36dp"
         android:id="@+id/news"
         android:orderInCategory="1"
         android:title="@string/action_news"
@@ -21,13 +21,13 @@
         android:title="@string/action_subscribers"
         app:showAsAction="always" />
     <item
-        android:icon="@android:drawable/ic_dialog_info"
+        android:icon="@drawable/ic_account_box_white"
         android:id="@+id/profile"
         android:orderInCategory="4"
         android:title="@string/action_profile"
         app:showAsAction="always" />
     <item
-        android:icon="@android:drawable/ic_menu_gallery"
+        android:icon="@drawable/ic_supervisor_account_white_36dp"
         android:id="@+id/all_users"
         android:orderInCategory="5"
         android:title="@string/action_subscribers"
