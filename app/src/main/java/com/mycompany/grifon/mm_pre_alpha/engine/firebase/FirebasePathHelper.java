@@ -16,6 +16,7 @@ import com.mycompany.grifon.mm_pre_alpha.data.PlainChat;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
 import com.mycompany.grifon.mm_pre_alpha.data.Profile;
+import com.mycompany.grifon.mm_pre_alpha.data.SongInfo;
 import com.mycompany.grifon.mm_pre_alpha.data.events.users.AllMyUsersEvent;
 import com.mycompany.grifon.mm_pre_alpha.data.events.profile.UserProfileEvent;
 import com.mycompany.grifon.mm_pre_alpha.data.events.profile.MyProfileEvent;
@@ -201,20 +202,20 @@ public class FirebasePathHelper {
     }
 
     // пишем new post в Database in my profile
-    public static void writeNewPostDB(String uuid, Post post, String timestamp) {
+    public static void writeNewPostDB(String uuid, Post post) {
         //String key = getRoot().getKey();
         // use timestamps
-        getRoot().child("users").child(uuid).child("posts").child(timestamp).setValue(post);
+        getRoot().child("users").child(uuid).child("posts").child(post.getTimestamp()).setValue(post);
     }
 
     // пишем new post в Database in subscribers profiles
-    public static void writeNewPostToSubscribersDB(String uuid, final Post post, final String timestamp) {
+    public static void writeNewPostToSubscribersDB(String uuid, final Post post) {
         getRoot().child("users").child(uuid).child("subscribers").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     PlainUser plainUser = postSnapshot.getValue(PlainUser.class);
-                    writeNewPostDB(plainUser.getUuid(), post, timestamp);
+                    writeNewPostDB(plainUser.getUuid(), post);
                 }
                 //event fired!
                 //EventBus.getDefault().post(new SubscribersEvent(plainUsers));
@@ -225,6 +226,11 @@ public class FirebasePathHelper {
 
             }
         });
+    }
+
+    // add like
+    public static void addLikeDB(String uuid, String timestamp, String likes) {
+        getRoot().child("users").child(uuid).child("posts").child(timestamp).child("song").child("likes").setValue(likes);
     }
 
     // пишем new profile в Database

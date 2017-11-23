@@ -3,6 +3,7 @@ package com.mycompany.grifon.mm_pre_alpha.ui;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.v7.app.AppCompatActivity;
@@ -61,9 +62,14 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         firebaseUtils = NewsActivity.getFirebaseUtils();
         firebasePathHelper = new FirebasePathHelper();
         // получаем полный список, хранящихся в БД песен
-        List<SongInfo> myDataset = firebaseUtils.getDataSet();
+        final List<SongInfo> myDataset = firebaseUtils.getDataSet();
         // создаём стену
-        createWall(myDataset);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                createWall(myDataset);
+            }
+        }, 1*500);
 
         et_searchName = (EditText) findViewById(R.id.et_search);
         findViewById(R.id.btn_search_music).setOnClickListener(this);

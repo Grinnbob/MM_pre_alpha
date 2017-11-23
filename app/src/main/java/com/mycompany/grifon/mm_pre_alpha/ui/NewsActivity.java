@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.v7.app.AppCompatActivity;
@@ -15,19 +16,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapterPosts;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
+import com.mycompany.grifon.mm_pre_alpha.ui.splash.SplashActivity;
 
 import java.util.List;
 
 public class NewsActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Toolbar toolbar;
+
     private Intent intentSubscribers;
     private Intent intentMusic;
     private Intent intentProfile;
@@ -64,14 +66,19 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
             // подключаемся к Firebase
             firebaseUtils = new FirebaseUtils();
             // получаем полный список всех постов
-            String myUuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            final String myUuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             Log.d("MY LOG:", "my uuid: " + myUuid);
             // all users posts
-            List<Post> myDataset = firebaseUtils.getPostSet(myUuid, false);
+            final List<Post> myDataset = firebaseUtils.getPostSet(myUuid, false);
             if (myDataset.isEmpty())
                 Log.d("MY LOG:", "POSTS SET is empty ");
             // создаём стену
-            createWall(myDataset);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    createWall(myDataset, myUuid);
+                }
+            }, 1*500);
         } catch (NullPointerException e) {
             Log.d("MY LOG:", "NPE: " + e);
         }
@@ -82,9 +89,9 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // создаём стену
-    private void createWall(List<Post> myDataset) {
+    private void createWall(List<Post> myDataset, String myUuid) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mAdapter = new RecyclerViewAdapterPosts(this, myDataset);
+        mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, false, false);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

@@ -1,8 +1,8 @@
 package com.mycompany.grifon.mm_pre_alpha.ui;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -100,9 +99,9 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     }
 
     // создаём стену
-    private void createWall(List<Post> myDataset) {
+    private void createWall(List<Post> myDataset, String myUuid, boolean profyleType) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mAdapter = new RecyclerViewAdapterPosts(this, myDataset);
+        mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, profyleType, true);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -216,19 +215,28 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             firebaseUtils = new FirebaseUtils();
             // получаем полный список своих постов
             String currentUuid;
+            final boolean profileType;
             boolean isMine = user != null && plainUser != null && user.getUid().equals(plainUser.getUuid());
             if (isMine) {
                 currentUuid = user.getUid();
+                profileType = true;
             } else {
                 currentUuid = plainUser.getUuid();
+                profileType = false;
             }
             // my posts
-            List<Post> myDataset = firebaseUtils.getPostSet(currentUuid, true);
+            final List<Post> myDataset = firebaseUtils.getPostSet(currentUuid, true);
             if (myDataset.isEmpty())
                 Log.d("MY LOG:", "POSTS SET is empty ");
 
+
             // создаём стену
-            createWall(myDataset);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    createWall(myDataset, user.getUid(), profileType);
+                }
+            }, 1*500);
         } catch (NullPointerException e) {
             Log.d("MY LOG:", "NPE: " + e);
         }
