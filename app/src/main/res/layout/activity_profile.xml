@@ -30,12 +30,12 @@
         android:text="User name" />
 
     <TextView
-        android:id="@+id/NumberOfPublications"
+        android:id="@+id/tv_numberOfPublications"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
         android:layout_toRightOf="@+id/UserAvatar"
-        android:text="123" />
+        android:text="0" />
     <!---->
 
     <TextView
@@ -53,15 +53,15 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
-        android:layout_toRightOf="@+id/NumberOfPublications"
-        android:text="4412" />
+        android:layout_toRightOf="@+id/tv_numberOfPublications"
+        android:text="0" />
     <!---->
 
     <TextView
         android:id="@+id/tv_subscribers"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/NumberOfPublications"
+        android:layout_below="@+id/tv_numberOfPublications"
         android:layout_toRightOf="@+id/Publications"
         android:text="subscribers" />
 
@@ -71,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
         android:layout_toRightOf="@+id/tv_numberOfSubscribers"
-        android:text="123" />
+        android:text="0" />
 
     <TextView
         android:id="@+id/Subscriptions"

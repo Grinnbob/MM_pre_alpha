@@ -21,23 +21,25 @@
         android:textSize="10sp" />
 
     <Button
-        android:layout_width="60dp"
+        android:layout_width="30dp"
         android:layout_height="30dp"
-        android:textSize="10sp"
         android:layout_below="@+id/tv_author_name"
-        android:text="Play"
         android:layout_weight="0.03"
-        android:id="@+id/btn_play"/>
+        android:id="@+id/btn_play"
+        android:background="@color/colorWhite"
+        android:drawableLeft="@android:drawable/ic_media_play"
+        android:padding="0.1dp"/>
 
     <Button
-        android:layout_width="60dp"
+        android:layout_width="30dp"
         android:layout_height="30dp"
-        android:textSize="10sp"
-        android:text="Pause"
         android:layout_below="@+id/tv_author_name"
         android:layout_toRightOf="@+id/btn_play"
         android:layout_weight="0.03"
-        android:id="@+id/btn_pause"/>
+        android:id="@+id/btn_pause"
+        android:background="@color/colorWhite"
+        android:drawableLeft="@android:drawable/ic_media_pause"
+        android:padding="0.1dp"/>
 
     <TextView
         android:id="@+id/tv_recycler_item"
@@ -76,6 +78,9 @@
         android:textSize="10sp"
         android:layout_below="@+id/checkBox_like"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:background="@color/colorWhite"
+        android:drawableLeft="@drawable/ic_compare_arrows_black_24dp"
+        android:padding="0.1dp"/>
 
 </RelativeLayout>

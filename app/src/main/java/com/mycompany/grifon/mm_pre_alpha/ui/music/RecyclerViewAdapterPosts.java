@@ -127,6 +127,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
         public void onClick(View view) {
             // хз что это, возможно не нужно
             //if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+
             if (view.getId() == R.id.btn_play) {
                 player.startPlayback(mData.get(getAdapterPosition()).getSong().getUrl());
             } else if (view.getId() == R.id.btn_pause) {
@@ -143,7 +144,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                         Post repostedPost = new Post(post.getText(), post.getSong(), currentTime);
                         FirebasePathHelper.writeNewPostDB(uuid, repostedPost);
                     } else {
-                        // кнопка не делается невидимой, но и не работает, надо сделать
+                        // работает не так, как хотелось бы
                         btnv_repost.setVisibility(View.INVISIBLE);
                     }
                 } else {
