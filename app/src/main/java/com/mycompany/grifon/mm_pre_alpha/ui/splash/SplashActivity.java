@@ -4,19 +4,24 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
+import com.mycompany.grifon.mm_pre_alpha.ui.AllUsersActivity;
+import com.mycompany.grifon.mm_pre_alpha.ui.MusicActivity;
 import com.mycompany.grifon.mm_pre_alpha.ui.NewsActivity;
+import com.mycompany.grifon.mm_pre_alpha.ui.ProfileActivity;
+import com.mycompany.grifon.mm_pre_alpha.ui.SubscribersActivity;
 
 import java.util.List;
 
 // активити загрузки
 public class SplashActivity extends AppCompatActivity {
-
-    private static FirebaseUtils firebaseUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

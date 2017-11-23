@@ -7,11 +7,9 @@
     android:paddingRight="16dp"
     tools:context="com.mycompany.grifon.mm_pre_alpha.ui.ProfileActivity">
 
-
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
-
 
     <ImageView
         android:id="@+id/UserAvatar"
@@ -20,7 +18,6 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@id/toolbar"
         android:src="@drawable/ic_subscribers" />
-
 
     <TextView
         android:id="@+id/tv_userName"

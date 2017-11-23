@@ -121,14 +121,13 @@ public class FirebaseUtils {
             try {
                 post = new Post(postText, info, currentTime);
                 // пишем post в Database in my profile
-                FirebasePathHelper.writeNewPostDB(myUuid, post, currentTime);
+                FirebasePathHelper.writeNewPostDB(myUuid, post);
 
                 post = new Post(postText, info, plainUser, currentTime);
                 // пишем post в Database in subscribers profiles
-                FirebasePathHelper.writeNewPostToSubscribersDB(myUuid, post, currentTime);
+                FirebasePathHelper.writeNewPostToSubscribersDB(myUuid, post);
 
-                //todo: add likes
-            } catch (Exception e){
+            } catch (Exception e) {
                 Log.d("myLog!!!", "post didn't added in firebase: " + e);
             }
         }
@@ -233,9 +232,9 @@ public class FirebaseUtils {
                 Post post;
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     post = dsp.getValue(Post.class);
-                    if(post.getAuthor() == null) {
+                    if (post.getAuthor() == null) {
                         Post subPost = new Post(post.getText(), post.getSong(), subscribtionPlainUser, post.getTimestamp());
-                        FirebasePathHelper.writeNewPostDB(myUuid, subPost, post.getTimestamp());
+                        FirebasePathHelper.writeNewPostDB(myUuid, subPost);
                     }
                 }
             }
@@ -257,8 +256,8 @@ public class FirebaseUtils {
                 Post post;
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     post = dsp.getValue(Post.class);
-                    if(post.getAuthor() != null) {
-                        if(post.getAuthor().getUuid().equals(authorUuid))
+                    if (post.getAuthor() != null) {
+                        if (post.getAuthor().getUuid().equals(authorUuid))
                             dsp.getRef().removeValue();
                     }
                 }
@@ -314,4 +313,32 @@ public class FirebaseUtils {
             }
         });
     }
+
+    // глобальные лайки, доделать
+    // переделать концепцию, сейчас просматриваются ВСЕ песни, чтобы понять в какую поставили лайк
+    // сделать сеттер для лайков?
+    /*
+    private String likes = "0";
+    public String getSongLikes(final String url) {
+        databaseRef.child("music").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                SongInfo songInfo;
+                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                    songInfo = dsp.getValue(SongInfo.class);
+                    if(songInfo.getUrl().equals(url)) {
+                        likes = songInfo.getLikes();
+                    }
+                }
+                Log.d("MyLog", "song likes: " + likes);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return likes;
+    }
+    */
 }

@@ -7,12 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
+import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.engine.music.Player;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,13 +28,22 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
     private ItemClickListener mClickListener;
 
     private Player player;
+    private String uuid;
+    // for reposts
+    // true = my profile, false = not mine
+    private boolean profyleType;
+    // true = ProfileActivity, false = NewsActivity
+    private boolean activityType;
 
     // data is passed into the constructor
-    public RecyclerViewAdapterPosts(Context context, List<Post> data) {
+    public RecyclerViewAdapterPosts(Context context, List<Post> data, String uuid, boolean profileType, boolean activityType) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
 
         player = new Player();
+        this.uuid = uuid;
+        this.profyleType = profileType;
+        this.activityType = activityType;
     }
 
     // inflates the row layout from xml when needed
@@ -44,12 +58,12 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Log.d("MY LOG:", "POSTS SET: " + mData);
-        if(!mData.isEmpty()) {
+        if (!mData.isEmpty()) {
             Log.d("MY LOG:", "POSTS SET is correct ");
             String songName = mData.get(position).getSong().getName();
             String postText = mData.get(position).getText();
             String authorName = null;
-            if(mData.get(position).getAuthor() != null) {
+            if (mData.get(position).getAuthor() != null) {
                 authorName = mData.get(position).getAuthor().getName();
                 holder.tv_authorName.setText(authorName);
             }
@@ -57,8 +71,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             int likes = mData.get(position).getSong().getLikes();
             holder.tv_songName.setText(songName);
             holder.tv_post_text.setText(postText);
-            holder.tv_likes.setText(String.valueOf(likes));
-
+            holder.tv_likes.setText(Integer.toString(likes));
 
         } else {
             Log.d("MY LOG:", "POSTS SET is empty or null");
@@ -83,6 +96,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
         public Button btnv_play;
         public Button btnv_pause;
         public Button btnv_repost;
+        public CheckBox checkBox;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -94,6 +108,13 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             btnv_play = (Button) itemView.findViewById(R.id.btn_play);
             btnv_pause = (Button) itemView.findViewById(R.id.btn_pause);
             btnv_repost = (Button) itemView.findViewById(R.id.btn_repost);
+            //checkBox = (CheckBox) itemView.findViewById(R.id.checkBox_like);
+            //checkBox.setOnCheckedChangeListener(checkBoxListener);
+
+            // if my profile - no reposts
+            if(profyleType) {
+                btnv_repost.setVisibility(View.INVISIBLE);
+            }
 
             btnv_play.setOnClickListener(this);
             btnv_pause.setOnClickListener(this);
@@ -106,14 +127,60 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
         public void onClick(View view) {
             // хз что это, возможно не нужно
             //if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
-            if(view.getId() == R.id.btn_play) {
+            if (view.getId() == R.id.btn_play) {
                 player.startPlayback(mData.get(getAdapterPosition()).getSong().getUrl());
-            } else if(view.getId() == R.id.btn_pause) {
+            } else if (view.getId() == R.id.btn_pause) {
                 player.stopPlayback();
-            } else if(view.getId() == R.id.btn_repost) {
-
-            } //todo: add likes
+            } else if (view.getId() == R.id.btn_repost) {
+                Post post = mData.get(getAdapterPosition());
+                // if NewsActivity
+                if(!activityType) {
+                    // if author not I
+                    if (post.getAuthor() != null) {
+                        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String currentTime = dateFormat.format(currentTimestamp);
+                        Post repostedPost = new Post(post.getText(), post.getSong(), currentTime);
+                        FirebasePathHelper.writeNewPostDB(uuid, repostedPost);
+                    } else {
+                        // кнопка не делается невидимой, но и не работает, надо сделать
+                        btnv_repost.setVisibility(View.INVISIBLE);
+                    }
+                } else {
+                    // else - ProfileActivity
+                    Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String currentTime = dateFormat.format(currentTimestamp);
+                    Post repostedPost = new Post(post.getText(), post.getSong(), currentTime);
+                    FirebasePathHelper.writeNewPostDB(uuid, repostedPost);
+                }
+            }
         }
+
+/*
+        // like it!
+        CompoundButton.OnCheckedChangeListener checkBoxListener = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!isChecked) {
+                // ставим лайк
+                    Post post = mData.get(getAdapterPosition());
+                    //int likes = Integer.parseInt(post.getSong().getLikes());
+                    int likes = post.getSong().getLikes();
+                    likes++;
+                    FirebasePathHelper.addLikeDB(uuid, post.getTimestamp(), likes);
+
+                } else {
+                // убираем лайк
+                    Post post = mData.get(getAdapterPosition());
+                    //int likes = Integer.parseInt(post.getSong().getLikes());
+                    int likes = post.getSong().getLikes();
+                    likes--;
+                    FirebasePathHelper.addLikeDB(uuid, post.getTimestamp(), likes);
+                }
+            }
+        };
+        */
     }
 
     // convenience method for getting data at click position
