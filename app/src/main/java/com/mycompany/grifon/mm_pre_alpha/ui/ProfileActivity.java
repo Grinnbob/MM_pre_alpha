@@ -52,6 +52,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     private TextView tv_userName;
     private TextView tv_numberOfSubscribers;
     private TextView tv_numberOfSubscriptions;
+    private TextView tv_numberOfPublications;
     private CheckBox checkBox;
     FirebaseUser user;
     Profile profile;//тот чел на которого ткнули чтобы посмотреть
@@ -81,6 +82,8 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         Log.i(TAG, "All is up!");
         tv_numberOfSubscriptions = (TextView) findViewById(R.id.tv_numberOfSubscriptions);
         tv_numberOfSubscriptions.setOnClickListener(this);
+        tv_numberOfPublications = (TextView) findViewById(R.id.tv_numberOfPublications);
+        //tv_numberOfPublications.setOnClickListener(this);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -151,6 +154,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             tv_userName.setText(myProfile.getName());
             tv_numberOfSubscribers.setText(String.valueOf(myProfile.getSubscribers().size()));
             tv_numberOfSubscriptions.setText(String.valueOf(myProfile.getSubscriptions().size()));
+            //tv_numberOfPublications.setText(String.valueOf(myProfile.getMyPostsSize()));
             setControls();
         }
     }
@@ -165,6 +169,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             tv_userName.setText(profile.getName());
             tv_numberOfSubscribers.setText(String.valueOf(profile.getSubscribers().size()));
             tv_numberOfSubscriptions.setText(String.valueOf(profile.getSubscriptions().size()));
+            //tv_numberOfPublications.setText(String.valueOf(myProfile.getMyPostsSize()));
             setControls();
         }
 
@@ -236,7 +241,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 public void run() {
                     createWall(myDataset, user.getUid(), profileType);
                 }
-            }, 1*500);
+            }, 1 * 500);
         } catch (NullPointerException e) {
             Log.d("MY LOG:", "NPE: " + e);
         }

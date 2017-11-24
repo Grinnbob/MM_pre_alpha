@@ -6,5 +6,5 @@
     android:layout_height="56dp"
     android:id="@+id/toolbar"
     android:minHeight="?attr/actionBarSize"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorBlack">
 </android.support.v7.widget.Toolbar>

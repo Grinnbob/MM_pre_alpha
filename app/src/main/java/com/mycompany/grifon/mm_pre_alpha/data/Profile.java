@@ -32,6 +32,7 @@ public class Profile {
         this.posts.putAll(posts);
         this.chats.putAll(chats);
     }
+
     public Profile(@NonNull String name,@NonNull String uuid, String information) {
         this.name = name;
         this.uuid = uuid;
@@ -72,6 +73,16 @@ public class Profile {
     public Map<String, PlainUser> getSubscriptions(){return subscriptions;}
     //public List<Post> getUserPlayList(){return userPlayList;}
     public Map<String, Post> getPosts(){return posts;}
+    // не работает корректно
+    public int getMyPostsSize(){
+        List<Post> myPosts = new ArrayList<>();
+        for(Post postIter : posts.values()) {
+            if (postIter.getAuthor() == null) {
+                myPosts.add(postIter);
+            }
+        }
+        return myPosts.size();
+    }
 
     public void setSubscribers(Map<String, PlainUser> subscribers){
         this.subscribers.clear();
