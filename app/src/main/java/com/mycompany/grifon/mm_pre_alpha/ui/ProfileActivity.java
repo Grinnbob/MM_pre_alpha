@@ -35,8 +35,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -52,7 +54,9 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     private TextView tv_userName;
     private TextView tv_numberOfSubscribers;
     private TextView tv_numberOfSubscriptions;
-    private TextView tv_numberOfPublications;
+    private TextView tv_subscribeMe;
+    private TextView tv_numberOfSameSongs;
+    private TextView tv_sameSongs;
     private CheckBox checkBox;
     FirebaseUser user;
     Profile profile;//тот чел на которого ткнули чтобы посмотреть
@@ -82,8 +86,14 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         Log.i(TAG, "All is up!");
         tv_numberOfSubscriptions = (TextView) findViewById(R.id.tv_numberOfSubscriptions);
         tv_numberOfSubscriptions.setOnClickListener(this);
-        tv_numberOfPublications = (TextView) findViewById(R.id.tv_numberOfPublications);
         //tv_numberOfPublications.setOnClickListener(this);
+        tv_subscribeMe = (TextView) findViewById(R.id.tv_subscribe_me);
+        tv_subscribeMe.setOnClickListener(this);
+
+        tv_numberOfSameSongs = (TextView) findViewById(R.id.tv_number_of_the_same_songs);
+        tv_numberOfSameSongs.setOnClickListener(this);
+        tv_sameSongs = (TextView) findViewById(R.id.tv_same_songs);
+        tv_sameSongs.setOnClickListener(this);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -179,12 +189,20 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         boolean isMine = myProfile != null && profile != null && myProfile.getUuid().equals(profile.getUuid());
         if (isMine) {
             //chatView.setVisibility(View.INVISIBLE);//later
+
             checkBox.setVisibility(View.INVISIBLE);
             chatButton.setVisibility(View.INVISIBLE);
+            tv_subscribeMe.setVisibility(View.INVISIBLE);
+            tv_numberOfSameSongs.setVisibility(View.INVISIBLE);
+            tv_sameSongs.setVisibility(View.INVISIBLE);
+
         } else {
             //chatView.setVisibility(View.VISIBLE);
             checkBox.setVisibility(View.VISIBLE);
             chatButton.setVisibility(View.VISIBLE);
+            tv_subscribeMe.setVisibility(View.VISIBLE);
+            tv_numberOfSameSongs.setVisibility(View.VISIBLE);
+            tv_sameSongs.setVisibility(View.VISIBLE);
         }
     }
 
@@ -219,19 +237,30 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             // подключаемся к Firebase
             firebaseUtils = new FirebaseUtils();
             // получаем полный список своих постов
+            final String numberOfSameSongs;
             String currentUuid;
             final boolean profileType;
             boolean isMine = user != null && plainUser != null && user.getUid().equals(plainUser.getUuid());
             if (isMine) {
                 currentUuid = user.getUid();
                 profileType = true;
+
+                numberOfSameSongs = "";
             } else {
                 currentUuid = plainUser.getUuid();
                 profileType = false;
+
+                // не работает как надо - ничего не делает (должна стоять галочка, если подписан на этого чела)
+                /*if(firebaseUtils.isMySubscribtion(currentUuid))
+                    checkBox.setChecked(true);*/
+
+                // считаем совпадения по песням
+                numberOfSameSongs = getNumberOfTheSameSongs(user.getUid(), currentUuid);
             }
+
             // my posts
-            final List<Post> myDataset = firebaseUtils.getPostSet(currentUuid, true);
-            if (myDataset.isEmpty())
+            final List<Post> currentDataSet = firebaseUtils.getPostSet(currentUuid, true);
+            if (currentDataSet.isEmpty())
                 Log.d("MY LOG:", "POSTS SET is empty ");
 
 
@@ -239,14 +268,39 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    createWall(myDataset, user.getUid(), profileType);
+                    createWall(currentDataSet, user.getUid(), profileType);
+                    tv_numberOfSameSongs.setText(numberOfSameSongs);
                 }
             }, 1 * 500);
+
+
         } catch (NullPointerException e) {
             Log.d("MY LOG:", "NPE: " + e);
         }
     }
 
+    // совпадения по песням
+    private String getNumberOfTheSameSongs(String myUid, String userUid) {
+        Set<String> mySet = firebaseUtils.getSongSet(myUid);
+        Set<String> userSet = firebaseUtils.getSongSet(userUid);
+        Set<String> resSet = new HashSet<>();
+        int a = mySet.size();
+        Log.d("MY LOG:", "a: " + a);
+        int b = userSet.size();
+        Log.d("MY LOG:", "b: " + b);
+        if (a == 0)
+            return "0";
+        else if (b == 0)
+            return "0";
+        else {
+            resSet.addAll(mySet);
+            resSet.addAll(userSet);
+            int c = resSet.size();
+            c = 1 - (c - b) / a;
+            Log.d("MY LOG:", "c: " + c);
+            return String.valueOf(c);
+        }
+    }
 
     @Override
     public void onClick(View view) {
@@ -286,11 +340,6 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     public boolean onOptionsItemSelected(MenuItem item) {
         // Операции для выбранного пункта меню
         switch (item.getItemId()) {
-            case R.id.subscribers:
-                Intent intentSubscribers = new Intent(this, SubscribersActivity.class);
-                startActivity(intentSubscribers);
-                this.finish();
-                break;
             case R.id.music:
                 Intent intentMusic = new Intent(this, MusicActivity.class);
                 startActivity(intentMusic);

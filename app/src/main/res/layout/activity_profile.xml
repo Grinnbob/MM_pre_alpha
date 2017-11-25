@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
     tools:context="com.mycompany.grifon.mm_pre_alpha.ui.ProfileActivity">
 
     <include
@@ -17,120 +17,120 @@
         android:layout_height="80dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/toolbar"
-        android:src="@drawable/ic_subscribers" />
+        android:src="@drawable/ic_account_circle" />
 
     <TextView
         android:id="@+id/tv_userName"
         android:layout_width="67dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/UserAvatar"
-        android:text="User name" />
-
-    <TextView
-        android:id="@+id/tv_numberOfPublications"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
+        android:text="User name"
+        android:textSize="15dp"
         android:layout_below="@+id/toolbar"
         android:layout_toRightOf="@+id/UserAvatar"
-        android:text="0" />
+        android:layout_toEndOf="@+id/UserAvatar" />
+
+    <TextView
+        android:id="@+id/tv_numberOfSubscriptions"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:layout_alignBaseline="@+id/Subscriptions"
+        android:layout_alignBottom="@+id/Subscriptions"
+        android:layout_toRightOf="@+id/chatButton"
+        android:layout_toEndOf="@+id/chatButton" />
     <!---->
 
     <TextView
-        android:id="@+id/Publications"
+        android:id="@+id/tv_subscribe_me"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/tv_subscribers"
-        android:layout_alignBottom="@+id/tv_subscribers"
-        android:layout_toEndOf="@+id/UserAvatar"
-        android:layout_toRightOf="@+id/UserAvatar"
-        android:text="publications" />
+        android:text="subscribe"
+        android:layout_below="@+id/tv_same_songs"
+        android:layout_alignLeft="@+id/tv_same_songs"
+        android:layout_alignStart="@+id/tv_same_songs" />
 
     <TextView
         android:id="@+id/tv_numberOfSubscribers"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:layout_toRightOf="@+id/tv_numberOfPublications"
-        android:text="0" />
+        android:text="0"
+        android:layout_alignBaseline="@+id/tv_subscribers"
+        android:layout_alignBottom="@+id/tv_subscribers"
+        android:layout_toRightOf="@+id/chatButton"
+        android:layout_toEndOf="@+id/chatButton" />
     <!---->
 
     <TextView
         android:id="@+id/tv_subscribers"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_numberOfPublications"
-        android:layout_toRightOf="@+id/Publications"
-        android:text="subscribers" />
-
-    <TextView
-        android:id="@+id/tv_numberOfSubscriptions"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:layout_toRightOf="@+id/tv_numberOfSubscribers"
-        android:text="0" />
+        android:text="subscribers"
+        android:layout_marginRight="37dp"
+        android:layout_marginEnd="37dp"
+        android:layout_below="@+id/tv_userName"
+        android:layout_toLeftOf="@+id/tv_numberOfSubscribers"
+        android:layout_toStartOf="@+id/tv_numberOfSubscribers" />
 
     <TextView
         android:id="@+id/Subscriptions"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/tv_subscribers"
-        android:layout_alignBottom="@+id/tv_subscribers"
-        android:layout_toEndOf="@+id/tv_numberOfSubscribers"
-        android:layout_toRightOf="@+id/tv_numberOfSubscribers"
-        android:text="subscriptions" />
+        android:text="subscriptions"
+        android:layout_below="@+id/tv_subscribers"
+        android:layout_alignLeft="@+id/tv_subscribers"
+        android:layout_alignStart="@+id/tv_subscribers" />
 
     <Button
         android:id="@+id/chatButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/tv_userName"
-        android:layout_below="@+id/Publications"
-        android:layout_toRightOf="@+id/UserAvatar"
-        android:text="chat" />
+        android:background="@color/colorWhite"
+        android:text="chat"
+        android:layout_marginLeft="27dp"
+        android:layout_marginStart="27dp"
+        android:layout_below="@+id/toolbar"
+        android:layout_toRightOf="@+id/userINfo"
+        android:layout_toEndOf="@+id/userINfo"
+        android:layout_above="@+id/tv_numberOfSubscribers" />
+
+    <TextView
+        android:id="@+id/tv_same_songs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="same songs"
+        android:layout_below="@+id/Subscriptions"
+        android:layout_alignLeft="@+id/Subscriptions"
+        android:layout_alignStart="@+id/Subscriptions"
+        android:layout_alignRight="@+id/Subscriptions"
+        android:layout_alignEnd="@+id/Subscriptions" />
+
+    <TextView
+        android:id="@+id/tv_number_of_the_same_songs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:layout_below="@+id/tv_numberOfSubscriptions"
+        android:layout_alignLeft="@+id/tv_numberOfSubscriptions"
+        android:layout_alignStart="@+id/tv_numberOfSubscriptions"
+        android:layout_alignRight="@+id/tv_numberOfSubscriptions"
+        android:layout_alignEnd="@+id/tv_numberOfSubscriptions" />
 
     <CheckBox
         android:id="@+id/subscribeCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/chatButton"
-        android:layout_below="@+id/tv_subscribers"
-        android:layout_toEndOf="@+id/Publications"
-        android:layout_toRightOf="@+id/Publications" />
-
-    <ProgressBar
-        android:id="@+id/progressBar5"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/Subscriptions"
-        android:layout_marginTop="13dp"
-        android:layout_toEndOf="@+id/tv_subscribers"
-        android:layout_toRightOf="@+id/tv_subscribers" />
+        android:layout_below="@+id/tv_number_of_the_same_songs"
+        android:layout_alignLeft="@+id/tv_number_of_the_same_songs"
+        android:layout_alignStart="@+id/tv_number_of_the_same_songs" />
 
     <TextView
         android:id="@+id/userINfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:text="Information about user"
+        android:layout_below="@+id/tv_subscribe_me"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/tv_userName"
-        android:text="Information about user" />
-
-    <ToggleButton
-        android:id="@+id/tg_Mode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/userINfo"
-        android:textOff="list"
-        android:textOn="albums" />
+        android:layout_alignParentStart="true" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -138,7 +138,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="vertical"
-        android:layout_below="@+id/tg_Mode"
-        android:scrollbars="none"/>
+        android:scrollbars="none"
+        android:layout_below="@+id/userINfo"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
