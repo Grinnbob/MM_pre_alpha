@@ -113,8 +113,6 @@ public class SubscriptionsActivity extends EBActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Операции для выбранного пункта меню
         switch (item.getItemId()) {
-            case R.id.subscribers:
-                break;
             case R.id.music:
                 Intent intentMusic = new Intent(this, MusicActivity.class);
                 startActivity(intentMusic);

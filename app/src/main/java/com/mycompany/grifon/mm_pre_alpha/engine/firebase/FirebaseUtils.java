@@ -27,8 +27,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class FirebaseUtils {
 
@@ -222,6 +224,30 @@ public class FirebaseUtils {
         return mDataSet;
     }
 
+    // returns Set of my songs
+    public Set<String> getSongSet(String uuid) {
+        final Set<String> myDataSet = new HashSet<>();
+        //не поддерживает многопоточность
+            // all posts
+            databaseRef.child("users").child(uuid).child("posts").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.e("FB", "Current thread: " + Thread.currentThread().getName());
+                    Post post;
+                    //final Set<String> myDataSet = new HashSet<>();
+                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                        post = dsp.getValue(Post.class);
+                        if (post.getAuthor() == null)
+                            myDataSet.add(post.getSong().getName());
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        return myDataSet;
+    }
+
     // добавляем существующие посты новому подписчику в ленту
     public void addPostToSubscribersDB(final PlainUser subscribtionPlainUser) {
         // all posts
@@ -312,6 +338,29 @@ public class FirebaseUtils {
 
             }
         });
+    }
+
+    // проверяем, подписаны ли мы на этого чела, чтобы поставить галочку
+    private boolean result = false;
+    public boolean isMySubscribtion(final String uuid) {
+
+        databaseRef.child("users").child(myUuid).child("subscriptions").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                PlainUser plainUser;
+                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                    plainUser = dsp.getValue(PlainUser.class);
+                    if (plainUser.getUuid().equals(uuid))
+                        result = true;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+        return result;
     }
 
     // глобальные лайки, доделать

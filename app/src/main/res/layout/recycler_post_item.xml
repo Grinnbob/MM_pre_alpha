@@ -10,15 +10,19 @@
         android:id="@+id/tv_author_name"
         android:layout_width="wrap_content"
         android:layout_height="15dp"
+        android:text="Author"
         android:textSize="12sp" />
 
     <TextView
         android:id="@+id/tv_text_post_item"
         android:layout_width="wrap_content"
-        android:layout_toRightOf="@+id/tv_author_name"
         android:layout_height="15dp"
-        android:text="text"
-        android:textSize="10sp" />
+        android:text="post_text"
+        android:textSize="10sp"
+        android:layout_alignBaseline="@+id/tv_author_name"
+        android:layout_alignBottom="@+id/tv_author_name"
+        android:layout_toRightOf="@+id/tv_author_name"
+        android:layout_toEndOf="@+id/tv_author_name" />
 
     <Button
         android:layout_width="30dp"
@@ -44,43 +48,42 @@
     <TextView
         android:id="@+id/tv_recycler_item"
         android:layout_width="wrap_content"
+        android:layout_height="10dp"
+        android:text="song_name"
+        android:textSize="10sp"
+        android:layout_below="@+id/tv_text_post_item"
         android:layout_toRightOf="@+id/btn_pause"
-        android:layout_height="15dp"
-        android:textSize="10sp" />
+        android:layout_alignBottom="@+id/btn_pause" />
 
     <CheckBox
         android:id="@+id/checkBox_like"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CheckBox"
-        android:layout_below="@+id/tv_recycler_item"
+        android:layout_alignBaseline="@+id/tv_likes"
+        android:layout_alignBottom="@+id/tv_likes"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="52dp"
-        android:layout_marginEnd="52dp" />
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:id="@+id/tv_likes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="likes"
         android:layout_below="@+id/tv_recycler_item"
-        android:layout_alignLeft="@+id/checkBox_like"
-        android:layout_alignStart="@+id/checkBox_like"
-        android:layout_marginLeft="100dp"
-        android:layout_marginStart="100dp"
-        android:text="likes" />
+        android:layout_toLeftOf="@+id/checkBox_like"
+        android:layout_toStartOf="@+id/checkBox_like" />
 
     <Button
         android:id="@+id/btn_repost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
         android:text="Repost"
-        android:textSize="10sp"
-        android:layout_below="@+id/checkBox_like"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
+        android:textSize="5sp"
         android:background="@color/colorWhite"
-        android:drawableLeft="@drawable/ic_compare_arrows_black_24dp"
-        android:padding="0.1dp"/>
+        android:drawableLeft="@drawable/ic_compare_arrows_black_18dp"
+        android:padding="0.1dp"
+        android:layout_alignTop="@+id/tv_likes"
+        android:layout_toLeftOf="@+id/tv_likes"
+        android:layout_toStartOf="@+id/tv_likes" />
 
 </RelativeLayout>

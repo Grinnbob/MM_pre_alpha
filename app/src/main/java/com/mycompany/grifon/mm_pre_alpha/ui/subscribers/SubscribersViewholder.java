@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
+import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.ui.ProfileActivity;
 
 import java.io.Serializable;
@@ -17,18 +18,22 @@ import java.io.Serializable;
 public class SubscribersViewholder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     private final TextView tv_subscriber_name;
+    private final TextView tv_sameSongs;
     private PlainUser plainUser;
 
     public SubscribersViewholder(View itemView) {
         super(itemView);
-        tv_subscriber_name= (TextView) itemView.findViewById(R.id.tv_subscriber_name);
+        tv_subscriber_name = (TextView) itemView.findViewById(R.id.tv_subscriber_name);
+        tv_sameSongs = (TextView) itemView.findViewById(R.id.tv_subscriber_name);
+
         itemView.setOnClickListener(this);
     }
 
 
-    void applySubscriber(PlainUser plainUser){
+    void applySubscriber(PlainUser plainUser) {
         tv_subscriber_name.setText(plainUser.getName());
         this.plainUser = plainUser;
+        //tv_sameSongs.setText(FirebasePathHelper);
     }
 
 

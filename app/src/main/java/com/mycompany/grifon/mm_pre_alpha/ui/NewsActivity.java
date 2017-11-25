@@ -159,11 +159,6 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         // Операции для выбранного пункта меню
         switch (item.getItemId()) {
-            case R.id.subscribers:
-                intentSubscribers = new Intent(this, SubscribersActivity.class);
-                startActivity(intentSubscribers);
-                this.finish();
-                break;
             case R.id.music:
                 intentMusic = new Intent(this, MusicActivity.class);
                 startActivity(intentMusic);
