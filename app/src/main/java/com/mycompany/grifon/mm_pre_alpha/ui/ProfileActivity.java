@@ -61,6 +61,9 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     FirebaseUser user;
     Profile profile;//тот чел на которого ткнули чтобы посмотреть
     Profile myProfile;//наш профиль
+    private Set<String> userSetSongs = new HashSet<>();//тот чел на которого ткнули чтобы посмотреть
+    private Set<String> mySetSongs = new HashSet<>();//наш профиль
+    private String numberOfSameSongs = "";
     private Button chatButton;
 
     private static FirebaseUtils firebaseUtils;
@@ -180,6 +183,16 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             tv_numberOfSubscribers.setText(String.valueOf(profile.getSubscribers().size()));
             tv_numberOfSubscriptions.setText(String.valueOf(profile.getSubscriptions().size()));
             //tv_numberOfPublications.setText(String.valueOf(myProfile.getMyPostsSize()));
+
+            Map<String, Post> posts = profile.getPosts();
+            for (final String s : posts.keySet()) {
+                final Post post = posts.get(s);
+                if (post.getAuthor() == null)
+                    userSetSongs.add(post.getSong().getName());
+            }
+
+
+
             setControls();
         }
 
@@ -203,6 +216,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             tv_subscribeMe.setVisibility(View.VISIBLE);
             tv_numberOfSameSongs.setVisibility(View.VISIBLE);
             tv_sameSongs.setVisibility(View.VISIBLE);
+            numberOfSameSongs = getNumberOfTheSameSongs(myProfile.getUuid(), profile.getUuid());
         }
     }
 
@@ -237,7 +251,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             // подключаемся к Firebase
             firebaseUtils = new FirebaseUtils();
             // получаем полный список своих постов
-            final String numberOfSameSongs;
+            //final String numberOfSameSongs;
             String currentUuid;
             final boolean profileType;
             boolean isMine = user != null && plainUser != null && user.getUid().equals(plainUser.getUuid());
@@ -245,7 +259,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 currentUuid = user.getUid();
                 profileType = true;
 
-                numberOfSameSongs = "";
+                //numberOfSameSongs = "";
             } else {
                 currentUuid = plainUser.getUuid();
                 profileType = false;
@@ -255,7 +269,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                     checkBox.setChecked(true);*/
 
                 // считаем совпадения по песням
-                numberOfSameSongs = getNumberOfTheSameSongs(user.getUid(), currentUuid);
+                //numberOfSameSongs = getNumberOfTheSameSongs(user.getUid(), currentUuid);
             }
 
             // my posts
@@ -281,20 +295,24 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
 
     // совпадения по песням
     private String getNumberOfTheSameSongs(String myUid, String userUid) {
-        Set<String> mySet = firebaseUtils.getSongSet(myUid);
-        Set<String> userSet = firebaseUtils.getSongSet(userUid);
-        Set<String> resSet = new HashSet<>();
-        int a = mySet.size();
+        final Set<String> resSet = new HashSet<>();
+        Map<String, Post> posts = myProfile.getPosts();
+        for (final String s : posts.keySet()) {
+            final Post post = posts.get(s);
+            if (post.getAuthor() == null)
+                mySetSongs.add(post.getSong().getName());
+        }
+        int a = mySetSongs.size();
         Log.d("MY LOG:", "a: " + a);
-        int b = userSet.size();
+        int b = userSetSongs.size();
         Log.d("MY LOG:", "b: " + b);
         if (a == 0)
             return "0";
         else if (b == 0)
             return "0";
         else {
-            resSet.addAll(mySet);
-            resSet.addAll(userSet);
+            resSet.addAll(mySetSongs);
+            resSet.addAll(userSetSongs);
             int c = resSet.size();
             c = 1 - (c - b) / a;
             Log.d("MY LOG:", "c: " + c);
@@ -314,11 +332,13 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             }
             intentChat.putExtra("chat", (Serializable) pc);
             startActivity(intentChat);
+            finish();
         }
         if (view.getId() == R.id.tv_numberOfSubscribers) {
             Intent intentSubscribers = new Intent(ProfileActivity.this, SubscribersActivity.class);
             intentSubscribers.putExtra("user", plainUser);
             startActivity(intentSubscribers);
+            finish();
         }
         if (view.getId() == R.id.tv_numberOfSubscriptions) {
             Intent intentSubscriptions = new Intent(ProfileActivity.this, SubscriptionsActivity.class);
@@ -327,6 +347,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             intentSubscriptions.putExtra("user", plainUser);
             //c.startActivity(i);
             startActivity(intentSubscriptions);
+            finish();
         }
     }
 
