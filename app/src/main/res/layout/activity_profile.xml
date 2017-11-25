@@ -25,19 +25,13 @@
         android:layout_height="wrap_content"
         android:text="User name"
         android:textSize="15dp"
-        android:layout_below="@+id/toolbar"
-        android:layout_toRightOf="@+id/UserAvatar"
-        android:layout_toEndOf="@+id/UserAvatar" />
+        android:layout_below="@+id/UserAvatar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
-    <TextView
-        android:id="@+id/tv_numberOfSubscriptions"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="0"
-        android:layout_alignBaseline="@+id/Subscriptions"
-        android:layout_alignBottom="@+id/Subscriptions"
-        android:layout_toRightOf="@+id/chatButton"
-        android:layout_toEndOf="@+id/chatButton" />
+
     <!---->
 
     <TextView
@@ -49,15 +43,7 @@
         android:layout_alignLeft="@+id/tv_same_songs"
         android:layout_alignStart="@+id/tv_same_songs" />
 
-    <TextView
-        android:id="@+id/tv_numberOfSubscribers"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="0"
-        android:layout_alignBaseline="@+id/tv_subscribers"
-        android:layout_alignBottom="@+id/tv_subscribers"
-        android:layout_toRightOf="@+id/chatButton"
-        android:layout_toEndOf="@+id/chatButton" />
+
     <!---->
 
     <TextView
@@ -65,11 +51,20 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="subscribers"
-        android:layout_marginRight="37dp"
-        android:layout_marginEnd="37dp"
-        android:layout_below="@+id/tv_userName"
-        android:layout_toLeftOf="@+id/tv_numberOfSubscribers"
-        android:layout_toStartOf="@+id/tv_numberOfSubscribers" />
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_below="@+id/toolbar"
+        android:layout_toRightOf="@+id/UserAvatar"
+        android:layout_toEndOf="@+id/UserAvatar" />
+
+    <TextView
+        android:id="@+id/tv_numberOfSubscribers"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:layout_below="@+id/toolbar"
+        android:layout_toRightOf="@+id/Subscriptions"
+        android:layout_toEndOf="@+id/Subscriptions" />
 
     <TextView
         android:id="@+id/Subscriptions"
@@ -80,18 +75,26 @@
         android:layout_alignLeft="@+id/tv_subscribers"
         android:layout_alignStart="@+id/tv_subscribers" />
 
+    <TextView
+        android:id="@+id/tv_numberOfSubscriptions"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:layout_below="@+id/tv_numberOfSubscribers"
+        android:layout_toRightOf="@+id/Subscriptions"
+        android:layout_toEndOf="@+id/Subscriptions" />
+
+
     <Button
         android:id="@+id/chatButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:background="@color/colorWhite"
         android:text="chat"
-        android:layout_marginLeft="27dp"
-        android:layout_marginStart="27dp"
-        android:layout_below="@+id/toolbar"
-        android:layout_toRightOf="@+id/userINfo"
-        android:layout_toEndOf="@+id/userINfo"
-        android:layout_above="@+id/tv_numberOfSubscribers" />
+        android:textSize="10sp"
+        android:layout_below="@+id/tv_userName"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/tv_same_songs"
@@ -119,18 +122,18 @@
         android:id="@+id/subscribeCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_number_of_the_same_songs"
-        android:layout_alignLeft="@+id/tv_number_of_the_same_songs"
-        android:layout_alignStart="@+id/tv_number_of_the_same_songs" />
+        android:layout_below="@+id/tv_same_songs"
+        android:layout_toRightOf="@+id/tv_subscribe_me"
+        android:layout_toEndOf="@+id/tv_subscribe_me" />
 
     <TextView
         android:id="@+id/userINfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Information about user"
-        android:layout_below="@+id/tv_subscribe_me"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/tv_userName"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -139,7 +142,7 @@
         android:layout_gravity="center_horizontal"
         android:orientation="vertical"
         android:scrollbars="none"
-        android:layout_below="@+id/userINfo"
+        android:layout_below="@+id/chatButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 

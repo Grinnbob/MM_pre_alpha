@@ -124,7 +124,7 @@ public class FirebasePathHelper {
         });
     }
 
-    public static void getUserProfile(String uuid) {
+    public static void getUserProfile(final String uuid) {
         //return getRoot().child(String.valueOf(R.string.users_path)).child(user.getUid()).child(path);
         getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
             @Override
