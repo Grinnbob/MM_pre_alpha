@@ -86,4 +86,18 @@
         android:layout_toLeftOf="@+id/tv_likes"
         android:layout_toStartOf="@+id/tv_likes" />
 
+    <Button
+        android:id="@+id/btn_del"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@color/colorWhite"
+        android:drawableLeft="@drawable/ic_clear_black_24dp"
+        android:padding="0.1dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/tv_likes"
+        android:layout_toRightOf="@+id/tv_likes"
+        android:layout_toEndOf="@+id/tv_likes"
+        android:layout_alignTop="@+id/btn_pause" />
+
 </RelativeLayout>

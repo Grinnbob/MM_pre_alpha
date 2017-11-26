@@ -65,6 +65,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     private Set<String> mySetSongs = new HashSet<>();//наш профиль
     private String numberOfSameSongs = "";
     private Button chatButton;
+    private Button btn_del;
 
     private static FirebaseUtils firebaseUtils;
 
@@ -102,6 +103,8 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
+        // подключаемся к Firebase
+        firebaseUtils = new FirebaseUtils();
 
        /*Intent intent = getIntent();
         plainUser = (PlainUser) intent.getSerializableExtra("user");
@@ -117,7 +120,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     // создаём стену
     private void createWall(List<Post> myDataset, String myUuid, boolean profyleType) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, profyleType, true);
+        mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, profyleType, true, firebaseUtils);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -138,7 +141,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 }
 
                 // delete posts from wall
-                firebaseUtils.deletePostToSubscribersDB(plainUser);
+                firebaseUtils.deleteSubscribersPostsDB(plainUser);
 
             } else {
                 // подписка
@@ -248,8 +251,6 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         FirebasePathHelper.getUserProfile(plainUser.getUuid());
 
         try {
-            // подключаемся к Firebase
-            firebaseUtils = new FirebaseUtils();
             // получаем полный список своих постов
             //final String numberOfSameSongs;
             String currentUuid;
@@ -348,6 +349,9 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             //c.startActivity(i);
             startActivity(intentSubscriptions);
             finish();
+        }
+        if (view.getId() == R.id.btn_del) {
+
         }
     }
 

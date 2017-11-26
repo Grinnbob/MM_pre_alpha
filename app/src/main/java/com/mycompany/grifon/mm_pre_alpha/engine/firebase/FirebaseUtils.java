@@ -26,11 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class FirebaseUtils {
 
@@ -224,30 +220,33 @@ public class FirebaseUtils {
         return mDataSet;
     }
 
+/*
+// не используется
     // returns Set of my songs
     public Set<String> getSongSet(String uuid) {
         final Set<String> myDataSet = new HashSet<>();
         //не поддерживает многопоточность
-            // all posts
-            databaseRef.child("users").child(uuid).child("posts").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.e("FB", "Current thread: " + Thread.currentThread().getName());
-                    Post post;
-                    //final Set<String> myDataSet = new HashSet<>();
-                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                        post = dsp.getValue(Post.class);
-                        if (post.getAuthor() == null)
-                            myDataSet.add(post.getSong().getName());
-                    }
+        // all posts
+        databaseRef.child("users").child(uuid).child("posts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("FB", "Current thread: " + Thread.currentThread().getName());
+                Post post;
+                //final Set<String> myDataSet = new HashSet<>();
+                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                    post = dsp.getValue(Post.class);
+                    if (post.getAuthor() == null)
+                        myDataSet.add(post.getSong().getName());
                 }
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
         return myDataSet;
     }
-
+*/
     // добавляем существующие посты новому подписчику в ленту
     public void addPostToSubscribersDB(final PlainUser subscribtionPlainUser) {
         // all posts
@@ -272,7 +271,7 @@ public class FirebaseUtils {
     }
 
     // удаляем посты из стены при отписке
-    public void deletePostToSubscribersDB(final PlainUser subscribtionPlainUser) {
+    public void deleteSubscribersPostsDB(final PlainUser subscribtionPlainUser) {
         final String authorUuid = subscribtionPlainUser.getUuid();
         // all posts
         databaseRef.child("users").child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
@@ -390,4 +389,63 @@ public class FirebaseUtils {
         return likes;
     }
     */
+
+    // удаляем посты из своей стены
+    public void deletePostDB(final String postTimestamp) {
+        databaseRef.child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("FB", "Current thread: " + Thread.currentThread().getName());
+                Post post;
+                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                    post = dsp.getValue(Post.class);
+                    if (post.getTimestamp().equals(postTimestamp)) {
+                        dsp.getRef().removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+        //удаляем посты из стен подписчиков
+        databaseRef.child(myUuid).child("subscribers").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("FB", "Current thread: " + Thread.currentThread().getName());
+                PlainUser plainUser;
+                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                    plainUser = dsp.getValue(PlainUser.class);
+                    delSubPostDB(plainUser.getUuid(), postTimestamp);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public void delSubPostDB(String uuid, final String postTimestamp){
+        //удаляем посты из стен подписчиков
+        databaseRef.child("users").child(uuid).child("posts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("FB", "Current thread: " + Thread.currentThread().getName());
+                Post post;
+                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                    post = dsp.getValue(Post.class);
+                    if (post.getTimestamp().equals(postTimestamp)) {
+                        dsp.getRef().removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
 }
