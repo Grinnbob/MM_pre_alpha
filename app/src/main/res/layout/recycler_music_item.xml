@@ -13,7 +13,7 @@
         android:layout_weight="0.03"
         android:id="@+id/btn_play"
         android:background="@color/colorWhite"
-        android:drawableLeft="@android:drawable/ic_media_play"
+        android:drawableLeft="@drawable/ic_play_arrow_black_24dp"
         android:padding="0.1dp"/>
 
     <Button
@@ -24,13 +24,22 @@
         android:layout_weight="0.03"
         android:id="@+id/btn_pause"
         android:background="@color/colorWhite"
-        android:drawableLeft="@android:drawable/ic_media_pause"
+        android:drawableLeft="@drawable/ic_pause_black_24dp"
         android:padding="0.1dp"/>
+
+    <Button
+        android:id="@+id/btn_plus_song"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_toRightOf="@+id/tv_recycler_item"
+        android:background="@color/colorWhite"
+        android:drawableLeft="@drawable/ic_add_black_18dp" />
 
     <TextView
         android:id="@+id/tv_recycler_item"
         android:layout_width="wrap_content"
         android:layout_height="15dp"
+        android:text="song_name"
         android:textSize="10sp" />
 
 </LinearLayout>

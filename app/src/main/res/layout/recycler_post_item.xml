@@ -31,7 +31,7 @@
         android:layout_weight="0.03"
         android:id="@+id/btn_play"
         android:background="@color/colorWhite"
-        android:drawableLeft="@android:drawable/ic_media_play"
+        android:drawableLeft="@drawable/ic_play_arrow_black_24dp"
         android:padding="0.1dp"/>
 
     <Button
@@ -42,7 +42,7 @@
         android:layout_weight="0.03"
         android:id="@+id/btn_pause"
         android:background="@color/colorWhite"
-        android:drawableLeft="@android:drawable/ic_media_pause"
+        android:drawableLeft="@drawable/ic_pause_black_24dp"
         android:padding="0.1dp"/>
 
     <TextView

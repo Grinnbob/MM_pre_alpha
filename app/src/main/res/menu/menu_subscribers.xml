@@ -8,7 +8,7 @@
         android:title="@string/action_news"
         app:showAsAction="always" />
     <item
-        android:icon="@android:drawable/ic_media_play"
+        android:icon="@drawable/ic_queue_music_white_36dp"
         android:id="@+id/music"
         android:orderInCategory="3"
         android:title="@string/action_music"

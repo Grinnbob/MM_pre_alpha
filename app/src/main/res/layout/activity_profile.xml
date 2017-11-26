@@ -92,9 +92,12 @@
         android:background="@color/colorWhite"
         android:text="chat"
         android:textSize="10sp"
+        android:drawableLeft="@drawable/ic_message_black_18dp"
         android:layout_below="@+id/tv_userName"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/UserAvatar"
+        android:layout_alignEnd="@+id/UserAvatar" />
 
     <TextView
         android:id="@+id/tv_same_songs"
@@ -123,8 +126,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_same_songs"
-        android:layout_toRightOf="@+id/tv_subscribe_me"
-        android:layout_toEndOf="@+id/tv_subscribe_me" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/userINfo"
