@@ -40,7 +40,7 @@ public class AllUsersActivity extends EBActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
         rvSubscribers.setLayoutManager(layoutManager);
         rvSubscribers.setAdapter(subscribersAdapter);
-        FirebasePathHelper.requestAllUsers();
+        FirebasePathHelper.getInstance().requestAllUsers();
     }
 
     @Override

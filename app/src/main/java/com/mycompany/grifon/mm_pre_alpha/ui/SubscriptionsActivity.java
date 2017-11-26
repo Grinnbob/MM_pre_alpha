@@ -66,8 +66,8 @@ public class SubscriptionsActivity extends EBActivity {
         if (plainUser == null) { //попали сюда не ткнув на какого-то пользователя, а ткнули со своего профиля
             plainUser = new PlainUser(user);
         }
-        FirebasePathHelper.getMyProfile(user.getUid());
-        FirebasePathHelper.getUserProfile(plainUser.getUuid());
+        FirebasePathHelper.getInstance().getMyProfile(user.getUid());
+        FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

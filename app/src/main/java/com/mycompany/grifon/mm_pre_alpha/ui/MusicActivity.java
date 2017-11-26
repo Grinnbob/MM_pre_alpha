@@ -43,7 +43,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     // song name to write in database and storage
     private String name = null;
     private FirebaseUtils firebaseUtils;
-    private FirebasePathHelper firebasePathHelper;
 
     // song name for search
     private static EditText et_searchName;
@@ -60,7 +59,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
         // подключаемся к Firebase
         firebaseUtils = NewsActivity.getFirebaseUtils();
-        firebasePathHelper = new FirebasePathHelper();
         // получаем полный список, хранящихся в БД песен
         final List<SongInfo> myDataset = firebaseUtils.getDataSet();
         // создаём стену

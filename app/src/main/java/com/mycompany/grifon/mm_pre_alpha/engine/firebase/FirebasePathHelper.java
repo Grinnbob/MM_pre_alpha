@@ -38,9 +38,51 @@ import java.util.Set;
 
 public class FirebasePathHelper {
 
+    private static FirebasePathHelper INSTANCE;
+
+    private FirebasePathHelper() {
+    }
+
+    public static FirebasePathHelper getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new FirebasePathHelper();
+        }
+        return INSTANCE;
+    }
+
+    private ValueEventListener myProfileListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            Profile profile = dataSnapshot.getValue(Profile.class);
+            //event fired!
+            EventBus.getDefault().post(new MyProfileEvent(profile));
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
+    private ValueEventListener userProfileListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            Profile profile = dataSnapshot.getValue(Profile.class);
+            //event fired!
+            EventBus.getDefault().post(new UserProfileEvent(profile));
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
+    // --------------------------------------------------------------------------------------------
+
     private static volatile DatabaseReference root = null;
 
-    public static DatabaseReference getRoot() {
+    private DatabaseReference getRoot() {
         if (root == null)
             synchronized (FirebasePathHelper.class) {
                 if (root == null) {
@@ -52,19 +94,19 @@ public class FirebasePathHelper {
     }
 
     // upload profile in Database (alternative)
-    public static void uploadProfileDB(Profile info) {
+    public void uploadProfileDB(Profile info) {
         Map<String, Object> childUpdates = new HashMap<>();
 
         childUpdates.put("users/" + info.getUuid(), info.toMap());
         getRoot().updateChildren(childUpdates);
     }
 
-    private static DatabaseReference getUserData(String path) {
+    private DatabaseReference getUserData(String path) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         return getRoot().child("users").child(user.getUid()).child(path);
     }
 
-    public static void requestSubscribers(String uuid) {
+    public void requestSubscribers(String uuid) {
         //getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
         getRoot().child("users").child(uuid).child("subscribers").addValueEventListener(new ValueEventListener() {
             @Override
@@ -86,7 +128,7 @@ public class FirebasePathHelper {
         });
     }
 
-    public static void requestAllUsers() {
+    public void requestAllUsers() {
         getRoot().child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -107,41 +149,19 @@ public class FirebasePathHelper {
         });
     }
 
-    public static void getMyProfile(String uuid) {
+    public void getMyProfile(String uuid) {
         //return getRoot().child(String.valueOf(R.string.users_path)).child(user.getUid()).child(path);
-        getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Profile profile = dataSnapshot.getValue(Profile.class);
-                //event fired!
-                EventBus.getDefault().post(new MyProfileEvent(profile));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        getRoot().child("users").child(uuid).removeEventListener(myProfileListener);
+        getRoot().child("users").child(uuid).addValueEventListener(myProfileListener);
     }
 
-    public static void getUserProfile(final String uuid) {
+    public void getUserProfile(final String uuid) {
         //return getRoot().child(String.valueOf(R.string.users_path)).child(user.getUid()).child(path);
-        getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Profile profile = dataSnapshot.getValue(Profile.class);
-                //event fired!
-                EventBus.getDefault().post(new UserProfileEvent(profile));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        getRoot().child("users").child(uuid).removeEventListener(userProfileListener);
+        getRoot().child("users").child(uuid).addValueEventListener(userProfileListener);
     }
 
-    public static void getChat(String uuid) {
+    public void getChat(String uuid) {
         //return getRoot().child(String.valueOf(R.string.users_path)).child(user.getUid()).child(path);
         getRoot().child("chats").child(uuid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -158,11 +178,11 @@ public class FirebasePathHelper {
         });
     }
 
-    public static DatabaseReference getChatMessagesReference(String uuid) {
+    public DatabaseReference getChatMessagesReference(String uuid) {
         return getRoot().child("chats").child(uuid).child("messages");
     }
 
-    public static void subscribeToNewMessages(String uuid) {
+    public void subscribeToNewMessages(String uuid) {
         //return getRoot().child(String.valueOf(R.string.users_path)).child(user.getUid()).child(path);
         getRoot().child("chats").child(uuid).child("messages").addChildEventListener(new ChildEventListener() {
             @Override
@@ -199,19 +219,19 @@ public class FirebasePathHelper {
     }
 
     // пишем new profile в Database
-    public static void writeNewProfileDB(Profile info) {
+    public void writeNewProfileDB(Profile info) {
         getRoot().child("users").child(info.getUuid()).setValue(info);
     }
 
     // пишем new post в Database in my profile
-    public static void writeNewPostDB(String uuid, Post post) {
+    public void writeNewPostDB(String uuid, Post post) {
         //String key = getRoot().getKey();
         // use timestamps
         getRoot().child("users").child(uuid).child("posts").child(post.getTimestamp()).setValue(post);
     }
 
     // пишем new post в Database in subscribers profiles
-    public static void writeNewPostToSubscribersDB(String uuid, final Post post) {
+    public void writeNewPostToSubscribersDB(String uuid, final Post post) {
         getRoot().child("users").child(uuid).child("subscribers").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -231,18 +251,18 @@ public class FirebasePathHelper {
     }
 
     // add like
-    public static void addLikeDB(String uuid, String timestamp, String likes) {
+    public void addLikeDB(String uuid, String timestamp, String likes) {
         getRoot().child("users").child(uuid).child("posts").child(timestamp).child("song").child("likes").setValue(likes);
     }
 
     // пишем new profile в Database
-    public static void createChat(PlainChat plainChat) {
+    public void createChat(PlainChat plainChat) {
         Chat chat = new Chat(plainChat);
         createChat(chat);
     }
 
     // пишем new profile в Database
-    public static void createChat(Chat chat) {
+    public void createChat(Chat chat) {
         //getRoot().getDatabase()
         for (PlainUser user : chat.getUsers().values()) {
             getRoot().child("users").child(user.getUuid()).child("chats").child(chat.getUuid()).setValue(new PlainChat(chat));
@@ -250,13 +270,13 @@ public class FirebasePathHelper {
         getRoot().child("chats").child(chat.getUuid()).setValue(chat);
     }
 
-    public static void updateChat(Chat chat) {
+    public void updateChat(Chat chat) {
         //public Profile(String name, String uuid, String information, List<Profile> subscribers, List<Profile> subscriptions, List<SongInfo> userPlayList, List<Post> posts) {
         //  Profile newProfile = new Profile(info.getName(), info.getUuid(), info.getInformation(), subscribers, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
         getRoot().child("chats").child(chat.getUuid()).setValue(chat);
     }
 
-    public static void addMessageToChat(String chatUUID, Message message) {
+    public void addMessageToChat(String chatUUID, Message message) {
         getRoot().child("chats").child(chatUUID).child("messages").child(message.getUuid()).setValue(message);
     }
 
