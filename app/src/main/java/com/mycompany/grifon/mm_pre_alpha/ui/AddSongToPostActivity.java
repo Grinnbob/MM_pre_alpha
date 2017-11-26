@@ -68,11 +68,11 @@ public class AddSongToPostActivity extends AppCompatActivity implements View.OnC
             String currentTime = dateFormat.format(currentTimestamp);
             Log.d("myLog!!!", "time formed: " + currentTime);
             Post post = new Post(postText.getText().toString(), songInfo, currentTime);
-            FirebasePathHelper.writeNewPostDB(myUuid, post);
+            FirebasePathHelper.getInstance().writeNewPostDB(myUuid, post);
 
             post = new Post(postText.getText().toString(), songInfo, plainUser, currentTime);
             // пишем post в Database in subscribers profiles
-            FirebasePathHelper.writeNewPostToSubscribersDB(myUuid, post);
+            FirebasePathHelper.getInstance().writeNewPostToSubscribersDB(myUuid, post);
         }
     }
 

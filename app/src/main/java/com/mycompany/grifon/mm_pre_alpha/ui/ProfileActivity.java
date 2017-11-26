@@ -53,6 +53,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     private TextView tv_subscribeMe;
     private TextView tv_numberOfSameSongs;
     private TextView tv_sameSongs;
+    private TextView tv_userInfo;
     private CheckBox checkBox;
     FirebaseUser user;
     Profile profile;//тот чел на которого ткнули чтобы посмотреть
@@ -93,6 +94,11 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         tv_numberOfSameSongs.setOnClickListener(this);
         tv_sameSongs = (TextView) findViewById(R.id.tv_same_songs);
         tv_sameSongs.setOnClickListener(this);
+
+        // нереализованный функционал
+        tv_userInfo = (TextView) findViewById(R.id.userINfo);
+        tv_userInfo.setOnClickListener(this);
+        tv_userInfo.setVisibility(View.INVISIBLE);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 

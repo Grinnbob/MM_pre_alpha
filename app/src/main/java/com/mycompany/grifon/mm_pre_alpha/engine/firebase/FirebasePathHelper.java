@@ -288,7 +288,7 @@ public class FirebasePathHelper {
         return getUserData("chats");
     }
 
-    public static DatabaseReference getMyProfile() {
+    public DatabaseReference getMyProfile() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         return getRoot().child(user.getUid());
     }

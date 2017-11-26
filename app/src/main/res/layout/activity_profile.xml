@@ -125,7 +125,8 @@
         android:id="@+id/subscribeCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_same_songs"
+        android:layout_alignBaseline="@+id/tv_subscribe_me"
+        android:layout_alignBottom="@+id/tv_subscribe_me"
         android:layout_centerHorizontal="true" />
 
     <TextView

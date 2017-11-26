@@ -129,6 +129,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             // нереализованный функционал
             tv_likes.setVisibility(View.INVISIBLE);
             checkBox.setVisibility(View.INVISIBLE);
+            btn_del.setVisibility(View.INVISIBLE);
 
             btn_del.setOnClickListener(this);
             btnv_play.setOnClickListener(this);
@@ -171,6 +172,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                     FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
                 }
             } else if (view.getId() == R.id.btn_del) {
+                // todo: delete posts
                 // somthing going wrong...
                 //String timeStamp = mData.get(getAdapterPosition()).getTimestamp();
                 //firebaseUtils.deletePostDB(timeStamp);
