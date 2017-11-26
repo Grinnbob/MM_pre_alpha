@@ -30,7 +30,7 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         final PlainChat chat = (PlainChat) getIntent().getSerializableExtra("chat");
-        reference= FirebasePathHelper.getChatMessagesReference(chat.getUuid());
+        reference= FirebasePathHelper.getInstance().getChatMessagesReference(chat.getUuid());
         input = (EditText) findViewById(R.id.editText);
 
         activity_chat = (RelativeLayout) findViewById(R.id.activity_chat);
@@ -42,7 +42,7 @@ public class ChatActivity extends AppCompatActivity {
                 //поле ввода
 
                 //считываем тект из поля ввода и отправляем новый экземпляр сообщения в БД firebase
-                FirebasePathHelper.addMessageToChat(chat.getUuid(), new Message(input.getText().toString(),
+                FirebasePathHelper.getInstance().addMessageToChat(chat.getUuid(), new Message(input.getText().toString(),
                                 FirebaseAuth.getInstance().getCurrentUser().getEmail()));
                 input.setText("");
             }
