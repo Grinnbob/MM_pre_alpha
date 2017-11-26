@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,11 +46,6 @@ import java.util.UUID;
 public class ProfileActivity extends EBActivity implements View.OnClickListener {
     private static final String TAG = ProfileActivity.class.getSimpleName();
     private Toolbar toolbar;//recyclerwiew
-    private Intent intentSubscribers;
-    private Intent intentNews;
-    private Intent intentMusic;
-    private Intent intentChat;
-    private View chatView;
     private PlainUser plainUser;//либо я, либо тот чел на которого ткнули чтобы посмотреть
     private TextView tv_userName;
     private TextView tv_numberOfSubscribers;
@@ -65,7 +61,6 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     private Set<String> mySetSongs = new HashSet<>();//наш профиль
     private String numberOfSameSongs = "";
     private Button chatButton;
-    private Button btn_del;
 
     private static FirebaseUtils firebaseUtils;
 
@@ -132,12 +127,12 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 // отписка
                 if (profile.getSubscribers().size() > 0) {
                     profile.getSubscribers().remove(user.getUid());
-                    FirebasePathHelper.writeNewProfileDB(profile);
+                    FirebasePathHelper.getInstance().writeNewProfileDB(profile);
                 }
 
                 if (myProfile.getSubscriptions().size() > 0) {
                     myProfile.getSubscriptions().remove(plainUser.getUuid());
-                    FirebasePathHelper.writeNewProfileDB(myProfile);
+                    FirebasePathHelper.getInstance().writeNewProfileDB(myProfile);
                 }
 
                 // delete posts from wall
@@ -150,11 +145,11 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                     subscribers = new HashMap<>();
                 }
                 subscribers.put(user.getUid(), new PlainUser(myProfile.getName(), user.getUid()));
-                FirebasePathHelper.writeNewProfileDB(profile);
+                FirebasePathHelper.getInstance().writeNewProfileDB(profile);
 
                 Map<String, PlainUser> subscriptions = myProfile.getSubscriptions();
                 subscriptions.put(plainUser.getUuid(), plainUser);
-                FirebasePathHelper.writeNewProfileDB(myProfile);
+                FirebasePathHelper.getInstance().writeNewProfileDB(myProfile);
 
                 // add all posts to current user
                 firebaseUtils.addPostToSubscribersDB(plainUser);
@@ -194,9 +189,20 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                     userSetSongs.add(post.getSong().getName());
             }
 
+            boolean flag = false;
+            Map<String, PlainUser> subscribers = profile.getSubscribers();
+            for (final String s : subscribers.keySet()) {
+                final PlainUser user = subscribers.get(s);
+                flag = myProfile != null && !TextUtils.isEmpty(myProfile.getUuid()) &&
+                    myProfile.getUuid().equals(user.getUuid());
 
+                if (flag) break;
+            }
 
             setControls();
+            checkBox.setOnCheckedChangeListener(null);
+            checkBox.setChecked(flag);
+            checkBox.setOnCheckedChangeListener(checkBoxListener);
         }
 
     }
@@ -247,8 +253,8 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         if (plainUser == null) { //попали сюда не ткнув на какого-то пользователя, а ткнули на свой профиль просто
             plainUser = new PlainUser(user);
         }
-        FirebasePathHelper.getMyProfile(user.getUid());
-        FirebasePathHelper.getUserProfile(plainUser.getUuid());
+        FirebasePathHelper.getInstance().getMyProfile(user.getUid());
+        FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
 
         try {
             // получаем полный список своих постов
@@ -329,7 +335,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             pc = myProfile.getPlainChatWithUser(plainUser);
             if (pc == null) {
                 pc = new PlainChat(myProfile.getName() + " with " + plainUser.getName(), UUID.randomUUID().toString(), Arrays.asList(myProfile.toPlain(), plainUser));
-                FirebasePathHelper.createChat(pc);
+                FirebasePathHelper.getInstance().createChat(pc);
             }
             intentChat.putExtra("chat", (Serializable) pc);
             startActivity(intentChat);
@@ -349,9 +355,6 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             //c.startActivity(i);
             startActivity(intentSubscriptions);
             finish();
-        }
-        if (view.getId() == R.id.btn_del) {
-
         }
     }
 

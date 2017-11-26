@@ -157,7 +157,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         String currentTime = dateFormat.format(currentTimestamp);
                         Post repostedPost = new Post(post.getText(), post.getSong(), currentTime);
-                        FirebasePathHelper.writeNewPostDB(uuid, repostedPost);
+                        FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
                     } else {
                         // работает не так, как хотелось бы
                         btnv_repost.setVisibility(View.INVISIBLE);
@@ -168,7 +168,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String currentTime = dateFormat.format(currentTimestamp);
                     Post repostedPost = new Post(post.getText(), post.getSong(), currentTime);
-                    FirebasePathHelper.writeNewPostDB(uuid, repostedPost);
+                    FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
                 }
             } else if (view.getId() == R.id.btn_del) {
                 // somthing going wrong...

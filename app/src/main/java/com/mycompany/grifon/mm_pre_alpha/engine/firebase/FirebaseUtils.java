@@ -26,7 +26,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class FirebaseUtils {
 
@@ -119,11 +123,11 @@ public class FirebaseUtils {
             try {
                 post = new Post(postText, info, currentTime);
                 // пишем post в Database in my profile
-                FirebasePathHelper.writeNewPostDB(myUuid, post);
+                FirebasePathHelper.getInstance().writeNewPostDB(myUuid, post);
 
                 post = new Post(postText, info, plainUser, currentTime);
                 // пишем post в Database in subscribers profiles
-                FirebasePathHelper.writeNewPostToSubscribersDB(myUuid, post);
+                FirebasePathHelper.getInstance().writeNewPostToSubscribersDB(myUuid, post);
 
             } catch (Exception e) {
                 Log.d("myLog!!!", "post didn't added in firebase: " + e);
@@ -220,33 +224,6 @@ public class FirebaseUtils {
         return mDataSet;
     }
 
-/*
-// не используется
-    // returns Set of my songs
-    public Set<String> getSongSet(String uuid) {
-        final Set<String> myDataSet = new HashSet<>();
-        //не поддерживает многопоточность
-        // all posts
-        databaseRef.child("users").child(uuid).child("posts").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.e("FB", "Current thread: " + Thread.currentThread().getName());
-                Post post;
-                //final Set<String> myDataSet = new HashSet<>();
-                for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                    post = dsp.getValue(Post.class);
-                    if (post.getAuthor() == null)
-                        myDataSet.add(post.getSong().getName());
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-        return myDataSet;
-    }
-*/
     // добавляем существующие посты новому подписчику в ленту
     public void addPostToSubscribersDB(final PlainUser subscribtionPlainUser) {
         // all posts
@@ -259,7 +236,7 @@ public class FirebaseUtils {
                     post = dsp.getValue(Post.class);
                     if (post.getAuthor() == null) {
                         Post subPost = new Post(post.getText(), post.getSong(), subscribtionPlainUser, post.getTimestamp());
-                        FirebasePathHelper.writeNewPostDB(myUuid, subPost);
+                        FirebasePathHelper.getInstance().writeNewPostDB(myUuid, subPost);
                     }
                 }
             }

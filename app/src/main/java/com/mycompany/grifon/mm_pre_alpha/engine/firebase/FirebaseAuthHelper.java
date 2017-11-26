@@ -69,7 +69,7 @@ public class FirebaseAuthHelper {
                 if (newUser) {
                     Profile myProfile = new Profile(userName, uuid);
                     //firebasePathHelper.uploadProfileDB(myProfile);
-                    FirebasePathHelper.writeNewProfileDB(myProfile);
+                    FirebasePathHelper.getInstance().writeNewProfileDB(myProfile);
                 }
                 eventBus.post(new LoginEvent(success, email));
             }
