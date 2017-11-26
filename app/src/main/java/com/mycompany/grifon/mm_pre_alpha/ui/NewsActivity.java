@@ -30,7 +30,6 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
 
     private Toolbar toolbar;
 
-    private Intent intentSubscribers;
     private Intent intentMusic;
     private Intent intentProfile;
 

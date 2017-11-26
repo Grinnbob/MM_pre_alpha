@@ -50,8 +50,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.splash.SplashActivity"
-            android:theme="@style/SplashTheme">
-        </activity>
+            android:theme="@style/SplashTheme"></activity>
+        <activity android:name=".ui.AddSongToPostActivity"></activity>
     </application>
 
 </manifest>
