@@ -214,10 +214,9 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     }
 
     void setControls() {
-        boolean isMine = myProfile != null && profile != null && myProfile.getUuid().equals(profile.getUuid());
+        boolean isMine = user!=null &&  plainUser != null && user.getUid().equals(plainUser.getUuid());
         if (isMine) {
             //chatView.setVisibility(View.INVISIBLE);//later
-
             checkBox.setVisibility(View.INVISIBLE);
             chatButton.setVisibility(View.INVISIBLE);
             tv_subscribeMe.setVisibility(View.INVISIBLE);
@@ -263,11 +262,16 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
 
         try {
+            // подключаемся к Firebase
+            firebaseUtils = new FirebaseUtils();
             // получаем полный список своих постов
             //final String numberOfSameSongs;
             String currentUuid;
             final boolean profileType;
             boolean isMine = user != null && plainUser != null && user.getUid().equals(plainUser.getUuid());
+
+            //Vlad: Думаю это лишний кусок кода
+            //-----------------------------------------------------------------------------
             if (isMine) {
                 currentUuid = user.getUid();
                 profileType = true;
@@ -284,6 +288,8 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 // считаем совпадения по песням
                 //numberOfSameSongs = getNumberOfTheSameSongs(user.getUid(), currentUuid);
             }
+            //-----------------------------------------------------------------------------
+
 
             // my posts
             final List<Post> currentDataSet = firebaseUtils.getPostSet(currentUuid, true);
@@ -390,6 +396,9 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 this.finish();
                 break;
             case R.id.profile:
+                Intent intentProfile = new Intent(this, ProfileActivity.class);
+                startActivity(intentProfile);
+                this.finish();
                 break;
             default:
                 return super.onOptionsItemSelected(item);

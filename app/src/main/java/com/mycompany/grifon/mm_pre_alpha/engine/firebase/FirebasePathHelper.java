@@ -51,11 +51,14 @@ public class FirebasePathHelper {
     }
 
     private ValueEventListener myProfileListener = new ValueEventListener() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             Profile profile = dataSnapshot.getValue(Profile.class);
             //event fired!
-            EventBus.getDefault().post(new MyProfileEvent(profile));
+            if ((user.getUid()).equals(profile.getUuid())) {
+                EventBus.getDefault().post(new MyProfileEvent(profile));
+            }
         }
 
         @Override
@@ -65,11 +68,14 @@ public class FirebasePathHelper {
     };
 
     private ValueEventListener userProfileListener = new ValueEventListener() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             Profile profile = dataSnapshot.getValue(Profile.class);
             //event fired!
-            EventBus.getDefault().post(new UserProfileEvent(profile));
+            if (!(user.getUid()).equals(profile.getUuid())) {
+                EventBus.getDefault().post(new UserProfileEvent(profile));
+            }
         }
 
         @Override
