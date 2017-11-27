@@ -40,7 +40,7 @@
             android:label="@string/action_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.ChatActivity" />
-        <activity android:name=".ui.SearchActivity" />
+        <activity android:name=".ui.SearchMusicActivity" />
         <activity
             android:name=".ui.SubscriptionsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -50,8 +50,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.splash.SplashActivity"
-            android:theme="@style/SplashTheme"></activity>
-        <activity android:name=".ui.AddSongToPostActivity"></activity>
+            android:theme="@style/SplashTheme" />
+        <activity android:name=".ui.AddSongToPostActivity" />
     </application>
 
 </manifest>

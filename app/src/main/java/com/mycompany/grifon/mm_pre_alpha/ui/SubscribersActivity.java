@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,17 +29,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SubscribersActivity extends EBActivity {
+public class SubscribersActivity extends EBActivity implements View.OnClickListener {
 
     private Toolbar toolbar;
 
-    RecyclerView rvSubscribers;
-    SubscribersAdapter subscribersAdapter;
-
+    private RecyclerView rvSubscribers;
+    private SubscribersAdapter subscribersAdapter;
+    private EditText et_searchUsers;
     private PlainUser plainUser;
-    FirebaseUser user;
-    Profile profile;//тот чел на которого ткнули чтобы посмотреть
-    Profile myProfile;//наш профиль
+    public FirebaseUser user;
+    private Profile profile;//тот чел на которого ткнули чтобы посмотреть
+    private Profile myProfile;//наш профиль
+    private Map<String, PlainUser> subscribers;
+    private String searchName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +52,16 @@ public class SubscribersActivity extends EBActivity {
         setSupportActionBar(toolbar);
 
         rvSubscribers = (RecyclerView) findViewById(R.id.rvSubscribers);
-        subscribersAdapter= new SubscribersAdapter(this);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
+        subscribersAdapter = new SubscribersAdapter(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rvSubscribers.setLayoutManager(layoutManager);
         rvSubscribers.setAdapter(subscribersAdapter);
         //FirebasePathHelper.requestAllUsers();
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
+        et_searchUsers = (EditText) findViewById(R.id.et_search_users);
+        findViewById(R.id.btn_search_subscribers).setOnClickListener(this);
     }
 
     @Override
@@ -75,9 +81,26 @@ public class SubscribersActivity extends EBActivity {
         //   plainUser = new PlainUser(user.getDisplayName(), user.getUid());
         myProfile = evt.getProfile();
         if (myProfile != null && myProfile.getUuid().equals(plainUser.getUuid())) {
-            Map<String, PlainUser> subscribers = myProfile.getSubscribers();
+            subscribers = myProfile.getSubscribers();
+            if (!(searchName == null || "".equals(searchName))) {
+                for(String key : subscribers.keySet()){
+                    if(!subscribers.get(key).getName().toLowerCase().contains(searchName))
+                        subscribers.remove(key);
+                }
+            }
             subscribersAdapter.replaceData(new ArrayList<>(subscribers.values()));
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        // поиск людей
+        if (view.getId() == R.id.btn_search_subscribers) {
+            searchName = et_searchUsers.getText().toString().toLowerCase();
+            FirebasePathHelper.getInstance().getMyProfile(user.getUid());
+            FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
+        }
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -87,7 +110,13 @@ public class SubscribersActivity extends EBActivity {
         }
         profile = evt.getProfile();
         if (profile != null && profile.getUuid().equals(plainUser.getUuid())) {
-            Map<String, PlainUser> subscribers = profile.getSubscribers();
+            subscribers = myProfile.getSubscribers();
+            if (!(searchName == null || "".equals(searchName))) {
+                for(String key : subscribers.keySet()){
+                    if(!subscribers.get(key).getName().toLowerCase().contains(searchName))
+                        subscribers.remove(key);
+                }
+            }
             subscribersAdapter.replaceData(new ArrayList<>(subscribers.values()));
         }
 
@@ -103,7 +132,9 @@ public class SubscribersActivity extends EBActivity {
     public void onMessageEvent(AllMyUsersEvent event) {
         List<PlainUser> myPlainUsers = event.getPlainUsers();
         subscribersAdapter.replaceData(myPlainUsers);
-    };
+    }
+
+    ;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

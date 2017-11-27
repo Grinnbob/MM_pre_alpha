@@ -15,7 +15,7 @@ import com.mycompany.grifon.mm_pre_alpha.data.SongInfo;
 import java.util.List;
 
 // search music
-public class SearchActivity extends AppCompatActivity{
+public class SearchMusicActivity extends AppCompatActivity{
 
     // для стены
     private RecyclerView mRecyclerView;
@@ -32,7 +32,7 @@ public class SearchActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_search_music);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 

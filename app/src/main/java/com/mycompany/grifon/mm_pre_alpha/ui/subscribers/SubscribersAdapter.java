@@ -28,8 +28,6 @@ public class SubscribersAdapter extends RecyclerView.Adapter<SubscribersViewhold
         notifyDataSetChanged();
     }
 
-    ;
-
     @Override
     public SubscribersViewholder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new SubscribersViewholder(inflater.inflate(R.layout.recycler_subscribers_item, parent, false));

@@ -7,7 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
@@ -18,14 +22,20 @@ import com.mycompany.grifon.mm_pre_alpha.engine.eventbus.EBActivity;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 
-public class AllUsersActivity extends EBActivity {
+public class AllUsersActivity extends EBActivity implements View.OnClickListener {
 
     private Toolbar toolbar;
 
-    RecyclerView rvSubscribers;
-    SubscribersAdapter subscribersAdapter;
+    private RecyclerView rvSubscribers;
+    private SubscribersAdapter subscribersAdapter;
+    private EditText et_searchUsers;
+    private List<PlainUser> myPlainUsers;
+    private String searchName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +46,16 @@ public class AllUsersActivity extends EBActivity {
         setSupportActionBar(toolbar);
 
         rvSubscribers = (RecyclerView) findViewById(R.id.rvSubscribers);
-        subscribersAdapter= new SubscribersAdapter(this);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
+
+        createWall();
+
+        et_searchUsers = (EditText) findViewById(R.id.et_search_users);
+        findViewById(R.id.btn_search_subscribers).setOnClickListener(this);
+    }
+
+    private void createWall() {
+        subscribersAdapter = new SubscribersAdapter(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rvSubscribers.setLayoutManager(layoutManager);
         rvSubscribers.setAdapter(subscribersAdapter);
         FirebasePathHelper.getInstance().requestAllUsers();
@@ -49,15 +67,46 @@ public class AllUsersActivity extends EBActivity {
         return true;
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(AllMyUsersEvent event) {
-        List<PlainUser> myPlainUsers = event.getPlainUsers();
+        myPlainUsers = event.getPlainUsers();
+       // Падало потому что мы удаляли из листа - то у нас всё падало
+        /* List<PlainUser> myPlainUsersCopy = Collections.singletonList(myPlainUsers);
+        if (!(searchName == null || "".equals(searchName))) {
+
+            for (PlainUser myPlainUser : myPlainUsers) {
+                if (!myPlainUser.getName().toLowerCase().contains(searchName)) {
+                    myPlainUsers.remove(myPlainUser);
+                }
+            }
+        }*/
+        if (!(searchName == null || "".equals(searchName))) {
+            for (ListIterator<PlainUser> iter = myPlainUsers.listIterator(); iter.hasNext();) {
+                PlainUser myPlainUser = iter.next();
+                if (!myPlainUser.getName().toLowerCase().contains(searchName)) {
+                    iter.remove();
+                }
+                // 1 - can call methods of element
+                // 2 - can use iter.remove() to remove the current element from the list
+                // 3 - can use iter.add(...) to insert a new element into the list
+                //     between element and iter->next()
+                // 4 - can use iter.set(...) to replace the current element
+
+                // ...
+            }
+        }
+        //subscribersAdapter.replaceData();
         subscribersAdapter.replaceData(myPlainUsers);
-    };
+    }
 
-
-
+    @Override
+    public void onClick(View view) {
+        // поиск людей
+        if (view.getId() == R.id.btn_search_subscribers) {
+            searchName = et_searchUsers.getText().toString().toLowerCase();
+            FirebasePathHelper.getInstance().requestAllUsers();
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

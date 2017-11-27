@@ -52,6 +52,7 @@ public class FirebasePathHelper {
 
     private ValueEventListener myProfileListener = new ValueEventListener() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             Profile profile = dataSnapshot.getValue(Profile.class);
@@ -69,6 +70,7 @@ public class FirebasePathHelper {
 
     private ValueEventListener userProfileListener = new ValueEventListener() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             Profile profile = dataSnapshot.getValue(Profile.class);
@@ -142,6 +144,28 @@ public class FirebasePathHelper {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     PlainUser plainUser = postSnapshot.getValue(PlainUser.class);
                     plainUsers.add(plainUser);
+                    Log.e("Get Data", plainUser.toString());
+                }
+                //event fired!
+                EventBus.getDefault().post(new AllMyUsersEvent(plainUsers));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void requestSearchedUsers(final String searchedName) {
+        getRoot().child("users").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<PlainUser> plainUsers = new ArrayList<>();
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    PlainUser plainUser = postSnapshot.getValue(PlainUser.class);
+                    if (plainUser.getName().toLowerCase().contains(searchedName.toLowerCase()))
+                        plainUsers.add(plainUser);
                     Log.e("Get Data", plainUser.toString());
                 }
                 //event fired!

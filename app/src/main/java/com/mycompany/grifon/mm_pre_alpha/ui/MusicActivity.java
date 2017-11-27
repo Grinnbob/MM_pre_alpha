@@ -19,7 +19,6 @@ import android.widget.EditText;
 
 import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapterMusic;
 import com.mycompany.grifon.mm_pre_alpha.R;
-import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.data.SongInfo;
 
@@ -69,7 +68,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             }
         }, 1*500);
 
-        et_searchName = (EditText) findViewById(R.id.et_search);
+        et_searchName = (EditText) findViewById(R.id.et_search_music);
         findViewById(R.id.btn_search_music).setOnClickListener(this);
         findViewById(R.id.btn_add_music).setOnClickListener(this);
     }
@@ -95,7 +94,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
             // search music
         } else if(view.getId() == R.id.btn_search_music) {
-            searchActivity =  new Intent(this, SearchActivity.class);
+            searchActivity =  new Intent(this, SearchMusicActivity.class);
             searchActivity.putExtra("data", et_searchName.getText().toString());
             startActivity(searchActivity);
         }
