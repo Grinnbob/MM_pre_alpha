@@ -30,7 +30,6 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
 
     private Toolbar toolbar;
 
-    private Intent intentSubscribers;
     private Intent intentMusic;
     private Intent intentProfile;
 
@@ -91,7 +90,7 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
     // создаём стену
     private void createWall(List<Post> myDataset, String myUuid) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, false, false);
+        mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, false, false, firebaseUtils);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

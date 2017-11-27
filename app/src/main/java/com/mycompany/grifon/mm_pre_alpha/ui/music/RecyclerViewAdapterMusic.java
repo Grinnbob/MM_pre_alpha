@@ -1,6 +1,7 @@
 package com.mycompany.grifon.mm_pre_alpha.ui.music;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +10,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.mycompany.grifon.mm_pre_alpha.R;
+import com.mycompany.grifon.mm_pre_alpha.data.Post;
 import com.mycompany.grifon.mm_pre_alpha.data.SongInfo;
 import com.mycompany.grifon.mm_pre_alpha.engine.music.Player;
+import com.mycompany.grifon.mm_pre_alpha.ui.AddSongToPostActivity;
+import com.mycompany.grifon.mm_pre_alpha.ui.MusicActivity;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,11 +28,13 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
     private ItemClickListener mClickListener;
 
     private Player player;
+    private Context context;
 
     // data is passed into the constructor
     public RecyclerViewAdapterMusic(Context context, List<SongInfo> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        this.context = context;
 
         player = new Player();
     }
@@ -60,6 +66,7 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
         public TextView tv_songName;
         public Button btnv_play;
         public Button btnv_pause;
+        public Button btnv_plusSong;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -67,9 +74,11 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
             tv_songName = (TextView) itemView.findViewById(R.id.tv_recycler_item);
             btnv_play = (Button) itemView.findViewById(R.id.btn_play);
             btnv_pause = (Button) itemView.findViewById(R.id.btn_pause);
+            btnv_plusSong = (Button) itemView.findViewById(R.id.btn_plus_song);
 
             btnv_play.setOnClickListener(this);
             btnv_pause.setOnClickListener(this);
+            btnv_plusSong.setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
 
@@ -82,6 +91,13 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
                 player.startPlayback(mData.get(getAdapterPosition()).getUrl());
             } else if(view.getId() == R.id.btn_pause) {
                 player.stopPlayback();
+            }else if(view.getId() == R.id.btn_plus_song) {
+                Intent intent = new Intent(context, AddSongToPostActivity.class);
+                SongInfo songInfo = mData.get(getAdapterPosition());
+                intent.putExtra("song_name", songInfo.getName());
+                intent.putExtra("song_url", songInfo.getUrl());
+                //intent.putExtra("song_likes", songInfo.getLikes());
+                context.startActivity(intent);
             }
         }
     }

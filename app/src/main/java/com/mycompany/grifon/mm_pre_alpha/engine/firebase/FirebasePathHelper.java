@@ -298,4 +298,5 @@ public class FirebasePathHelper {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         return getRoot().child(user.getUid());
     }
+
 }

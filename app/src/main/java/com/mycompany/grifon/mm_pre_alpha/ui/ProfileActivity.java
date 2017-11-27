@@ -53,6 +53,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     private TextView tv_subscribeMe;
     private TextView tv_numberOfSameSongs;
     private TextView tv_sameSongs;
+    private TextView tv_userInfo;
     private CheckBox checkBox;
     FirebaseUser user;
     Profile profile;//тот чел на которого ткнули чтобы посмотреть
@@ -94,15 +95,33 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         tv_sameSongs = (TextView) findViewById(R.id.tv_same_songs);
         tv_sameSongs.setOnClickListener(this);
 
+        // нереализованный функционал
+        tv_userInfo = (TextView) findViewById(R.id.userINfo);
+        tv_userInfo.setOnClickListener(this);
+        tv_userInfo.setVisibility(View.INVISIBLE);
+
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        // подключаемся к Firebase
+        firebaseUtils = new FirebaseUtils();
+
+       /*Intent intent = getIntent();
+        plainUser = (PlainUser) intent.getSerializableExtra("user");
+        if (plainUser == null) { //попали сюда не ткнув на какого-то пользователя, а ткнули на свой профиль просто
+            plainUser = new PlainUser(user);
+        }
+
+        FirebasePathHelper.getMyProfile(user.getUid());
+        FirebasePathHelper.getUserProfile(plainUser.getUuid());*/
+
     }
 
     // создаём стену
     private void createWall(List<Post> myDataset, String myUuid, boolean profyleType) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, profyleType, true);
+        mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, profyleType, true, firebaseUtils);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -123,7 +142,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 }
 
                 // delete posts from wall
-                firebaseUtils.deletePostToSubscribersDB(plainUser);
+                firebaseUtils.deleteSubscribersPostsDB(plainUser);
 
             } else {
                 // подписка

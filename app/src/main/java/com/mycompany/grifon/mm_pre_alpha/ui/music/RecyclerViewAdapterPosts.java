@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
+import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.engine.music.Player;
 
 import java.sql.Timestamp;
@@ -35,8 +36,10 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
     // true = ProfileActivity, false = NewsActivity
     private boolean activityType;
 
+    private FirebaseUtils firebaseUtils;
+
     // data is passed into the constructor
-    public RecyclerViewAdapterPosts(Context context, List<Post> data, String uuid, boolean profileType, boolean activityType) {
+    public RecyclerViewAdapterPosts(Context context, List<Post> data, String uuid, boolean profileType, boolean activityType, FirebaseUtils firebaseUtils) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
 
@@ -44,6 +47,8 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
         this.uuid = uuid;
         this.profyleType = profileType;
         this.activityType = activityType;
+
+        this.firebaseUtils = firebaseUtils;
     }
 
     // inflates the row layout from xml when needed
@@ -96,6 +101,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
         public Button btnv_play;
         public Button btnv_pause;
         public Button btnv_repost;
+        public Button btn_del;
         public CheckBox checkBox;
 
         public ViewHolder(View itemView) {
@@ -108,14 +114,24 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             btnv_play = (Button) itemView.findViewById(R.id.btn_play);
             btnv_pause = (Button) itemView.findViewById(R.id.btn_pause);
             btnv_repost = (Button) itemView.findViewById(R.id.btn_repost);
-            //checkBox = (CheckBox) itemView.findViewById(R.id.checkBox_like);
+            btn_del = (Button) itemView.findViewById(R.id.btn_del);
+            checkBox = (CheckBox) itemView.findViewById(R.id.checkBox_like);
             //checkBox.setOnCheckedChangeListener(checkBoxListener);
 
             // if my profile - no reposts
-            if(profyleType) {
+            // and you can del posts
+            if (profyleType) {
                 btnv_repost.setVisibility(View.INVISIBLE);
+            } else {
+                btn_del.setVisibility(View.INVISIBLE);
             }
 
+            // нереализованный функционал
+            tv_likes.setVisibility(View.INVISIBLE);
+            checkBox.setVisibility(View.INVISIBLE);
+            btn_del.setVisibility(View.INVISIBLE);
+
+            btn_del.setOnClickListener(this);
             btnv_play.setOnClickListener(this);
             btnv_pause.setOnClickListener(this);
             btnv_repost.setOnClickListener(this);
@@ -135,7 +151,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             } else if (view.getId() == R.id.btn_repost) {
                 Post post = mData.get(getAdapterPosition());
                 // if NewsActivity
-                if(!activityType) {
+                if (!activityType) {
                     // if author not I
                     if (post.getAuthor() != null) {
                         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
@@ -155,6 +171,11 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                     Post repostedPost = new Post(post.getText(), post.getSong(), currentTime);
                     FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
                 }
+            } else if (view.getId() == R.id.btn_del) {
+                // todo: delete posts
+                // somthing going wrong...
+                //String timeStamp = mData.get(getAdapterPosition()).getTimestamp();
+                //firebaseUtils.deletePostDB(timeStamp);
             }
         }
 
