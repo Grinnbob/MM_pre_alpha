@@ -377,6 +377,9 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 this.finish();
                 break;
             case R.id.profile:
+                Intent intentProfile = new Intent(this, ProfileActivity.class);
+                startActivity(intentProfile);
+                this.finish();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
