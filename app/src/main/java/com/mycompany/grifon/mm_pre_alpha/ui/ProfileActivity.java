@@ -97,17 +97,6 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
-
-       /*Intent intent = getIntent();
-        plainUser = (PlainUser) intent.getSerializableExtra("user");
-        if (plainUser == null) { //попали сюда не ткнув на какого-то пользователя, а ткнули на свой профиль просто
-            plainUser = new PlainUser(user);
-        }
-
-        FirebasePathHelper.getMyProfile(user.getUid());
-        FirebasePathHelper.getUserProfile(plainUser.getUuid());*/
-
     }
 
     // создаём стену
@@ -134,7 +123,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 }
 
                 // delete posts from wall
-                //firebaseUtils.deletePostToSubscribersDB(plainUser);
+                firebaseUtils.deletePostToSubscribersDB(plainUser);
 
             } else {
                 // подписка
@@ -150,7 +139,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 FirebasePathHelper.getInstance().writeNewProfileDB(myProfile);
 
                 // add all posts to current user
-                //firebaseUtils.addPostToSubscribersDB(plainUser);
+                firebaseUtils.addPostToSubscribersDB(plainUser);
             }
         }
     };
@@ -206,10 +195,9 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     }
 
     void setControls() {
-        boolean isMine = myProfile != null && profile != null && myProfile.getUuid().equals(profile.getUuid());
+        boolean isMine = user!=null &&  plainUser != null && user.getUid().equals(plainUser.getUuid());
         if (isMine) {
             //chatView.setVisibility(View.INVISIBLE);//later
-
             checkBox.setVisibility(View.INVISIBLE);
             chatButton.setVisibility(View.INVISIBLE);
             tv_subscribeMe.setVisibility(View.INVISIBLE);
@@ -262,6 +250,9 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             String currentUuid;
             final boolean profileType;
             boolean isMine = user != null && plainUser != null && user.getUid().equals(plainUser.getUuid());
+
+            //Vlad: Думаю это лишний кусок кода
+            //-----------------------------------------------------------------------------
             if (isMine) {
                 currentUuid = user.getUid();
                 profileType = true;
@@ -278,6 +269,8 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 // считаем совпадения по песням
                 //numberOfSameSongs = getNumberOfTheSameSongs(user.getUid(), currentUuid);
             }
+            //-----------------------------------------------------------------------------
+
 
             // my posts
             final List<Post> currentDataSet = firebaseUtils.getPostSet(currentUuid, true);
