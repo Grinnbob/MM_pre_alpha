@@ -262,8 +262,6 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
 
         try {
-            // подключаемся к Firebase
-            firebaseUtils = new FirebaseUtils();
             // получаем полный список своих постов
             //final String numberOfSameSongs;
             String currentUuid;
@@ -335,7 +333,8 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             int c = resSet.size();
             c = 1 - (c - b) / a;
             Log.d("MY LOG:", "c: " + c);
-            return String.valueOf(c);
+            c *= 100;
+            return String.valueOf(c) + "%";
         }
     }
 

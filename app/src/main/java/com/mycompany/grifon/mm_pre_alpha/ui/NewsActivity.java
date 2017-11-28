@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.mycompany.grifon.mm_pre_alpha.R;
@@ -33,6 +34,7 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
     private Intent intentMusic;
     private Intent intentProfile;
 
+    private ProgressBar progressBar;
     private EditText postText;
     // song name to write in database and storage
     private String name = null;
@@ -54,6 +56,9 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(ProgressBar.INVISIBLE);
 
         //for splash
         //Intent intent = getIntent();
@@ -117,8 +122,10 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
                 selectedAudioPath = getPath(selectedAudioUri);
 
                 // загружаем в бд музыку
-                // и создаём свой пост,
-                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, postText.getText().toString());
+                // и создаём свой пост
+                progressBar.setVisibility(ProgressBar.VISIBLE);
+                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, postText.getText().toString(), progressBar);
+
             }
         }
     }

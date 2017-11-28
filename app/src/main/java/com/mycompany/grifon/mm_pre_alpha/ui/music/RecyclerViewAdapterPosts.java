@@ -42,6 +42,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
     public RecyclerViewAdapterPosts(Context context, List<Post> data, String uuid, boolean profileType, boolean activityType, FirebaseUtils firebaseUtils) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        Collections.reverse(data);
 
         player = new Player();
         this.uuid = uuid;
@@ -69,7 +70,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             String postText = mData.get(position).getText();
             String authorName = null;
             if (mData.get(position).getAuthor() != null) {
-                authorName = mData.get(position).getAuthor().getName();
+                authorName = mData.get(position).getAuthor().getName() + ": ";
                 holder.tv_authorName.setText(authorName);
             }
             Log.d("MY LOG:", "Author name: " + authorName);
@@ -129,7 +130,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             // нереализованный функционал
             tv_likes.setVisibility(View.INVISIBLE);
             checkBox.setVisibility(View.INVISIBLE);
-            btn_del.setVisibility(View.INVISIBLE);
+            //btn_del.setVisibility(View.INVISIBLE);
 
             btn_del.setOnClickListener(this);
             btnv_play.setOnClickListener(this);
@@ -174,8 +175,8 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             } else if (view.getId() == R.id.btn_del) {
                 // todo: delete posts
                 // somthing going wrong...
-                //String timeStamp = mData.get(getAdapterPosition()).getTimestamp();
-                //firebaseUtils.deletePostDB(timeStamp);
+                String timeStamp = mData.get(getAdapterPosition()).getTimestamp();
+                firebaseUtils.deletePostDB(timeStamp);
             }
         }
 

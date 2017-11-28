@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import java.util.List;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapterMusic;
 import com.mycompany.grifon.mm_pre_alpha.R;
@@ -25,9 +26,7 @@ import com.mycompany.grifon.mm_pre_alpha.data.SongInfo;
 public class MusicActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Toolbar toolbar;
-    private Intent intentSubscribers;
-    private Intent intentNews;
-    private Intent intentProfile;
+    private ProgressBar progressBar;
     private Intent searchActivity;
 
     private static final int SELECT_MUSIC = 1;
@@ -53,6 +52,9 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(ProgressBar.INVISIBLE);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -110,7 +112,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 selectedAudioPath = getPath(selectedAudioUri);
 
                 // загружаем в бд музыку и создаём пустой пост в профайле
-                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, "none");
+                progressBar.setVisibility(ProgressBar.VISIBLE);
+                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, "none", progressBar);
             }
         }
     }

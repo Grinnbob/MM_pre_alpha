@@ -3,6 +3,7 @@ package com.mycompany.grifon.mm_pre_alpha.engine.firebase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -62,7 +63,7 @@ public class FirebaseUtils {
     }
 
     // загружает файл в Cloud Storage и его uri в Database
-    public void uploadFileInFirebase(final Uri uri, final String name, final String postText) {
+    public void uploadFileInFirebase(final Uri uri, final String name, final String postText, final ProgressBar progressBar) {
         // Создаем ссылку в Storage Firebase
         StorageReference myRef = storageRef.child("music").child(name);
         /*
@@ -85,6 +86,8 @@ public class FirebaseUtils {
                 @SuppressWarnings("VisibleForTests")
                 double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
                 System.out.println("Upload progress: " + progress + "%");
+                int currentprogress = (int) progress;
+                progressBar.setProgress(currentprogress);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -367,8 +370,8 @@ public class FirebaseUtils {
     }
     */
 
-    // удаляем посты из своей стены
     public void deletePostDB(final String postTimestamp) {
+        // удаляем посты из своей стены
         databaseRef.child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -386,8 +389,8 @@ public class FirebaseUtils {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-
-        //удаляем посты из стен подписчиков
+/*
+        // удаляем посты из стен подписчиков
         databaseRef.child(myUuid).child("subscribers").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -402,7 +405,7 @@ public class FirebaseUtils {
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
-        });
+        });*/
     }
 
     public void delSubPostDB(String uuid, final String postTimestamp){

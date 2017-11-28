@@ -48,13 +48,26 @@
         android:hint="search"
         android:textSize="10dp" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="20"
+        android:paddingLeft="130dp"
+        android:paddingRight="10dp"
+        android:theme="@style/CustomProgressBar"
+        android:layout_below="@+id/btn_add_music"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="vertical"
-        android:layout_below="@+id/btn_add_music"
+        android:layout_below="@+id/progressBar"
         android:scrollbars="none"/>
 
 </RelativeLayout>

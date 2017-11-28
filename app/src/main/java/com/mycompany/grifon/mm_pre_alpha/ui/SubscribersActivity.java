@@ -134,8 +134,6 @@ public class SubscribersActivity extends EBActivity implements View.OnClickListe
         subscribersAdapter.replaceData(myPlainUsers);
     }
 
-    ;
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Операции для выбранного пункта меню
