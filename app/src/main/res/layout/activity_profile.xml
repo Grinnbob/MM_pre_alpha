@@ -39,9 +39,9 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="subscribe"
-        android:layout_below="@+id/tv_same_songs"
-        android:layout_alignLeft="@+id/tv_same_songs"
-        android:layout_alignStart="@+id/tv_same_songs" />
+        android:layout_above="@+id/tv_number_of_the_same_songs"
+        android:layout_alignLeft="@+id/Subscriptions"
+        android:layout_alignStart="@+id/Subscriptions" />
 
 
     <!---->
@@ -63,8 +63,7 @@
         android:layout_height="wrap_content"
         android:text="0"
         android:layout_below="@+id/toolbar"
-        android:layout_toRightOf="@+id/Subscriptions"
-        android:layout_toEndOf="@+id/Subscriptions" />
+        android:layout_toRightOf="@+id/Subscriptions" />
 
     <TextView
         android:id="@+id/Subscriptions"
@@ -104,22 +103,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Music identity "
-        android:layout_below="@+id/Subscriptions"
-        android:layout_alignLeft="@+id/Subscriptions"
-        android:layout_alignStart="@+id/Subscriptions"
-        android:layout_alignRight="@+id/Subscriptions"
-        android:layout_alignEnd="@+id/Subscriptions" />
+        android:layout_below="@+id/tv_subscribe_me"
+        android:layout_alignLeft="@+id/tv_subscribe_me"
+        android:layout_alignStart="@+id/tv_subscribe_me" />
 
     <TextView
         android:id="@+id/tv_number_of_the_same_songs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0%"
-        android:layout_below="@+id/tv_numberOfSubscriptions"
-        android:layout_alignLeft="@+id/tv_numberOfSubscriptions"
-        android:layout_alignStart="@+id/tv_numberOfSubscriptions"
+        android:layout_marginBottom="10dp"
+        android:layout_above="@+id/tv_userName"
+        android:layout_toRightOf="@+id/tv_same_songs"
         android:layout_alignRight="@+id/tv_numberOfSubscriptions"
         android:layout_alignEnd="@+id/tv_numberOfSubscriptions" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="20"
+        android:paddingLeft="60dp"
+        android:paddingRight="75dp"
+        android:layout_below="@+id/tv_same_songs"
+        android:layout_alignRight="@+id/tv_number_of_the_same_songs"
+        android:layout_alignEnd="@+id/tv_number_of_the_same_songs" />
 
     <CheckBox
         android:id="@+id/subscribeCheckBox"
@@ -127,7 +138,10 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/tv_subscribe_me"
         android:layout_alignBottom="@+id/tv_subscribe_me"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignRight="@+id/tv_numberOfSubscriptions"
+        android:layout_alignEnd="@+id/tv_numberOfSubscriptions"
+        android:layout_marginRight="30dp"
+        android:layout_marginEnd="30dp" />
 
     <TextView
         android:id="@+id/userINfo"
