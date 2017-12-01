@@ -1,33 +1,37 @@
 package com.mycompany.grifon.mm_pre_alpha.ui.music;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mycompany.grifon.mm_pre_alpha.R;
-import com.mycompany.grifon.mm_pre_alpha.data.Post;
 import com.mycompany.grifon.mm_pre_alpha.data.SongInfo;
-import com.mycompany.grifon.mm_pre_alpha.engine.music.Player;
+import com.mycompany.grifon.mm_pre_alpha.engine.music.MediaPlayerService;
 import com.mycompany.grifon.mm_pre_alpha.ui.AddSongToPostActivity;
-import com.mycompany.grifon.mm_pre_alpha.ui.MusicActivity;
 
 import java.util.Collections;
 import java.util.List;
 
 //https://ru.stackoverflow.com/questions/549695/%D1%80%D0%B0%D1%81%D1%81%D1%82%D0%BE%D1%8F%D0%BD%D0%B8%D0%B5-%D0%BC%D0%B5%D0%B6%D0%B4%D1%83-%D0%B0%D0%B9%D1%82%D0%B5%D0%BC%D0%B0%D0%BC%D0%B8-recyclerview
 //чтобы задать отступ между message_item
-public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewAdapterMusic.ViewHolder>  {
+public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewAdapterMusic.ViewHolder> {
 
     private List<SongInfo> mData = Collections.emptyList();
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
-    private Player player;
+    // player
+    private MediaPlayerService player;
+    boolean serviceBound = false;
     private Context context;
 
     // data is passed into the constructor
@@ -36,7 +40,39 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
         this.mData = data;
         this.context = context;
 
-        player = new Player();
+        //mediaPlayerService = new MediaPlayerService();
+    }
+
+    //Binding this Client to the AudioPlayer Service
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
+            player = binder.getService();
+            serviceBound = true;
+
+            //Toast.makeText(context, "Service Bound", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceBound = false;
+        }
+    };
+
+    // The following function creates a new instance of the MediaPlayerService and sends a media file to play
+    private void playAudio(String media) {
+        //Check is service is active
+        if (!serviceBound) {
+            Intent playerIntent = new Intent(context, MediaPlayerService.class);
+            playerIntent.putExtra("media", media);
+            context.startService(playerIntent);
+            context.bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        } else {
+            //Service is active
+            //Send media with BroadcastReceiver
+        }
     }
 
     // inflates the row layout from xml when needed
@@ -85,13 +121,28 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
         //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onClick(View view) {
-            // хз что это, возможно не нужно
-            //if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
-            if(view.getId() == R.id.btn_play) {
-                player.startPlayback(mData.get(getAdapterPosition()).getUrl());
-            } else if(view.getId() == R.id.btn_pause) {
-                player.stopPlayback();
-            }else if(view.getId() == R.id.btn_plus_song) {
+          if (view.getId() == R.id.btn_play) {
+                if (serviceBound) {
+                    // подпорка, надо нормально сделать
+                    context.unbindService(serviceConnection);
+                    serviceBound = false;
+                    //service is active
+                    player.stopSelf();
+
+                    playAudio(mData.get(getAdapterPosition()).getUrl());
+                } else {
+                    playAudio(mData.get(getAdapterPosition()).getUrl());
+                }
+            } else if (view.getId() == R.id.btn_pause) {
+                if (serviceBound) {
+                    // подпорка, надо нормально сделать
+                    context.unbindService(serviceConnection);
+                    serviceBound = false;
+                    //service is active
+                    player.stopSelf();
+                }
+                //mediaPlayerService.stopPlayback();
+            } else if (view.getId() == R.id.btn_plus_song) {
                 Intent intent = new Intent(context, AddSongToPostActivity.class);
                 SongInfo songInfo = mData.get(getAdapterPosition());
                 intent.putExtra("song_name", songInfo.getName());

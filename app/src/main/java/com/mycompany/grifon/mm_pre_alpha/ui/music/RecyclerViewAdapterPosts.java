@@ -1,6 +1,10 @@
 package com.mycompany.grifon.mm_pre_alpha.ui.music;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,14 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
-import com.mycompany.grifon.mm_pre_alpha.engine.music.Player;
+import com.mycompany.grifon.mm_pre_alpha.engine.music.MediaPlayerService;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -28,7 +32,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
-    private Player player;
+    private MediaPlayerService mediaPlayerService;
     private String uuid;
     // for reposts
     // true = my profile, false = not mine
@@ -38,18 +42,56 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
 
     private FirebaseUtils firebaseUtils;
 
+    // player
+    private MediaPlayerService player;
+    boolean serviceBound = false;
+    private Context context;
+
     // data is passed into the constructor
     public RecyclerViewAdapterPosts(Context context, List<Post> data, String uuid, boolean profileType, boolean activityType, FirebaseUtils firebaseUtils) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         Collections.reverse(data);
 
-        player = new Player();
+        this.context = context;
+
         this.uuid = uuid;
         this.profyleType = profileType;
         this.activityType = activityType;
 
         this.firebaseUtils = firebaseUtils;
+    }
+
+    //Binding this Client to the AudioPlayer Service
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
+            player = binder.getService();
+            serviceBound = true;
+
+            //Toast.makeText(context, "Service Bound", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceBound = false;
+        }
+    };
+
+    // The following function creates a new instance of the MediaPlayerService and sends a media file to play
+    private void playAudio(String media) {
+        //Check is service is active
+        if (!serviceBound) {
+            Intent playerIntent = new Intent(context, MediaPlayerService.class);
+            playerIntent.putExtra("media", media);
+            context.startService(playerIntent);
+            context.bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        } else {
+            //Service is active
+            //Send media with BroadcastReceiver
+        }
     }
 
     // inflates the row layout from xml when needed
@@ -142,13 +184,26 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
         //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onClick(View view) {
-            // хз что это, возможно не нужно
-            //if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
-
             if (view.getId() == R.id.btn_play) {
-                player.startPlayback(mData.get(getAdapterPosition()).getSong().getUrl());
+                if (serviceBound) {
+                    // подпорка, надо нормально сделать
+                    context.unbindService(serviceConnection);
+                    serviceBound = false;
+                    //service is active
+                    player.stopSelf();
+
+                    playAudio(mData.get(getAdapterPosition()).getSong().getUrl());
+                } else {
+                    playAudio(mData.get(getAdapterPosition()).getSong().getUrl());
+                }
             } else if (view.getId() == R.id.btn_pause) {
-                player.stopPlayback();
+                if (serviceBound) {
+                    // подпорка, надо нормально сделать
+                    context.unbindService(serviceConnection);
+                    serviceBound = false;
+                    //service is active
+                    player.stopSelf();
+                }
             } else if (view.getId() == R.id.btn_repost) {
                 Post post = mData.get(getAdapterPosition());
                 // if NewsActivity
