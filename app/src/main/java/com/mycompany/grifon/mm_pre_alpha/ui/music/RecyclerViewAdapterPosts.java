@@ -55,6 +55,8 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
         this.mInflater = LayoutInflater.from(context);
         this.mData = new ArrayList<>(data.values());
         originalData=data;
+        //        Collections.reverse(data);
+
         player = new Player();
         this.uuid = uuid;
         this.profyleType = profileType;

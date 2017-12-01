@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,6 +58,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     private TextView tv_sameSongs;
     private TextView tv_userInfo;
     private CheckBox checkBox;
+    private ProgressBar progressBar;
     FirebaseUser user;
     Profile profile;//тот чел на которого ткнули чтобы посмотреть
     Profile myProfile;//наш профиль
@@ -96,6 +98,9 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         tv_numberOfSameSongs.setOnClickListener(this);
         tv_sameSongs = (TextView) findViewById(R.id.tv_same_songs);
         tv_sameSongs.setOnClickListener(this);
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(ProgressBar.INVISIBLE);
 
         // нереализованный функционал
         tv_userInfo = (TextView) findViewById(R.id.userINfo);
@@ -233,7 +238,10 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             tv_subscribeMe.setVisibility(View.VISIBLE);
             tv_numberOfSameSongs.setVisibility(View.VISIBLE);
             tv_sameSongs.setVisibility(View.VISIBLE);
-            numberOfSameSongs = getNumberOfTheSameSongs(myProfile.getUuid(), profile.getUuid());
+            int c = getNumberOfTheSameSongs(myProfile.getUuid(), profile.getUuid());
+            numberOfSameSongs = String.valueOf(c) + "%";
+            progressBar.setVisibility(ProgressBar.VISIBLE);
+            progressBar.setProgress(c);
         }
     }
 
@@ -265,8 +273,6 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
 
         try {
-            // подключаемся к Firebase
-            firebaseUtils = new FirebaseUtils();
             // получаем полный список своих постов
             //final String numberOfSameSongs;
             String currentUuid;
@@ -316,7 +322,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     }
 
     // совпадения по песням
-    private String getNumberOfTheSameSongs(String myUid, String userUid) {
+    private int getNumberOfTheSameSongs(String myUid, String userUid) {
         final Set<String> resSet = new HashSet<>();
         Map<String, Post> posts = myProfile.getPosts();
         PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
@@ -331,16 +337,17 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         int b = userSetSongs.size();
         Log.d("MY LOG:", "b: " + b);
         if (a == 0)
-            return "0";
+            return 0;
         else if (b == 0)
-            return "0";
+            return 0;
         else {
             resSet.addAll(mySetSongs);
             resSet.addAll(userSetSongs);
             int c = resSet.size();
             c = 1 - (c - b) / a;
             Log.d("MY LOG:", "c: " + c);
-            return String.valueOf(c);
+            c *= 100;
+            return c;
         }
     }
 

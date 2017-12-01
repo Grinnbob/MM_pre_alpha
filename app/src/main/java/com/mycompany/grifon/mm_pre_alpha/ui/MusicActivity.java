@@ -16,19 +16,17 @@ import android.view.MenuItem;
 import android.view.View;
 import java.util.List;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapterMusic;
 import com.mycompany.grifon.mm_pre_alpha.R;
-import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.data.SongInfo;
 
 public class MusicActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Toolbar toolbar;
-    private Intent intentSubscribers;
-    private Intent intentNews;
-    private Intent intentProfile;
+    private ProgressBar progressBar;
     private Intent searchActivity;
 
     private static final int SELECT_MUSIC = 1;
@@ -55,6 +53,9 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(ProgressBar.INVISIBLE);
+
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         // подключаемся к Firebase
@@ -69,7 +70,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             }
         }, 1*500);
 
-        et_searchName = (EditText) findViewById(R.id.et_search);
+        et_searchName = (EditText) findViewById(R.id.et_search_music);
         findViewById(R.id.btn_search_music).setOnClickListener(this);
         findViewById(R.id.btn_add_music).setOnClickListener(this);
     }
@@ -95,7 +96,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
             // search music
         } else if(view.getId() == R.id.btn_search_music) {
-            searchActivity =  new Intent(this, SearchActivity.class);
+            searchActivity =  new Intent(this, SearchMusicActivity.class);
             searchActivity.putExtra("data", et_searchName.getText().toString());
             startActivity(searchActivity);
         }
@@ -111,7 +112,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 selectedAudioPath = getPath(selectedAudioUri);
 
                 // загружаем в бд музыку и создаём пустой пост в профайле
-                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, "none");
+                progressBar.setVisibility(ProgressBar.VISIBLE);
+                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, "none", progressBar);
             }
         }
     }
