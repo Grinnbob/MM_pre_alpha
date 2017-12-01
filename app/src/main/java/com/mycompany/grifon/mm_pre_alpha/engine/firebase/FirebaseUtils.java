@@ -28,9 +28,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.UUID;
 
 public class FirebaseUtils {
 
@@ -116,16 +119,13 @@ public class FirebaseUtils {
         // "none" ключевое слово, означает, что только добавляем музыку в бд без создания поста
         if (!postText.equals("none")) {
             Post post;
-            Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String currentTime = dateFormat.format(currentTimestamp);
-            Log.d("myLog!!!", "time formed: " + currentTime);
+            //Log.d("myLog!!!", "time formed: " + currentTime);
             try {
-                post = new Post(postText, info, currentTime);
+                post = new Post(postText, info, plainUser, System.currentTimeMillis(), UUID.randomUUID().toString());
                 // пишем post в Database in my profile
                 FirebasePathHelper.getInstance().writeNewPostDB(myUuid, post);
 
-                post = new Post(postText, info, plainUser, currentTime);
+
                 // пишем post в Database in subscribers profiles
                 FirebasePathHelper.getInstance().writeNewPostToSubscribersDB(myUuid, post);
 
@@ -174,8 +174,8 @@ public class FirebaseUtils {
 
     // получаем список хранящиеся в Database посты
     // true - мои посты, false - все
-    public List<Post> getPostSet(String uuid, boolean postType) {
-        final List<Post> mDataSet = new ArrayList<>();//не поддерживает многопоточность
+    public LinkedHashMap<String, Post> getPostSet(String uuid, boolean postType) {
+        final LinkedHashMap<String,Post> mDataSet = new LinkedHashMap<>();//не поддерживает многопоточность
         if (!postType) {
             // all posts
             databaseRef.child("users").child(uuid).child("posts").addValueEventListener(new ValueEventListener() {
@@ -185,7 +185,7 @@ public class FirebaseUtils {
                     Post post;
                     for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                         post = dsp.getValue(Post.class);
-                        mDataSet.add(post);
+                        mDataSet.put(post.getUuid(),post);
                     }
                 }
 
@@ -199,11 +199,14 @@ public class FirebaseUtils {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Log.e("FB", "Current thread: " + Thread.currentThread().getName());
+                    //PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
+                    //getMyProfile();
+                    PlainUser me = myProfile.toPlain();
                     Post post;
                     for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                         post = dsp.getValue(Post.class);
-                        if (post.getAuthor() == null)
-                            mDataSet.add(post);
+                        if (me.equals(post.getAuthor()))
+                            mDataSet.put(post.getUuid(),post);
                     }
                 }
 
@@ -213,13 +216,6 @@ public class FirebaseUtils {
             });
         }
         Log.e("FB", "Posts array size: " + mDataSet.size());
-
-        // sorting by timestamps
-        Collections.sort(mDataSet, new Comparator<Post>() {
-            public int compare(Post post1, Post post2) {
-                return post1.toString().compareTo(post2.toString());
-            }
-        });
 
         return mDataSet;
     }
@@ -232,10 +228,11 @@ public class FirebaseUtils {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.e("FB", "Current thread: " + Thread.currentThread().getName());
                 Post post;
+                PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     post = dsp.getValue(Post.class);
-                    if (post.getAuthor() == null) {
-                        Post subPost = new Post(post.getText(), post.getSong(), subscribtionPlainUser, post.getTimestamp());
+                    if (me.equals(post.getAuthor())) {
+                        Post subPost = new Post(post.getText(), post.getSong(), subscribtionPlainUser, post.getTimestamp(),UUID.randomUUID().toString());
                         FirebasePathHelper.getInstance().writeNewPostDB(myUuid, subPost);
                     }
                 }
@@ -249,7 +246,7 @@ public class FirebaseUtils {
 
     // удаляем посты из стены при отписке
     public void deleteSubscribersPostsDB(final PlainUser subscribtionPlainUser) {
-        final String authorUuid = subscribtionPlainUser.getUuid();
+      //  final String authorUuid = subscribtionPlainUser.getUuid();
         // all posts
         databaseRef.child("users").child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
             @Override
@@ -259,7 +256,7 @@ public class FirebaseUtils {
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     post = dsp.getValue(Post.class);
                     if (post.getAuthor() != null) {
-                        if (post.getAuthor().getUuid().equals(authorUuid))
+                        if (post.getAuthor().equals(subscribtionPlainUser))
                             dsp.getRef().removeValue();
                     }
                 }
@@ -368,7 +365,7 @@ public class FirebaseUtils {
     */
 
     // удаляем посты из своей стены
-    public void deletePostDB(final String postTimestamp) {
+    public void deletePostDB(final Long postTimestamp) {
         databaseRef.child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -376,7 +373,7 @@ public class FirebaseUtils {
                 Post post;
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     post = dsp.getValue(Post.class);
-                    if (post.getTimestamp().equals(postTimestamp)) {
+                    if (post.getTimestamp()==postTimestamp) {
                         dsp.getRef().removeValue();
                     }
                 }
@@ -405,16 +402,16 @@ public class FirebaseUtils {
         });
     }
 
-    public void delSubPostDB(String uuid, final String postTimestamp){
+    public void delSubPostDB(String userUuid, final long postTimestamp){
         //удаляем посты из стен подписчиков
-        databaseRef.child("users").child(uuid).child("posts").addValueEventListener(new ValueEventListener() {
+        databaseRef.child("users").child(userUuid).child("posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.e("FB", "Current thread: " + Thread.currentThread().getName());
                 Post post;
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     post = dsp.getValue(Post.class);
-                    if (post.getTimestamp().equals(postTimestamp)) {
+                    if (post.getTimestamp()==postTimestamp) {
                         dsp.getRef().removeValue();
                     }
                 }

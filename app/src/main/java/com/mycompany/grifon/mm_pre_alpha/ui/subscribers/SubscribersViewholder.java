@@ -57,6 +57,7 @@ public class SubscribersViewholder extends RecyclerView.ViewHolder implements Vi
         Intent i = new Intent(c, ProfileActivity.class);
         i.putExtra("user", plainUser);
         c.startActivity(i);
+
         /*Intent intent = new Intent(SourceActivity.this, TargetActivity.class);
         intent.putExtra("QuestionListExtra", ArrayList<Question>mQuestionList);*/
     }

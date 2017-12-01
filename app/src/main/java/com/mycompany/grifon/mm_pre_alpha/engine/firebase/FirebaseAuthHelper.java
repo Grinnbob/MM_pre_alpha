@@ -1,12 +1,17 @@
 package com.mycompany.grifon.mm_pre_alpha.engine.firebase;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 import com.mycompany.grifon.mm_pre_alpha.data.Profile;
 import com.mycompany.grifon.mm_pre_alpha.data.events.login.LoginEvent;
 import com.mycompany.grifon.mm_pre_alpha.data.events.login.RegistrationEvent;
@@ -26,6 +31,25 @@ public class FirebaseAuthHelper {
 
     public static boolean newUser = false;
     private Profile profile;
+    /*public Profile myProfile;
+
+    public void getMyProfile() {
+        databaseRef.child("users").child(myUuid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                myProfile = dataSnapshot.getValue(Profile.class);
+                plainUser = new PlainUser(myProfile.getName(), myUuid);
+                Log.d("MyLog", "my name: " + myProfile.getName());
+                //event fired!
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }*/
+
 
     public static FirebaseAuthHelper getInstance() {
         if (instance == null)
@@ -80,7 +104,7 @@ public class FirebaseAuthHelper {
         return profile;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.POSTING)
     public void onProfileChanged(MyProfileEvent event) {
         this.profile = event.getProfile();
     }
