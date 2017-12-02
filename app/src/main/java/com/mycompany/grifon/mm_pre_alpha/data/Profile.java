@@ -3,6 +3,7 @@ package com.mycompany.grifon.mm_pre_alpha.data;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
+import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseAuthHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,15 +70,18 @@ public class Profile {
     public String getName(){return name;}
     public String getUuid(){return uuid;}
     public String getInformation(){return information;}
-    public Map<String, PlainUser> getSubscribers(){return subscribers;}
+    public Map<String, PlainUser> getSubscribers(){
+        return subscribers;
+    }
     public Map<String, PlainUser> getSubscriptions(){return subscriptions;}
     //public List<Post> getUserPlayList(){return userPlayList;}
     public Map<String, Post> getPosts(){return posts;}
     // не работает корректно
     public int getMyPostsSize(){
+        PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
         List<Post> myPosts = new ArrayList<>();
         for(Post postIter : posts.values()) {
-            if (postIter.getAuthor() == null) {
+            if (me.equals(postIter.getAuthor())) {
                 myPosts.add(postIter);
             }
         }

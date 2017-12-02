@@ -23,6 +23,7 @@ import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.UUID;
 
 public class AddSongToPostActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -67,10 +68,10 @@ public class AddSongToPostActivity extends AppCompatActivity implements View.OnC
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String currentTime = dateFormat.format(currentTimestamp);
             Log.d("myLog!!!", "time formed: " + currentTime);
-            Post post = new Post(postText.getText().toString(), songInfo, currentTime);
-            FirebasePathHelper.getInstance().writeNewPostDB(myUuid, post);
+            //Post post = new Post(postText.getText().toString(), songInfo, System.currentTimeMillis(), UUID.randomUUID().toString());
+            Post post = new Post(postText.getText().toString(), songInfo, plainUser, System.currentTimeMillis(), UUID.randomUUID().toString());
 
-            post = new Post(postText.getText().toString(), songInfo, plainUser, currentTime);
+            FirebasePathHelper.getInstance().writeNewPostDB(myUuid, post);
             // пишем post в Database in subscribers profiles
             FirebasePathHelper.getInstance().writeNewPostToSubscribersDB(myUuid, post);
         }

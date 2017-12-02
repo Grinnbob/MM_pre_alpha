@@ -114,6 +114,15 @@ public class FirebasePathHelper {
         return getRoot().child("users").child(user.getUid()).child(path);
     }
 
+    public void updatePosts(Map<String, Post> posts) {
+        //public Profile(String name, String uuid, String information, List<Profile> subscribers, List<Profile> subscriptions, List<SongInfo> userPlayList, List<Post> posts) {
+        //  Profile newProfile = new Profile(info.getName(), info.getUuid(), info.getInformation(), subscribers, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //getUserData("posts")
+        getUserData("posts").setValue(posts);
+    }
+
+
     public void requestSubscribers(String uuid) {
         //getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
         getRoot().child("users").child(uuid).child("subscribers").addValueEventListener(new ValueEventListener() {
@@ -257,7 +266,13 @@ public class FirebasePathHelper {
     public void writeNewPostDB(String uuid, Post post) {
         //String key = getRoot().getKey();
         // use timestamps
-        getRoot().child("users").child(uuid).child("posts").child(post.getTimestamp()).setValue(post);
+        getRoot().child("users").child(uuid).child("posts").child(post.getUuid()).setValue(post);
+    }
+
+    public void deletePostDB(String uuid, Post post) {
+        //String key = getRoot().getKey();
+        // use timestamps
+        getRoot().child("users").child(uuid).child("posts").child(post.getUuid()).setValue(null);
     }
 
     // пишем new post в Database in subscribers profiles
