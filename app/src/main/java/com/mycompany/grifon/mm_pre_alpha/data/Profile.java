@@ -70,7 +70,9 @@ public class Profile {
     public String getName(){return name;}
     public String getUuid(){return uuid;}
     public String getInformation(){return information;}
-    public Map<String, PlainUser> getSubscribers(){return subscribers;}
+    public Map<String, PlainUser> getSubscribers(){
+        return subscribers;
+    }
     public Map<String, PlainUser> getSubscriptions(){return subscriptions;}
     //public List<Post> getUserPlayList(){return userPlayList;}
     public Map<String, Post> getPosts(){return posts;}

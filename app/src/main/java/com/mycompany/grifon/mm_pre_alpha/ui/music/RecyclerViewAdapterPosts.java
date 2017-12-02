@@ -8,35 +8,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
+import com.mycompany.grifon.mm_pre_alpha.data.Profile;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseAuthHelper;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.engine.music.Player;
-import com.mycompany.grifon.mm_pre_alpha.ui.LoginActivity;
-import com.mycompany.grifon.mm_pre_alpha.ui.ProfileActivity;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.UUID;
 
 public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewAdapterPosts.ViewHolder> {
 
-    private Map<String,Post> originalData;//= new LinkedHashMap<>();
-    private List<Post> mData ;//= new LinkedHashMap<>();
+    private Map<String, Post> originalData;//= new LinkedHashMap<>();
+    private final List<Post> mData;//= new LinkedHashMap<>();
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
@@ -49,12 +44,21 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
     private boolean activityType;
 
     private FirebaseUtils firebaseUtils;
+    //private static Profile myProfile = FirebaseAuthHelper.getInstance().getProfile();
+
 
     // data is passed into the constructor
-    public RecyclerViewAdapterPosts(Context context, LinkedHashMap<String, Post>data, String uuid, boolean profileType, boolean activityType, FirebaseUtils firebaseUtils) {
+    public RecyclerViewAdapterPosts(Context context, LinkedHashMap<String, Post> data, String uuid, boolean profileType, boolean activityType, FirebaseUtils firebaseUtils) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = new ArrayList<>(data.values());
-        originalData=data;
+        Collections.sort(mData, new Comparator<Post>() {
+            public int compare(Post post1, Post post2) {
+                return post1.compareTo(post2);
+            }
+        });
+
+        //this.mData = new ArrayList<>(data.values());
+        originalData = data;
         //        Collections.reverse(data);
 
         player = new Player();
@@ -68,6 +72,11 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        /*Collections.sort(mData, new Comparator<Post>() {
+            public int compare(Post post1, Post post2) {
+                return post1.toString().compareTo(post2.toString());
+            }
+        });*/
         View view = mInflater.inflate(R.layout.recycler_post_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
@@ -79,6 +88,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
         Log.d("MY LOG:", "POSTS SET: " + mData);
 
         if (!mData.isEmpty()) {
+            //notifyDataSetChanged();
             PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
 
             Log.d("MY LOG:", "POSTS SET is correct ");
@@ -171,13 +181,12 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             } else if (view.getId() == R.id.btn_repost) {
                 Post post = mData.get(getAdapterPosition());
                 PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
-
                 // if NewsActivity
                 if (!activityType) {
                     // if author not I
-                      if (me.equals(post.getAuthor())) {
+                    if (me.equals(post.getAuthor())) {
 
-                        Post repostedPost = new Post(post.getText(), post.getSong(), me,System.currentTimeMillis(),UUID.randomUUID().toString());
+                        Post repostedPost = new Post(post.getText(), post.getSong(), me, System.currentTimeMillis(), UUID.randomUUID().toString());
                         FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
                     } else {
                         // работает не так, как хотелось бы
@@ -185,40 +194,35 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                     }
                 } else {
                     // else - ProfileActivity
-                    Post repostedPost = new Post(post.getText(), post.getSong(),me, System.currentTimeMillis(), UUID.randomUUID().toString());
+                    Post repostedPost = new Post(post.getText(), post.getSong(), me, System.currentTimeMillis(), UUID.randomUUID().toString());
                     FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
                 }
             } else if (view.getId() == R.id.btn_del) {
+                Profile myProfile = FirebaseAuthHelper.getInstance().getProfile();
+                Map<String, PlainUser> subscribers = myProfile.getSubscribers();
+
                 // todo: delete posts
                 // somthing going wrong...
                 String uuid = mData.get(getAdapterPosition()).getUuid();
-
-                /*for (Post post : mData) {
-                    if (post.getTimestamp().equals(timeStamp)) {
-
-                    }
-                }*/
-
-                for(Iterator<Post> iter= mData.iterator();iter.hasNext(); ){
-                    final Post myPost = iter.next();
-                    if (myPost.getUuid().equals(uuid)) {
+                for (Iterator<Post> iter = mData.iterator(); iter.hasNext(); ) {
+                    final Post removedPost = iter.next();
+                    if (removedPost.getUuid().equals(uuid)) {
                         iter.remove();
-                        originalData.remove(myPost.getUuid());
+                        notifyItemRemoved(getAdapterPosition());
+                        originalData.remove(removedPost.getUuid());
+                        for (String s : subscribers.keySet()) {
+                            FirebasePathHelper.getInstance().deletePostDB(s,removedPost);
+                        }
                         break;
                     }
                 }
 
+                FirebasePathHelper.getInstance().updatePosts(originalData);
+                //dataSource.remove(index); // remember to remove it from your adapter data source
+                //notifyItemRemoved(index);
 
-/*
-//subscribersAdapter.replaceData();
-                subscribersAdapter.replaceData(myPlainUsers);
-            }*/
-
-            //firebaseUtils.deletePostDB(timeStamp);
-            //mData.remove(timeStamp);
-            FirebasePathHelper.getInstance().updatePosts(originalData);
+            }
         }
-    }
 
 /*
         // like it!
@@ -244,7 +248,9 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             }
         };
         */
-}
+    }
+
+
 
     // convenience method for getting data at click position
     public Post getItem(int id) {
@@ -256,10 +262,10 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
         this.mClickListener = itemClickListener;
     }
 
-// parent activity will implement this method to respond to click events
-public interface ItemClickListener {
-    void onItemClick(View view, int position);
-    //void onItemClick(int position);
-}
+    // parent activity will implement this method to respond to click events
+    public interface ItemClickListener {
+        void onItemClick(View view, int position);
+        //void onItemClick(int position);
+    }
 
 }

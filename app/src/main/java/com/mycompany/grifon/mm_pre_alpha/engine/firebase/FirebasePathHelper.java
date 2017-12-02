@@ -122,6 +122,7 @@ public class FirebasePathHelper {
         getUserData("posts").setValue(posts);
     }
 
+
     public void requestSubscribers(String uuid) {
         //getRoot().child("users").child(uuid).addValueEventListener(new ValueEventListener() {
         getRoot().child("users").child(uuid).child("subscribers").addValueEventListener(new ValueEventListener() {
@@ -266,6 +267,12 @@ public class FirebasePathHelper {
         //String key = getRoot().getKey();
         // use timestamps
         getRoot().child("users").child(uuid).child("posts").child(post.getUuid()).setValue(post);
+    }
+
+    public void deletePostDB(String uuid, Post post) {
+        //String key = getRoot().getKey();
+        // use timestamps
+        getRoot().child("users").child(uuid).child("posts").child(post.getUuid()).setValue(null);
     }
 
     // пишем new post в Database in subscribers profiles

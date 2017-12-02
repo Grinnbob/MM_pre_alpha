@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class FirebaseUtils {
     private DatabaseReference databaseRef;
 
     public String myUuid;
-    public Profile myProfile;
+    public Profile myProfile =  null;
     public PlainUser plainUser;
 
     public FirebaseUtils() {
@@ -204,13 +205,16 @@ public class FirebaseUtils {
                     Log.e("FB", "Current thread: " + Thread.currentThread().getName());
                     //PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
                     //getMyProfile();
-                    PlainUser me = myProfile.toPlain();
-                    Post post;
-                    for (DataSnapshot dsp : dataSnapshot.getChildren()) {
-                        post = dsp.getValue(Post.class);
-                        if (me.equals(post.getAuthor()))
-                            mDataSet.put(post.getUuid(),post);
+                    if (myProfile!=null) { //подпора
+                        PlainUser me = myProfile.toPlain();
+                        Post post;
+                        for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                            post = dsp.getValue(Post.class);
+                            if (me.equals(post.getAuthor()))
+                                mDataSet.put(post.getUuid(),post);
+                        }
                     }
+
                 }
 
                 @Override
@@ -219,7 +223,12 @@ public class FirebaseUtils {
             });
         }
         Log.e("FB", "Posts array size: " + mDataSet.size());
-
+        // sorting by timestamps
+        /*Collections.sort(mDataSet, new Comparator<Post>() {
+            public int compare(Post post1, Post post2) {
+                return post1.toString().compareTo(post2.toString());
+            }
+        });*/
         return mDataSet;
     }
 

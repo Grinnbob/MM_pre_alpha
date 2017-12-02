@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-public class Post /*implements Comparable<Post> */{
+public class Post implements Comparable<Post> {
     private String text;
     private SongInfo song;
     private PlainUser author;
@@ -55,15 +55,12 @@ public class Post /*implements Comparable<Post> */{
         this.uuid = uuid;
     }
 
-/*
+
     public static int compare(long x, long y) {
         return (x < y) ? -1 : ((x == y) ? 0 : 1);
-    }*/
-   /* @Override
+    }
+    @Override
     public int compareTo(Post post) {
-
-        //Long.compare()
-
-        return compare(timestamp,post.timestamp);
-    }*/
+        return compare(post.timestamp,timestamp);
+    }
 }
