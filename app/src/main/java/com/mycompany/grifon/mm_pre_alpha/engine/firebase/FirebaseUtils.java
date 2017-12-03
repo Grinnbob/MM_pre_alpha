@@ -45,7 +45,7 @@ public class FirebaseUtils {
     private DatabaseReference databaseRef;
 
     public String myUuid;
-    public Profile myProfile =  null;
+    public Profile myProfile = null;
     public PlainUser plainUser;
 
     public FirebaseUtils() {
@@ -179,7 +179,7 @@ public class FirebaseUtils {
     // получаем список хранящиеся в Database посты
     // true - мои посты, false - все
     public LinkedHashMap<String, Post> getPostSet(String uuid, boolean postType) {
-        final LinkedHashMap<String,Post> mDataSet = new LinkedHashMap<>();//не поддерживает многопоточность
+        final LinkedHashMap<String, Post> mDataSet = new LinkedHashMap<>();//не поддерживает многопоточность
         if (!postType) {
             // all posts
             databaseRef.child("users").child(uuid).child("posts").addValueEventListener(new ValueEventListener() {
@@ -189,7 +189,7 @@ public class FirebaseUtils {
                     Post post;
                     for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                         post = dsp.getValue(Post.class);
-                        mDataSet.put(post.getUuid(),post);
+                        mDataSet.put(post.getUuid(), post);
                     }
                 }
 
@@ -205,13 +205,12 @@ public class FirebaseUtils {
                     Log.e("FB", "Current thread: " + Thread.currentThread().getName());
                     //PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
                     //getMyProfile();
-                    if (myProfile!=null) { //подпора
-                        PlainUser me = myProfile.toPlain();
+                    if (myProfile != null) { //подпора
                         Post post;
                         for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                             post = dsp.getValue(Post.class);
-                            if (me.getUuid().equals(post.getAuthor().getUuid()))
-                                mDataSet.put(post.getUuid(),post);
+                            if (myUuid.equals(post.getAuthor().getUuid()))
+                                mDataSet.put(post.getUuid(), post);
                         }
                     }
 
@@ -240,11 +239,10 @@ public class FirebaseUtils {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.e("FB", "Current thread: " + Thread.currentThread().getName());
                 Post post;
-                PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     post = dsp.getValue(Post.class);
-                    if (me.equals(post.getAuthor())) {
-                        Post subPost = new Post(post.getText(), post.getSong(), subscribtionPlainUser, post.getTimestamp(),UUID.randomUUID().toString());
+                    if (myUuid.equals(post.getAuthor().getUuid())) {
+                        Post subPost = new Post(post.getText(), post.getSong(), subscribtionPlainUser, post.getTimestamp(), UUID.randomUUID().toString());
                         FirebasePathHelper.getInstance().writeNewPostDB(myUuid, subPost);
                     }
                 }
@@ -256,9 +254,9 @@ public class FirebaseUtils {
         });
     }
 
-    // удаляем посты из стены при отписке
+    // удаляем посты из своей стены при отписке
     public void deleteSubscribersPostsDB(final PlainUser subscribtionPlainUser) {
-      //  final String authorUuid = subscribtionPlainUser.getUuid();
+        final String authorUuid = subscribtionPlainUser.getUuid();
         // all posts
         databaseRef.child("users").child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
             @Override
@@ -268,7 +266,7 @@ public class FirebaseUtils {
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     post = dsp.getValue(Post.class);
                     if (post.getAuthor() != null) {
-                        if (post.getAuthor().equals(subscribtionPlainUser))
+                        if (authorUuid.equals(post.getAuthor().getUuid()))
                             dsp.getRef().removeValue();
                     }
                 }
@@ -327,6 +325,7 @@ public class FirebaseUtils {
 
     // проверяем, подписаны ли мы на этого чела, чтобы поставить галочку
     private boolean result = false;
+
     public boolean isMySubscribtion(final String uuid) {
 
         databaseRef.child("users").child(myUuid).child("subscriptions").addValueEventListener(new ValueEventListener() {
@@ -385,7 +384,7 @@ public class FirebaseUtils {
                 Post post;
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     post = dsp.getValue(Post.class);
-                    if (post.getTimestamp()==postTimestamp) {
+                    if (post.getTimestamp() == postTimestamp) {
                         dsp.getRef().removeValue();
                     }
                 }
@@ -414,7 +413,7 @@ public class FirebaseUtils {
         });*/
     }
 
-    public void delSubPostDB(String userUuid, final long postTimestamp){
+    public void delSubPostDB(String userUuid, final long postTimestamp) {
         //удаляем посты из стен подписчиков
         databaseRef.child("users").child(userUuid).child("posts").addValueEventListener(new ValueEventListener() {
             @Override
@@ -423,7 +422,7 @@ public class FirebaseUtils {
                 Post post;
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     post = dsp.getValue(Post.class);
-                    if (post.getTimestamp()==postTimestamp) {
+                    if (post.getTimestamp() == postTimestamp) {
                         dsp.getRef().removeValue();
                     }
                 }

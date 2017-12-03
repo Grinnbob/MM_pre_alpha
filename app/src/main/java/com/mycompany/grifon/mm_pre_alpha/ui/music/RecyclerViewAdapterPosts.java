@@ -92,7 +92,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             String postText = mData.get(position).getText();
             String authorName = null;
             Post current = mData.get(position);
-            if (!me.equals(current.getAuthor())) {
+            if (!me.getUuid().equals(current.getAuthor().getUuid())) {
                 authorName = current.getAuthor().getName();
                 holder.tv_authorName.setText(authorName);
             }
@@ -174,10 +174,11 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             } else if (view.getId() == R.id.btn_repost) {
                 Post post = mData.get(getAdapterPosition());
                 PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
+                String myUuid = me.getUuid();
                 // if NewsActivity
                 if (!activityType) {
                     // if author not I
-                    if (me.getUuid().equals(post.getAuthor().getUuid())) {
+                    if (myUuid.equals(post.getAuthor().getUuid())) {
 
                         Post repostedPost = new Post(post.getText(), post.getSong(), me, System.currentTimeMillis(), UUID.randomUUID().toString());
                         FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
@@ -194,8 +195,6 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                 Profile myProfile = FirebaseAuthHelper.getInstance().getProfile();
                 Map<String, PlainUser> subscribers = myProfile.getSubscribers();
 
-                // todo: delete posts
-                // somthing going wrong...
                 String uuid = mData.get(getAdapterPosition()).getUuid();
                 for (Iterator<Post> iter = mData.iterator(); iter.hasNext(); ) {
                     final Post removedPost = iter.next();

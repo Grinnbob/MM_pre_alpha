@@ -275,7 +275,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         try {
             // получаем полный список своих постов
             //final String numberOfSameSongs;
-            String currentUuid;
+            final String currentUuid;
             final boolean profileType;
             boolean isMine = user != null && plainUser != null && user.getUid().equals(plainUser.getUuid());
 
@@ -310,7 +310,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    createWall(currentDataSet, user.getUid(), profileType);
+                    createWall(currentDataSet, currentUuid, profileType);
                     tv_numberOfSameSongs.setText(numberOfSameSongs);
                 }
             }, 1 * 500);
