@@ -72,11 +72,6 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        /*Collections.sort(mData, new Comparator<Post>() {
-            public int compare(Post post1, Post post2) {
-                return post1.toString().compareTo(post2.toString());
-            }
-        });*/
         View view = mInflater.inflate(R.layout.recycler_post_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
@@ -158,8 +153,6 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             // нереализованный функционал
             tv_likes.setVisibility(View.INVISIBLE);
             checkBox.setVisibility(View.INVISIBLE);
-            //btn_del.setVisibility(View.INVISIBLE);
-            btn_del.setVisibility(View.VISIBLE);
 
             btn_del.setOnClickListener(this);
             btnv_play.setOnClickListener(this);
@@ -184,7 +177,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                 // if NewsActivity
                 if (!activityType) {
                     // if author not I
-                    if (me.equals(post.getAuthor())) {
+                    if (me.getUuid().equals(post.getAuthor().getUuid())) {
 
                         Post repostedPost = new Post(post.getText(), post.getSong(), me, System.currentTimeMillis(), UUID.randomUUID().toString());
                         FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
