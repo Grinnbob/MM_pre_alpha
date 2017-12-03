@@ -65,6 +65,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     private Set<String> mySetSongs = new HashSet<>();//наш профиль
     private String numberOfSameSongs = "";
     private Button chatButton;
+    //private final LinkedHashMap<String ,Post> currentDataSet = new LinkedHashMap<>();
 
     private static FirebaseUtils firebaseUtils;
 
@@ -142,13 +143,24 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                     FirebasePathHelper.getInstance().writeNewProfileDB(profile);
                 }
 
+                final Map<String, Post> myPosts = myProfile.getPosts();
+                final Map<String, Post> hisPosts = profile.getPosts();
+                final Map<String, Post> hisOwnPosts = new HashMap<>();
+                for (String s : hisPosts.keySet()) {
+                    final Post post = hisPosts.get(s);
+                    if (post.getAuthor().getUuid().equals(profile.getUuid())) {
+                        hisOwnPosts.put(s, post);
+                        myPosts.remove(s);
+                    }
+                }
+
                 if (myProfile.getSubscriptions().size() > 0) {
                     myProfile.getSubscriptions().remove(plainUser.getUuid());
                     FirebasePathHelper.getInstance().writeNewProfileDB(myProfile);
                 }
 
                 // delete posts from wall
-                firebaseUtils.deleteSubscribersPostsDB(plainUser);
+               // firebaseUtils.deleteSubscribersPostsDB(plainUser);
 
             } else {
                 // подписка
@@ -159,12 +171,24 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 subscribers.put(user.getUid(), new PlainUser(myProfile.getName(), user.getUid()));
                 FirebasePathHelper.getInstance().writeNewProfileDB(profile);
 
+                final Map<String, Post> myPosts = myProfile.getPosts();
+                final Map<String, Post> hisPosts = profile.getPosts();
+                final Map<String, Post> hisOwnPosts = new HashMap<>();
+                for (String s : hisPosts.keySet()) {
+                    final Post post = hisPosts.get(s);
+                    if (post.getAuthor().getUuid().equals(profile.getUuid())) {
+                        hisOwnPosts.put(s, post);
+                    }
+                }
+                myPosts.putAll(hisOwnPosts);
+                
                 Map<String, PlainUser> subscriptions = myProfile.getSubscriptions();
                 subscriptions.put(plainUser.getUuid(), plainUser);
                 FirebasePathHelper.getInstance().writeNewProfileDB(myProfile);
 
+
                 // добавляем существующие посты новому подписчику (себе) в ленту
-                firebaseUtils.addSubPostsToMeDB(plainUser);
+                //firebaseUtils.addSubPostsToMeDB(plainUser);
             }
         }
     };
@@ -281,12 +305,15 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             if (isMine) {
                 currentUuid = user.getUid();
                 profileType = true;
+                //currentDataSet.putAll(myProfile.getPosts());
+
 
                 //numberOfSameSongs = "";
             } else {
                 currentUuid = plainUser.getUuid();
                 profileType = false;
-
+                //currentDataSet = profile.getPosts();
+                //currentDataSet.putAll(profile.getPosts());
                 // не работает как надо - ничего не делает (должна стоять галочка, если подписан на этого чела)
                 /*if(firebaseUtils.isMySubscribtion(currentUuid))
                     checkBox.setChecked(true);*/
@@ -296,7 +323,9 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             }
 
             // my posts
+            //true - Означает что мы передаём только те из постов данного пользователя, в которых автором является он сам(т.е. те которые он запостил или репостнул)
             final LinkedHashMap<String ,Post> currentDataSet = firebaseUtils.getPostSet(currentUuid, true);
+
             if (currentDataSet.isEmpty())
                 Log.d("MY LOG:", "POSTS SET is empty ");
 

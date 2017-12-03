@@ -269,10 +269,10 @@ public class FirebasePathHelper {
         getRoot().child("users").child(uuid).child("posts").child(post.getUuid()).setValue(post);
     }
 
-    public void deletePostDB(String uuid, Post post) {
+    public void deletePostDB(String myUuid, String author, Post post) {
         //String key = getRoot().getKey();
         // use timestamps
-        getRoot().child("users").child(uuid).child("posts").child(post.getUuid()).setValue(null);
+            getRoot().child("users").child(myUuid).child("posts").child(post.getUuid()).setValue(null);
     }
 
     // пишем new post в Database in subscribers profiles

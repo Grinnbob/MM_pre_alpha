@@ -127,20 +127,24 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
 
         if (!mData.isEmpty()) {
             //notifyDataSetChanged();
-            PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
+            //PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
 
             Log.d("MY LOG:", "POSTS SET is correct ");
 
             String songName = mData.get(position).getSong().getName();
             String postText = mData.get(position).getText();
             String authorName = null;
-            Post current = mData.get(position);
-            if (!me.getUuid().equals(current.getAuthor().getUuid())) {
-                authorName = current.getAuthor().getName();
+            Post currentPost = mData.get(position);
+            //чтобы в NewsActivity не писать имя автора если это наш пост
+            if (!uuid.equals(currentPost.getAuthor().getUuid())) {
+                authorName = currentPost.getAuthor().getName();
                 holder.tv_authorName.setText(authorName);
             }
+
+                //btnv_repost.setVisibility(View.INVISIBLE);
+
             Log.d("MY LOG:", "Author name: " + authorName);
-            int likes = current.getSong().getLikes();
+            int likes = currentPost.getSong().getLikes();
             holder.tv_songName.setText(songName);
             holder.tv_post_text.setText(postText);
             holder.tv_likes.setText(Integer.toString(likes));
@@ -187,9 +191,9 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
 
             // if my profile - no reposts
             // and you can del posts
-            if (profyleType) {
+            if (profyleType) {//если я зашёл на свой профиль
                 btnv_repost.setVisibility(View.INVISIBLE);
-            } else {
+            } else {//если я зашёл к другому человеку в профиль
                 btn_del.setVisibility(View.INVISIBLE);
             }
 
@@ -230,43 +234,44 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             } else if (view.getId() == R.id.btn_repost) {
                 Post post = mData.get(getAdapterPosition());
                 PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
-                String myUuid = me.getUuid();
+
                 // if NewsActivity
                 if (!activityType) {
                     // if author not I
-                    if (myUuid.equals(post.getAuthor().getUuid())) {
-                        String time = String.valueOf(System.currentTimeMillis());
-                        Post repostedPost = new Post(post.getText(), post.getSong(), me, time, UUID.randomUUID().toString());
-                        FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
+                    if (!me.getUuid().equals(post.getAuthor().getUuid())) {
+                        final String time = String.valueOf(System.currentTimeMillis());
+                        final Post repostedPost = new Post(post.getText(), post.getSong(), me, time, UUID.randomUUID().toString());
+                        FirebasePathHelper.getInstance().writeNewPostDB(me.getUuid(), repostedPost);
                     } else {
                         // работает не так, как хотелось бы
-                        btnv_repost.setVisibility(View.INVISIBLE);
+                        //btnv_repost.setVisibility(View.INVISIBLE);
                     }
                 } else {
                     // else - ProfileActivity
-                    String time = String.valueOf(System.currentTimeMillis());
-                    Post repostedPost = new Post(post.getText(), post.getSong(), me, time, UUID.randomUUID().toString());
-                    FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
+                    final String time = String.valueOf(System.currentTimeMillis());
+                    final Post repostedPost = new Post(post.getText(), post.getSong(), me, time, UUID.randomUUID().toString());
+                    FirebasePathHelper.getInstance().writeNewPostDB(me.getUuid(), repostedPost);
                 }
+
             } else if (view.getId() == R.id.btn_del) {
                 Profile myProfile = FirebaseAuthHelper.getInstance().getProfile();
                 Map<String, PlainUser> subscribers = myProfile.getSubscribers();
-
+                Map<String, Post> allPost = myProfile.getPosts();
                 String uuid = mData.get(getAdapterPosition()).getUuid();
                 for (Iterator<Post> iter = mData.iterator(); iter.hasNext();) {
                     final Post removedPost = iter.next();
-                    if (removedPost.getUuid().equals(uuid)) {
+                    if (removedPost.getUuid().equals(uuid) /*&& removedPost.getAuthor().getUuid().equals(myProfile.getUuid())*/) {
                         iter.remove();
                         notifyItemRemoved(getAdapterPosition());
-                        originalData.remove(removedPost.getUuid());
+                        allPost.remove(removedPost.getUuid());
                         for (String s : subscribers.keySet()) {
-                            FirebasePathHelper.getInstance().deletePostDB(s,removedPost);
+                            FirebasePathHelper.getInstance().deletePostDB(s, removedPost.getAuthor().getUuid(), removedPost);
                         }
                         break;
                     }
                 }
 
-                FirebasePathHelper.getInstance().updatePosts(originalData);
+                FirebasePathHelper.getInstance().updatePosts(allPost);
                 //dataSource.remove(index); // remember to remove it from your adapter data source
                 //notifyItemRemoved(index);
 
