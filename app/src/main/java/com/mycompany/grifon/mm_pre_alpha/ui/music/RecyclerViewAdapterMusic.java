@@ -10,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.data.SongInfo;
@@ -88,6 +90,7 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
     public void onBindViewHolder(ViewHolder holder, int position) {
         String songName = mData.get(position).getName();
         holder.tv_songName.setText(songName);
+        holder.toogleButton.setChecked(false);
     }
 
     // total number of rows
@@ -98,30 +101,34 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
 
 
     // stores and recycles views as they are scrolled off screen
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
         public TextView tv_songName;
-        public Button btnv_play;
-        public Button btnv_pause;
+        public ToggleButton toogleButton;
+        //public Button btnv_play;
+        //public Button btnv_pause;
         public Button btnv_plusSong;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             tv_songName = (TextView) itemView.findViewById(R.id.tv_recycler_item);
-            btnv_play = (Button) itemView.findViewById(R.id.btn_play);
-            btnv_pause = (Button) itemView.findViewById(R.id.btn_pause);
+            //btnv_play = (Button) itemView.findViewById(R.id.btn_play);
+            //btnv_pause = (Button) itemView.findViewById(R.id.btn_pause);
             btnv_plusSong = (Button) itemView.findViewById(R.id.btn_plus_song);
 
-            btnv_play.setOnClickListener(this);
-            btnv_pause.setOnClickListener(this);
+            //btnv_play.setOnClickListener(this);
+            //btnv_pause.setOnClickListener(this);
             btnv_plusSong.setOnClickListener(this);
             itemView.setOnClickListener(this);
+
+            toogleButton = (ToggleButton) itemView.findViewById(R.id.tbtn_play);
+            toogleButton.setOnCheckedChangeListener(this);
         }
 
-        //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
-        public void onClick(View view) {
-          if (view.getId() == R.id.btn_play) {
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                // Состояние: Включён (stop)
                 if (serviceBound) {
                     // подпорка, надо нормально сделать
                     context.unbindService(serviceConnection);
@@ -133,7 +140,8 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
                 } else {
                     playAudio(mData.get(getAdapterPosition()).getUrl());
                 }
-            } else if (view.getId() == R.id.btn_pause) {
+            } else {
+                // Состояние: Выключен (play)
                 if (serviceBound) {
                     // подпорка, надо нормально сделать
                     context.unbindService(serviceConnection);
@@ -141,8 +149,13 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
                     //service is active
                     player.stopSelf();
                 }
-                //mediaPlayerService.stopPlayback();
-            } else if (view.getId() == R.id.btn_plus_song) {
+            }
+        }
+
+        //@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void onClick(View view) {
+            if (view.getId() == R.id.btn_plus_song) {
                 Intent intent = new Intent(context, AddSongToPostActivity.class);
                 SongInfo songInfo = mData.get(getAdapterPosition());
                 intent.putExtra("song_name", songInfo.getName());
