@@ -1,9 +1,11 @@
 package com.mycompany.grifon.mm_pre_alpha.data;
 
+import android.support.annotation.NonNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class Chat {
+public class Chat implements Comparable<Chat> {
     private String name;
     private String uuid;
     private final  Map<String,PlainUser> users=new HashMap<>();
@@ -59,5 +61,10 @@ public class Chat {
     public void setMessages(Map<String,Message> messages) {
         this.messages.clear();
         this.messages.putAll(messages);
+    }
+
+    @Override
+    public int compareTo(@NonNull Chat o) {
+        return 0;
     }
 }

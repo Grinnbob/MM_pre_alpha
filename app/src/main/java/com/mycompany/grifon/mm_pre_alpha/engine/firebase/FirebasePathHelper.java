@@ -218,7 +218,7 @@ public class FirebasePathHelper {
     }
 
     public DatabaseReference getChatMessagesReference(String uuid) {
-        return getRoot().child("chats").child(uuid).child("messages");
+        return getRoot().child("chats").child(uuid).child("messages").orderByChild("timeMessage").getRef();
     }
 
     public void subscribeToNewMessages(String uuid) {

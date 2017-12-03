@@ -253,7 +253,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                 Map<String, PlainUser> subscribers = myProfile.getSubscribers();
 
                 String uuid = mData.get(getAdapterPosition()).getUuid();
-                for (Iterator<Post> iter = mData.iterator(); iter.hasNext(); ) {
+                for (Iterator<Post> iter = mData.iterator(); iter.hasNext();) {
                     final Post removedPost = iter.next();
                     if (removedPost.getUuid().equals(uuid)) {
                         iter.remove();
