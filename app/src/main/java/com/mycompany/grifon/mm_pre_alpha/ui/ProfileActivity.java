@@ -40,7 +40,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -164,8 +163,8 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 subscriptions.put(plainUser.getUuid(), plainUser);
                 FirebasePathHelper.getInstance().writeNewProfileDB(myProfile);
 
-                // add all posts to current user
-                firebaseUtils.addPostToSubscribersDB(plainUser);
+                // добавляем существующие посты новому подписчику (себе) в ленту
+                firebaseUtils.addSubPostsToMeDB(plainUser);
             }
         }
     };
@@ -275,12 +274,10 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         try {
             // получаем полный список своих постов
             //final String numberOfSameSongs;
-            String currentUuid;
+            final String currentUuid;
             final boolean profileType;
             boolean isMine = user != null && plainUser != null && user.getUid().equals(plainUser.getUuid());
 
-            //Vlad: Думаю это лишний кусок кода
-            //-----------------------------------------------------------------------------
             if (isMine) {
                 currentUuid = user.getUid();
                 profileType = true;
@@ -297,8 +294,6 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
                 // считаем совпадения по песням
                 //numberOfSameSongs = getNumberOfTheSameSongs(user.getUid(), currentUuid);
             }
-            //-----------------------------------------------------------------------------
-
 
             // my posts
             final LinkedHashMap<String ,Post> currentDataSet = firebaseUtils.getPostSet(currentUuid, true);
@@ -310,7 +305,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    createWall(currentDataSet, user.getUid(), profileType);
+                    createWall(currentDataSet, currentUuid, profileType);
                     tv_numberOfSameSongs.setText(numberOfSameSongs);
                 }
             }, 1 * 500);

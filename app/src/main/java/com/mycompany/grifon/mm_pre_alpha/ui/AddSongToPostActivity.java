@@ -64,12 +64,8 @@ public class AddSongToPostActivity extends AppCompatActivity implements View.OnC
     public void onClick(View view) {
         // добавить post
         if (view.getId() == R.id.btn_add_post_2) {
-            Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String currentTime = dateFormat.format(currentTimestamp);
-            Log.d("myLog!!!", "time formed: " + currentTime);
-            //Post post = new Post(postText.getText().toString(), songInfo, System.currentTimeMillis(), UUID.randomUUID().toString());
-            Post post = new Post(postText.getText().toString(), songInfo, plainUser, System.currentTimeMillis(), UUID.randomUUID().toString());
+            String time = String.valueOf(System.currentTimeMillis());
+            Post post = new Post(postText.getText().toString(), songInfo, plainUser, time, UUID.randomUUID().toString());
 
             FirebasePathHelper.getInstance().writeNewPostDB(myUuid, post);
             // пишем post в Database in subscribers profiles
