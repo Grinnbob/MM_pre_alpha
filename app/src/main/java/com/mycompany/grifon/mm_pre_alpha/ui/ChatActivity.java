@@ -2,6 +2,8 @@ package com.mycompany.grifon.mm_pre_alpha.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +23,7 @@ import com.mycompany.grifon.mm_pre_alpha.data.events.profile.MyProfileEvent;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.data.Message;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainChat;
+import com.mycompany.grifon.mm_pre_alpha.ui.chat.ChatRecyclerViewAdapter;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -32,7 +35,8 @@ import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity {
     private static int SIGN_IN_REQUEST_CODE = 1;
-    private FirebaseListAdapter<Message> adapter;
+    //private FirebaseListAdapter<Message> adapter;
+    private ChatRecyclerViewAdapter adapter;
     RelativeLayout activity_chat;
     Button button;
     DatabaseReference reference;
@@ -81,21 +85,11 @@ public class ChatActivity extends AppCompatActivity {
 
     private void displayChat() {
 
-        ListView listMessages = (ListView) findViewById(R.id.listView);
-        adapter = new FirebaseListAdapter<Message>(this, Message.class, R.layout.message_item, reference/*.orderByChild("timeMessage")*/) {
-            @Override
-            protected void populateView(View v, Message model, int position) {
-
-                TextView textMessage, autor, timeMessage;
-                textMessage = (TextView) v.findViewById(R.id.tvMessage);
-                autor = (TextView) v.findViewById(R.id.tvUser);
-                timeMessage = (TextView) v.findViewById(R.id.tvTime);
-
-                textMessage.setText(model.getTextMessage());
-                autor.setText(model.getAutor());
-                timeMessage.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.getTimeMessage()));
-            }
-        };
+        RecyclerView listMessages = (RecyclerView) findViewById(R.id.listView);
+        LinearLayoutManager mgr = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        mgr.setStackFromEnd(true);
+        listMessages.setLayoutManager(mgr);
+        adapter = new ChatRecyclerViewAdapter(this,reference);
         //listMessages.get
        /* Collections.sort(listMessages, new Comparator<Message>() {
             @Override
