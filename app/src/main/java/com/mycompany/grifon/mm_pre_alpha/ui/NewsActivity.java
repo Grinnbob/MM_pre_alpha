@@ -75,7 +75,9 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
             final String myUuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             Log.d("MY LOG:", "my uuid: " + myUuid);
             // all users posts
+            // тут передаём все посты данного пользователя ( те где он является автором(т.е. те которые он запостил или репостнул) + все остальные
             final LinkedHashMap<String, Post> myDataset = firebaseUtils.getPostSet(myUuid, false);
+            //final Map<String, Post> myDataset =
             if (myDataset.isEmpty())
                 Log.d("MY LOG:", "POSTS SET is empty ");
             // создаём стену
@@ -173,6 +175,9 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
                 this.finish();
                 break;
             case R.id.news:
+                Intent intentNews = new Intent(this, NewsActivity.class);
+                startActivity(intentNews);
+                this.finish();
                 break;
             case R.id.profile:
                 intentProfile = new Intent(this, ProfileActivity.class);

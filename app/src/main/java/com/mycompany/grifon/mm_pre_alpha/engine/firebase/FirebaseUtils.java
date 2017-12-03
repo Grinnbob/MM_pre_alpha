@@ -253,7 +253,7 @@ public class FirebaseUtils {
         databaseRef.child("users").child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.e("FB", "Current thread: " + Thread.currentThread().getName());
+                /*Log.e("FB", "Current thread: " + Thread.currentThread().getName());
                 Post post;
                 for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                     post = dsp.getValue(Post.class);
@@ -261,7 +261,7 @@ public class FirebaseUtils {
                         if (authorUuid.equals(post.getAuthor().getUuid()))
                             dsp.getRef().removeValue();
                     }
-                }
+                }*/
             }
 
             @Override
