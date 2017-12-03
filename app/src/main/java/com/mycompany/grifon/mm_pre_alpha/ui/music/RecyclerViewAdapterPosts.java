@@ -27,6 +27,7 @@ import com.mycompany.grifon.mm_pre_alpha.engine.music.MediaPlayerService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -141,7 +142,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                 holder.tv_authorName.setText(authorName);
             }
 
-                //btnv_repost.setVisibility(View.INVISIBLE);
+            //btnv_repost.setVisibility(View.INVISIBLE);
 
             Log.d("MY LOG:", "Author name: " + authorName);
             int likes = currentPost.getSong().getLikes();
@@ -233,24 +234,38 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                 }
             } else if (view.getId() == R.id.btn_repost) {
                 Post post = mData.get(getAdapterPosition());
-                PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
+                if (FirebaseAuthHelper.getInstance().getProfile() != null) {
+                    PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
 
-                // if NewsActivity
-                if (!activityType) {
-                    // if author not I
-                    if (!me.getUuid().equals(post.getAuthor().getUuid())) {
+                    // if NewsActivity
+                    if (!activityType) {
+                        // if author not I
+                        if (!me.getUuid().equals(post.getAuthor().getUuid())) {
+                            final String time = String.valueOf(System.currentTimeMillis());
+                            final Post repostedPost = new Post(post.getText(), post.getSong(), me, time, UUID.randomUUID().toString());
+                            FirebasePathHelper.getInstance().writeNewPostDB(me.getUuid(), repostedPost);
+
+                            Profile myProfile = FirebaseAuthHelper.getInstance().getProfile();
+                            Map<String, PlainUser> subscribers = myProfile.getSubscribers();
+                            for (String s : subscribers.keySet()) {
+                                FirebasePathHelper.getInstance().writeNewPostDB(s, repostedPost);
+                            }
+                        } else {
+                            // работает не так, как хотелось бы
+                            //btnv_repost.setVisibility(View.INVISIBLE);
+                        }
+                    } else {
+                        // else - ProfileActivity
                         final String time = String.valueOf(System.currentTimeMillis());
                         final Post repostedPost = new Post(post.getText(), post.getSong(), me, time, UUID.randomUUID().toString());
                         FirebasePathHelper.getInstance().writeNewPostDB(me.getUuid(), repostedPost);
-                    } else {
-                        // работает не так, как хотелось бы
-                        //btnv_repost.setVisibility(View.INVISIBLE);
+
+                        Profile myProfile = FirebaseAuthHelper.getInstance().getProfile();
+                        Map<String, PlainUser> subscribers = myProfile.getSubscribers();
+                        for (String s : subscribers.keySet()) {
+                            FirebasePathHelper.getInstance().writeNewPostDB(s, repostedPost);
+                        }
                     }
-                } else {
-                    // else - ProfileActivity
-                    final String time = String.valueOf(System.currentTimeMillis());
-                    final Post repostedPost = new Post(post.getText(), post.getSong(), me, time, UUID.randomUUID().toString());
-                    FirebasePathHelper.getInstance().writeNewPostDB(me.getUuid(), repostedPost);
                 }
 
             } else if (view.getId() == R.id.btn_del) {
@@ -258,7 +273,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                 Map<String, PlainUser> subscribers = myProfile.getSubscribers();
                 Map<String, Post> allPost = myProfile.getPosts();
                 String uuid = mData.get(getAdapterPosition()).getUuid();
-                for (Iterator<Post> iter = mData.iterator(); iter.hasNext();) {
+                for (Iterator<Post> iter = mData.iterator(); iter.hasNext(); ) {
                     final Post removedPost = iter.next();
                     if (removedPost.getUuid().equals(uuid) /*&& removedPost.getAuthor().getUuid().equals(myProfile.getUuid())*/) {
                         iter.remove();
@@ -270,6 +285,17 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                         break;
                     }
                 }
+
+                /*final Map<String, Post> myPosts = myProfile.getPosts();
+                final Map<String, Post> hisPosts = profile.getPosts();
+                final Map<String, Post> hisOwnPosts = new HashMap<>();
+                for (String s : hisPosts.keySet()) {
+                    final Post post = hisPosts.get(s);
+                    if (post.getAuthor().getUuid().equals(profile.getUuid())) {
+                        hisOwnPosts.put(s, post);
+                        myPosts.remove(s);
+                    }
+                }*/
 
                 FirebasePathHelper.getInstance().updatePosts(allPost);
                 //dataSource.remove(index); // remember to remove it from your adapter data source
@@ -303,7 +329,6 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
         };
         */
     }
-
 
 
     // convenience method for getting data at click position
