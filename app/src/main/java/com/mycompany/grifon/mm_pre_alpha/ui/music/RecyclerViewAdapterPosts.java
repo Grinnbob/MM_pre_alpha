@@ -153,8 +153,6 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             // нереализованный функционал
             tv_likes.setVisibility(View.INVISIBLE);
             checkBox.setVisibility(View.INVISIBLE);
-            //btn_del.setVisibility(View.INVISIBLE);
-            btn_del.setVisibility(View.VISIBLE);
 
             btn_del.setOnClickListener(this);
             btnv_play.setOnClickListener(this);

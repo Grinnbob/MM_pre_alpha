@@ -210,7 +210,7 @@ public class FirebaseUtils {
                         Post post;
                         for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                             post = dsp.getValue(Post.class);
-                            if (me.equals(post.getAuthor()))
+                            if (me.getUuid().equals(post.getAuthor().getUuid()))
                                 mDataSet.put(post.getUuid(),post);
                         }
                     }
