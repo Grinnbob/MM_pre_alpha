@@ -195,8 +195,6 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                 Profile myProfile = FirebaseAuthHelper.getInstance().getProfile();
                 Map<String, PlainUser> subscribers = myProfile.getSubscribers();
 
-                // todo: delete posts
-                // somthing going wrong...
                 String uuid = mData.get(getAdapterPosition()).getUuid();
                 for (Iterator<Post> iter = mData.iterator(); iter.hasNext(); ) {
                     final Post removedPost = iter.next();
