@@ -92,7 +92,7 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             String postText = mData.get(position).getText();
             String authorName = null;
             Post current = mData.get(position);
-            if (!me.equals(current.getAuthor())) {
+            if (!me.getUuid().equals(current.getAuthor().getUuid())) {
                 authorName = current.getAuthor().getName();
                 holder.tv_authorName.setText(authorName);
             }
