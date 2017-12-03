@@ -235,8 +235,8 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                 if (!activityType) {
                     // if author not I
                     if (myUuid.equals(post.getAuthor().getUuid())) {
-
-                        Post repostedPost = new Post(post.getText(), post.getSong(), me, System.currentTimeMillis(), UUID.randomUUID().toString());
+                        String time = String.valueOf(System.currentTimeMillis());
+                        Post repostedPost = new Post(post.getText(), post.getSong(), me, time, UUID.randomUUID().toString());
                         FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
                     } else {
                         // работает не так, как хотелось бы
@@ -244,7 +244,8 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                     }
                 } else {
                     // else - ProfileActivity
-                    Post repostedPost = new Post(post.getText(), post.getSong(), me, System.currentTimeMillis(), UUID.randomUUID().toString());
+                    String time = String.valueOf(System.currentTimeMillis());
+                    Post repostedPost = new Post(post.getText(), post.getSong(), me, time, UUID.randomUUID().toString());
                     FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
                 }
             } else if (view.getId() == R.id.btn_del) {
