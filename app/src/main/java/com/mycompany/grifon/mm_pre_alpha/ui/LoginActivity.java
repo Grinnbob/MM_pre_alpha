@@ -71,6 +71,7 @@ public class LoginActivity extends EBActivity implements View.OnClickListener {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSignIn(LoginEvent event) {
         if (event.isSucceed()) {
+
             Toast.makeText(LoginActivity.this, R.string.login_authorisation_success_toast_message, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(LoginActivity.this, SplashActivity.class);
             startActivity(intent);

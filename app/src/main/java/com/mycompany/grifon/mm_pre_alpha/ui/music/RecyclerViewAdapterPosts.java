@@ -16,19 +16,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mycompany.grifon.mm_pre_alpha.R;
+import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
+import com.mycompany.grifon.mm_pre_alpha.data.Profile;
+import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseAuthHelper;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.engine.music.MediaPlayerService;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewAdapterPosts.ViewHolder> {
 
-    private List<Post> mData = Collections.emptyList();
+    private Map<String, Post> originalData;//= new LinkedHashMap<>();
+    private final List<Post> mData;//= new LinkedHashMap<>();
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
@@ -41,6 +49,8 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
     private boolean activityType;
 
     private FirebaseUtils firebaseUtils;
+    //private static Profile myProfile = FirebaseAuthHelper.getInstance().getProfile();
+
 
     // player
     private MediaPlayerService player;
@@ -48,10 +58,18 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
     private Context context;
 
     // data is passed into the constructor
-    public RecyclerViewAdapterPosts(Context context, List<Post> data, String uuid, boolean profileType, boolean activityType, FirebaseUtils firebaseUtils) {
+    public RecyclerViewAdapterPosts(Context context, LinkedHashMap<String, Post> data, String uuid, boolean profileType, boolean activityType, FirebaseUtils firebaseUtils) {
         this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
-        Collections.reverse(data);
+        this.mData = new ArrayList<>(data.values());
+        Collections.sort(mData, new Comparator<Post>() {
+            public int compare(Post post1, Post post2) {
+                return post1.compareTo(post2);
+            }
+        });
+
+        //this.mData = new ArrayList<>(data.values());
+        originalData = data;
+        //        Collections.reverse(data);
 
         this.context = context;
 
@@ -106,17 +124,23 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Log.d("MY LOG:", "POSTS SET: " + mData);
+
         if (!mData.isEmpty()) {
+            //notifyDataSetChanged();
+            PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
+
             Log.d("MY LOG:", "POSTS SET is correct ");
+
             String songName = mData.get(position).getSong().getName();
             String postText = mData.get(position).getText();
             String authorName = null;
-            if (mData.get(position).getAuthor() != null) {
-                authorName = mData.get(position).getAuthor().getName() + ": ";
+            Post current = mData.get(position);
+            if (!me.getUuid().equals(current.getAuthor().getUuid())) {
+                authorName = current.getAuthor().getName();
                 holder.tv_authorName.setText(authorName);
             }
             Log.d("MY LOG:", "Author name: " + authorName);
-            int likes = mData.get(position).getSong().getLikes();
+            int likes = current.getSong().getLikes();
             holder.tv_songName.setText(songName);
             holder.tv_post_text.setText(postText);
             holder.tv_likes.setText(Integer.toString(likes));
@@ -172,7 +196,6 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
             // нереализованный функционал
             tv_likes.setVisibility(View.INVISIBLE);
             checkBox.setVisibility(View.INVISIBLE);
-            //btn_del.setVisibility(View.INVISIBLE);
 
             btn_del.setOnClickListener(this);
             btnv_play.setOnClickListener(this);
@@ -206,14 +229,14 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                 }
             } else if (view.getId() == R.id.btn_repost) {
                 Post post = mData.get(getAdapterPosition());
+                PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
+                String myUuid = me.getUuid();
                 // if NewsActivity
                 if (!activityType) {
                     // if author not I
-                    if (post.getAuthor() != null) {
-                        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String currentTime = dateFormat.format(currentTimestamp);
-                        Post repostedPost = new Post(post.getText(), post.getSong(), currentTime);
+                    if (myUuid.equals(post.getAuthor().getUuid())) {
+
+                        Post repostedPost = new Post(post.getText(), post.getSong(), me, System.currentTimeMillis(), UUID.randomUUID().toString());
                         FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
                     } else {
                         // работает не так, как хотелось бы
@@ -221,17 +244,31 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
                     }
                 } else {
                     // else - ProfileActivity
-                    Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String currentTime = dateFormat.format(currentTimestamp);
-                    Post repostedPost = new Post(post.getText(), post.getSong(), currentTime);
+                    Post repostedPost = new Post(post.getText(), post.getSong(), me, System.currentTimeMillis(), UUID.randomUUID().toString());
                     FirebasePathHelper.getInstance().writeNewPostDB(uuid, repostedPost);
                 }
             } else if (view.getId() == R.id.btn_del) {
-                // todo: delete posts
-                // somthing going wrong...
-                String timeStamp = mData.get(getAdapterPosition()).getTimestamp();
-                firebaseUtils.deletePostDB(timeStamp);
+                Profile myProfile = FirebaseAuthHelper.getInstance().getProfile();
+                Map<String, PlainUser> subscribers = myProfile.getSubscribers();
+
+                String uuid = mData.get(getAdapterPosition()).getUuid();
+                for (Iterator<Post> iter = mData.iterator(); iter.hasNext(); ) {
+                    final Post removedPost = iter.next();
+                    if (removedPost.getUuid().equals(uuid)) {
+                        iter.remove();
+                        notifyItemRemoved(getAdapterPosition());
+                        originalData.remove(removedPost.getUuid());
+                        for (String s : subscribers.keySet()) {
+                            FirebasePathHelper.getInstance().deletePostDB(s,removedPost);
+                        }
+                        break;
+                    }
+                }
+
+                FirebasePathHelper.getInstance().updatePosts(originalData);
+                //dataSource.remove(index); // remember to remove it from your adapter data source
+                //notifyItemRemoved(index);
+
             }
         }
 
@@ -260,6 +297,8 @@ public class RecyclerViewAdapterPosts extends RecyclerView.Adapter<RecyclerViewA
         };
         */
     }
+
+
 
     // convenience method for getting data at click position
     public Post getItem(int id) {

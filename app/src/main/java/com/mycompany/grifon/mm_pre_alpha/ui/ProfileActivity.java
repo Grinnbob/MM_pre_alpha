@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainChat;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
+import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseAuthHelper;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 import com.mycompany.grifon.mm_pre_alpha.data.events.profile.UserProfileEvent;
@@ -38,6 +39,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -124,7 +126,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     }
 
     // создаём стену
-    private void createWall(List<Post> myDataset, String myUuid, boolean profyleType) {
+    private void createWall(LinkedHashMap<String, Post> myDataset, String myUuid, boolean profyleType) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, profyleType, true, firebaseUtils);
         mRecyclerView.setAdapter(mAdapter);
@@ -192,11 +194,12 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             tv_numberOfSubscribers.setText(String.valueOf(profile.getSubscribers().size()));
             tv_numberOfSubscriptions.setText(String.valueOf(profile.getSubscriptions().size()));
             //tv_numberOfPublications.setText(String.valueOf(myProfile.getMyPostsSize()));
+            PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
 
             Map<String, Post> posts = profile.getPosts();
             for (final String s : posts.keySet()) {
                 final Post post = posts.get(s);
-                if (post.getAuthor() == null)
+                if (me.equals(post.getAuthor()))
                     userSetSongs.add(post.getSong().getName());
             }
 
@@ -272,7 +275,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         try {
             // получаем полный список своих постов
             //final String numberOfSameSongs;
-            String currentUuid;
+            final String currentUuid;
             final boolean profileType;
             boolean isMine = user != null && plainUser != null && user.getUid().equals(plainUser.getUuid());
 
@@ -298,7 +301,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
 
 
             // my posts
-            final List<Post> currentDataSet = firebaseUtils.getPostSet(currentUuid, true);
+            final LinkedHashMap<String ,Post> currentDataSet = firebaseUtils.getPostSet(currentUuid, true);
             if (currentDataSet.isEmpty())
                 Log.d("MY LOG:", "POSTS SET is empty ");
 
@@ -307,7 +310,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    createWall(currentDataSet, user.getUid(), profileType);
+                    createWall(currentDataSet, currentUuid, profileType);
                     tv_numberOfSameSongs.setText(numberOfSameSongs);
                 }
             }, 1 * 500);
@@ -322,9 +325,11 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     private int getNumberOfTheSameSongs(String myUid, String userUid) {
         final Set<String> resSet = new HashSet<>();
         Map<String, Post> posts = myProfile.getPosts();
+        PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
+
         for (final String s : posts.keySet()) {
             final Post post = posts.get(s);
-            if (post.getAuthor() == null)
+            if (me.equals(post.getAuthor()))
                 mySetSongs.add(post.getSong().getName());
         }
         int a = mySetSongs.size();

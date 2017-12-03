@@ -25,7 +25,9 @@ import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapterPosts;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
 import com.mycompany.grifon.mm_pre_alpha.ui.splash.SplashActivity;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NewsActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -73,7 +75,7 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
             final String myUuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             Log.d("MY LOG:", "my uuid: " + myUuid);
             // all users posts
-            final List<Post> myDataset = firebaseUtils.getPostSet(myUuid, false);
+            final LinkedHashMap<String, Post> myDataset = firebaseUtils.getPostSet(myUuid, false);
             if (myDataset.isEmpty())
                 Log.d("MY LOG:", "POSTS SET is empty ");
             // создаём стену
@@ -93,7 +95,7 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // создаём стену
-    private void createWall(List<Post> myDataset, String myUuid) {
+    private void createWall(LinkedHashMap<String, Post> myDataset, String myUuid) {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, false, false, firebaseUtils);
         mRecyclerView.setAdapter(mAdapter);
