@@ -14,9 +14,21 @@ import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.mycompany.grifon.mm_pre_alpha.R;
+import com.mycompany.grifon.mm_pre_alpha.data.Chat;
+import com.mycompany.grifon.mm_pre_alpha.data.events.chat.NewMessageEvent;
+import com.mycompany.grifon.mm_pre_alpha.data.events.chat.WholeChatEvent;
+import com.mycompany.grifon.mm_pre_alpha.data.events.profile.MyProfileEvent;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebasePathHelper;
 import com.mycompany.grifon.mm_pre_alpha.data.Message;
 import com.mycompany.grifon.mm_pre_alpha.data.PlainChat;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity {
     private static int SIGN_IN_REQUEST_CODE = 1;
@@ -25,12 +37,15 @@ public class ChatActivity extends AppCompatActivity {
     Button button;
     DatabaseReference reference;
     EditText input;
+    private final Map<String,Message> messages=new HashMap<>();
+    private Chat chat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         final PlainChat chat = (PlainChat) getIntent().getSerializableExtra("chat");
         reference= FirebasePathHelper.getInstance().getChatMessagesReference(chat.getUuid());
+        //reference.orderByChild("timeMessage");
         input = (EditText) findViewById(R.id.editText);
 
         activity_chat = (RelativeLayout) findViewById(R.id.activity_chat);
@@ -53,6 +68,17 @@ public class ChatActivity extends AppCompatActivity {
         displayChat();
     }
 
+    /*@Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNewMessages(NewMessageEvent evt) {
+        messages = evt.getArg();
+    }*/
+
+    //WholeChatEvent
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onChatUpdate(WholeChatEvent evt) {
+        chat = evt.getArg();
+    }
+
     private void displayChat() {
 
         ListView listMessages = (ListView) findViewById(R.id.listView);
@@ -70,6 +96,13 @@ public class ChatActivity extends AppCompatActivity {
                 timeMessage.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.getTimeMessage()));
             }
         };
+        //listMessages.get
+       /* Collections.sort(listMessages, new Comparator<Message>() {
+            @Override
+            public int compare(Message message1, Message message2) {
+                return message1.compareTo(message2);
+            }
+        });*/
         listMessages.setAdapter(adapter);
     }
    /* @Override

@@ -1,9 +1,11 @@
 package com.mycompany.grifon.mm_pre_alpha.data;
 
+import android.support.annotation.NonNull;
+
 import java.util.Date;
 import java.util.UUID;
 
-public class Message {
+public class Message implements Comparable<Message> {
 
     private String textMessage;
     private String autor;
@@ -52,5 +54,14 @@ public class Message {
 
     public void setTimeMessage(long timeMessage) {
         this.timeMessage = timeMessage;
+    }
+
+    public static int compare(long x, long y) {
+        return (x < y) ? -1 : ((x == y) ? 0 : 1);
+    }
+
+    @Override
+    public int compareTo(@NonNull Message message) {
+        return compare(message.getTimeMessage(), getTimeMessage());
     }
 }

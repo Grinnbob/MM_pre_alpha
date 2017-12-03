@@ -1,5 +1,7 @@
 package com.mycompany.grifon.mm_pre_alpha.data;
 
+import android.support.annotation.NonNull;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -60,7 +62,7 @@ public class Post implements Comparable<Post> {
         return (x < y) ? -1 : ((x == y) ? 0 : 1);
     }
     @Override
-    public int compareTo(Post post) {
-        return compare(post.timestamp,timestamp);
+    public int compareTo(@NonNull Post post) {
+        return compare(post.timestamp, timestamp);
     }
 }
