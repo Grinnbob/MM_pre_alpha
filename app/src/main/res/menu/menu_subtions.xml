@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.mycompany.grifon.mm_pre_alpha.ui.SubscribersActivity">
+    tools:context="com.mycompany.mm_pre_alpha.ui.SubscribersActivity">
     <item
         android:icon="@drawable/ic_home_white_36dp"
         android:id="@+id/news"

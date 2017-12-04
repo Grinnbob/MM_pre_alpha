@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.LoginActivity"
+            android:name="com.mycompany.mm_pre_alpha.ui.LoginActivity"
             android:label="login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,36 +28,36 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.NewsActivity"
+            android:name="com.mycompany.mm_pre_alpha.ui.NewsActivity"
             android:label="@string/action_news"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.SubscribersActivity"
+            android:name="com.mycompany.mm_pre_alpha.ui.SubscribersActivity"
             android:label="@string/action_subscribers"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.MusicActivity"
+            android:name="com.mycompany.mm_pre_alpha.ui.MusicActivity"
             android:label="@string/action_music"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.ProfileActivity"
+            android:name="com.mycompany.mm_pre_alpha.ui.ProfileActivity"
             android:label="@string/action_profile"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.ChatActivity" />
-        <activity android:name=".ui.SearchMusicActivity" />
+        <activity android:name="com.mycompany.mm_pre_alpha.ui.ChatActivity" />
+        <activity android:name="com.mycompany.mm_pre_alpha.ui.SearchMusicActivity" />
         <activity
-            android:name=".ui.SubscriptionsActivity"
+            android:name="com.mycompany.mm_pre_alpha.ui.SubscriptionsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.AllUsersActivity"
+            android:name="com.mycompany.mm_pre_alpha.ui.AllUsersActivity"
             android:label="@string/title_activity_all_users"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.splash.SplashActivity"
+            android:name="com.mycompany.mm_pre_alpha.ui.splash.SplashActivity"
             android:theme="@style/SplashTheme" />
-        <activity android:name=".ui.AddSongToPostActivity" />
+        <activity android:name="com.mycompany.mm_pre_alpha.ui.AddSongToPostActivity" />
 
-        <service android:name="com.mycompany.grifon.mm_pre_alpha.engine.music.MediaPlayerService" />
+        <service android:name="com.mycompany.mm_pre_alpha.engine.music.MediaPlayerService" />
     </application>
 
 </manifest>
