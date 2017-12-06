@@ -1,7 +1,10 @@
 package com.mycompany.grifon.mm_pre_alpha.ui;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -12,6 +15,7 @@ import com.mycompany.grifon.mm_pre_alpha.data.events.login.LoginEvent;
 import com.mycompany.grifon.mm_pre_alpha.data.events.login.RegistrationEvent;
 import com.mycompany.grifon.mm_pre_alpha.engine.eventbus.EBActivity;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseAuthHelper;
+import com.mycompany.grifon.mm_pre_alpha.engine.music.MediaPlayerService;
 import com.mycompany.grifon.mm_pre_alpha.ui.splash.SplashActivity;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -27,6 +31,9 @@ public class LoginActivity extends EBActivity implements View.OnClickListener {
     private EditText password;
     private EditText userName;
 
+    // player
+    public static MediaPlayerService player;
+    public static boolean serviceBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +56,10 @@ public class LoginActivity extends EBActivity implements View.OnClickListener {
         if (view.getId() == R.id.btn_sign_in) {
             // временная заглушка
             if (TextUtils.isEmpty(em) || TextUtils.isEmpty(pass)) {
-                FirebaseAuthHelper.getInstance().signIn("best@yandex.ru", "123456", "");
+                //FirebaseAuthHelper.getInstance().signIn("best@yandex.ru", "123456", "");
                 //FirebaseAuthHelper.getInstance().signIn("post@test.io", "123456", "");
                 //FirebaseAuthHelper.getInstance().signIn("post2@test.io", "123456", "");
-                //FirebaseAuthHelper.getInstance().signIn("morge@yandex.ru", "123456", "");
+                FirebaseAuthHelper.getInstance().signIn("morge@yandex.ru", "123456", "");
             } else {
                 FirebaseAuthHelper.getInstance().signIn(em, pass, "");
             }
@@ -88,5 +95,23 @@ public class LoginActivity extends EBActivity implements View.OnClickListener {
             Toast.makeText(LoginActivity.this, R.string.login_registration_failed_toast_message, Toast.LENGTH_SHORT).show();
         }
     }
+
+    //Binding this Client to the AudioPlayer Service
+    public static ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
+            player = binder.getService();
+            serviceBound = true;
+
+            //Toast.makeText(context, "Service Bound", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceBound = false;
+        }
+    };
 }
 

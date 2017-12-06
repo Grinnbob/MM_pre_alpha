@@ -19,6 +19,7 @@ import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.data.SongInfo;
 import com.mycompany.grifon.mm_pre_alpha.engine.music.MediaPlayerService;
 import com.mycompany.grifon.mm_pre_alpha.ui.AddSongToPostActivity;
+import com.mycompany.grifon.mm_pre_alpha.ui.LoginActivity;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +34,8 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
 
     // player
     private MediaPlayerService player;
-    boolean serviceBound = false;
+    //boolean serviceBound;
+    //private ServiceConnection serviceConnection;
     private Context context;
 
     // data is passed into the constructor
@@ -42,35 +44,20 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
         this.mData = data;
         this.context = context;
 
-        //mediaPlayerService = new MediaPlayerService();
+        //serviceConnection = LoginActivity.serviceConnection;
+        //serviceBound = LoginActivity.serviceBound;
     }
 
-    //Binding this Client to the AudioPlayer Service
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
-            player = binder.getService();
-            serviceBound = true;
 
-            //Toast.makeText(context, "Service Bound", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            serviceBound = false;
-        }
-    };
 
     // The following function creates a new instance of the MediaPlayerService and sends a media file to play
     private void playAudio(String media) {
         //Check is service is active
-        if (!serviceBound) {
+        if (!LoginActivity.serviceBound) {
             Intent playerIntent = new Intent(context, MediaPlayerService.class);
             playerIntent.putExtra("media", media);
             context.startService(playerIntent);
-            context.bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+            context.bindService(playerIntent, LoginActivity.serviceConnection, Context.BIND_AUTO_CREATE);
         } else {
             //Service is active
             //Send media with BroadcastReceiver
@@ -129,10 +116,10 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isChecked) {
                 // Состояние: Включён (stop)
-                if (serviceBound) {
+                if (LoginActivity.serviceBound) {
                     // подпорка, надо нормально сделать
-                    context.unbindService(serviceConnection);
-                    serviceBound = false;
+                    context.unbindService(LoginActivity.serviceConnection);
+                    LoginActivity.serviceBound = false;
                     //service is active
                     player.stopSelf();
 
@@ -142,10 +129,10 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
                 }
             } else {
                 // Состояние: Выключен (play)
-                if (serviceBound) {
+                if (LoginActivity.serviceBound) {
                     // подпорка, надо нормально сделать
-                    context.unbindService(serviceConnection);
-                    serviceBound = false;
+                    context.unbindService(LoginActivity.serviceConnection);
+                    LoginActivity.serviceBound = false;
                     //service is active
                     player.stopSelf();
                 }
