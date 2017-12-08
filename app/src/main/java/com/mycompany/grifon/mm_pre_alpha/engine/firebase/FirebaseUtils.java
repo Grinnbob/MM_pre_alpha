@@ -39,27 +39,32 @@ public class FirebaseUtils {
     public PlainUser plainUser;
 
     public FirebaseUtils() {
-        // Получаем доступ к Хранилищу storage
-        storage = FirebaseStorage.getInstance();
-        // Получаем доступ к Хранилищу database
-        database = FirebaseDatabase.getInstance();
-        // Создаем ссылки на руты
-        storageRef = storage.getReference();
-        databaseRef = database.getReference();
+        try {
+            // Получаем доступ к Хранилищу storage
+            storage = FirebaseStorage.getInstance();
+            // Получаем доступ к Хранилищу database
+            database = FirebaseDatabase.getInstance();
+            // Создаем ссылки на руты
+            storageRef = storage.getReference();
+            databaseRef = database.getReference();
 
-        // my uuid
-        myUuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        // my profile
-        getMyProfile();
-        //or?
-        //Profile profile = FirebaseAuthHelper.getInstance().getProfile();
-        Log.d("MyLog", "my uuid: " + myUuid);
+            // my uuid
+            myUuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            // my profile
+            getMyProfile();
+            //or?
+            //Profile profile = FirebaseAuthHelper.getInstance().getProfile();
+            Log.d("MyLog", "my uuid: " + myUuid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // загружает файл в Cloud Storage и его uri в Database
     public void uploadFileInFirebase(final Uri uri, final String name, final String postText, final ProgressBar progressBar) {
-        // Создаем ссылку в Storage Firebase
-        StorageReference myRef = storageRef.child("music").child(name);
+        try {
+            // Создаем ссылку в Storage Firebase
+            StorageReference myRef = storageRef.child("music").child(name);
         /*
         // metadata
         StorageMetadata metadata = new StorageMetadata.Builder()
@@ -69,43 +74,46 @@ public class FirebaseUtils {
         // создаем uploadTask посредством вызова метода putFile(), в качестве аргумента идет созданная нами ранее Uri
         UploadTask uploadTask = myRef.putFile(uri, metadata);
         */
-        UploadTask uploadTask = myRef.putFile(uri);
-        // устанавливаем 1ый слушатель прогресса (который почему-то не работает)
-        // 2-й слушатель на uploadTask, который среагирует, если произойдет ошибка,
-        // а также 3-й слушатель, который сработает в случае успеха операции
-        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                // считаем процетное соотношение загрузки и отображаем его пользователю
-                @SuppressWarnings("VisibleForTests")
-                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                System.out.println("Upload progress: " + progress + "%");
-                int currentprogress = (int) progress;
-                progressBar.setProgress(currentprogress);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Ошибка
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // Успешно! Берем прямую https-ссылку на файл
-                @SuppressWarnings("VisibleForTests")
-                Uri downloadUri = taskSnapshot.getDownloadUrl();
-                // добавляем URI в database
-                //DatabaseReference myRef = databaseRef.child("music").push();
-                // write in DB
-                writeSongInfoInDB(name, downloadUri.toString(), postText);
-                //myRef.setValue(uri);
-                //Toast.makeText(FirebaseUtils.this, "Композиция загружена", Toast.LENGTH_SHORT).show();
-            }
-        });
+            UploadTask uploadTask = myRef.putFile(uri);
+            // устанавливаем 1ый слушатель прогресса (который почему-то не работает)
+            // 2-й слушатель на uploadTask, который среагирует, если произойдет ошибка,
+            // а также 3-й слушатель, который сработает в случае успеха операции
+            uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    // считаем процетное соотношение загрузки и отображаем его пользователю
+                    @SuppressWarnings("VisibleForTests")
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                    System.out.println("Upload progress: " + progress + "%");
+                    int currentprogress = (int) progress;
+                    progressBar.setProgress(currentprogress);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Ошибка
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // Успешно! Берем прямую https-ссылку на файл
+                    @SuppressWarnings("VisibleForTests")
+                    Uri downloadUri = taskSnapshot.getDownloadUrl();
+                    // write in DB
+                    try {
+                        writeSongInfoInDB(name, downloadUri.toString(), postText);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // пишем музыку в Database
-    private void writeSongInfoInDB(String name, String url, String postText) {
+    private void writeSongInfoInDB(String name, String url, String postText) throws Exception {
         SongInfo info = new SongInfo(name, url, 0);
         String key = databaseRef.push().getKey();
         databaseRef.child("music").child(key).setValue(info);
@@ -144,7 +152,7 @@ public class FirebaseUtils {
      как вернулся этот список mDataSet)
      */
     // получаем список хранящейся в Database музыки
-    public List<SongInfo> getDataSet() {
+    public List<SongInfo> getDataSet() throws Exception {
         final List<SongInfo> mDataSet = new ArrayList<>();//не поддерживает многопоточность
 
         databaseRef.child("music").addValueEventListener(new ValueEventListener() {
@@ -168,7 +176,7 @@ public class FirebaseUtils {
 
     // получаем список хранящиеся в Database посты
     // true - мои посты, false - все
-    public LinkedHashMap<String, Post> getPostSet(final String uuid, boolean postType) {
+    public LinkedHashMap<String, Post> getPostSet(final String uuid, boolean postType) throws Exception {
         final LinkedHashMap<String, Post> mDataSet = new LinkedHashMap<>();//не поддерживает многопоточность
         if (!postType) {
             // all posts
@@ -222,7 +230,7 @@ public class FirebaseUtils {
     }
 
     // добавляем существующие посты новому подписчику (себе) в ленту
-    public void addSubPostsToMeDB(final PlainUser subscribtionPlainUser) {
+    public void addSubPostsToMeDB(final PlainUser subscribtionPlainUser) throws Exception {
         final String subUuid = subscribtionPlainUser.getUuid();
         // all posts
         databaseRef.child("users").child(subUuid).child("posts").addValueEventListener(new ValueEventListener() {
@@ -247,7 +255,7 @@ public class FirebaseUtils {
     }
 
     // удаляем посты из своей стены при отписке
-    public void deleteSubscribersPostsDB(final PlainUser subscribtionPlainUser) {
+    public void deleteSubscribersPostsDB(final PlainUser subscribtionPlainUser) throws Exception {
         final String authorUuid = subscribtionPlainUser.getUuid();
         // all posts
         databaseRef.child("users").child(myUuid).child("posts").addValueEventListener(new ValueEventListener() {
@@ -275,7 +283,7 @@ public class FirebaseUtils {
      */
 
     // получаем список искомой (хранящейся в Database) музыки
-    public List<SongInfo> getSearchedDataSet(final String searchedName) {
+    public List<SongInfo> getSearchedDataSet(final String searchedName) throws Exception {
         final List<SongInfo> mDataSet = new ArrayList<>();
 
         databaseRef.child("music").addValueEventListener(new ValueEventListener() {
@@ -298,7 +306,7 @@ public class FirebaseUtils {
         return mDataSet;
     }
 
-    public void getMyProfile() {
+    public void getMyProfile() throws Exception {
         databaseRef.child("users").child(myUuid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -318,7 +326,7 @@ public class FirebaseUtils {
     // проверяем, подписаны ли мы на этого чела, чтобы поставить галочку
     private boolean result = false;
 
-    public boolean isMySubscribtion(final String uuid) {
+    public boolean isMySubscribtion(final String uuid) throws Exception {
 
         databaseRef.child("users").child(myUuid).child("subscriptions").addValueEventListener(new ValueEventListener() {
             @Override

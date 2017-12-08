@@ -42,55 +42,69 @@ public class SubscriptionsActivity extends EBActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_subscribers);
+        try {
+            setContentView(R.layout.activity_subscribers);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
-        rvSubscribers = (RecyclerView) findViewById(R.id.rvSubscribers);
-        subscribersAdapter= new SubscribersAdapter(this);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
-        rvSubscribers.setLayoutManager(layoutManager);
-        rvSubscribers.setAdapter(subscribersAdapter);
-        //FirebasePathHelper.requestAllUsers();
+            rvSubscribers = (RecyclerView) findViewById(R.id.rvSubscribers);
+            subscribersAdapter = new SubscribersAdapter(this);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            rvSubscribers.setLayoutManager(layoutManager);
+            rvSubscribers.setAdapter(subscribersAdapter);
+            //FirebasePathHelper.requestAllUsers();
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
-
+            user = FirebaseAuth.getInstance().getCurrentUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Intent intent = getIntent();
-        plainUser = (PlainUser) intent.getSerializableExtra("user");
-        if (plainUser == null) { //попали сюда не ткнув на какого-то пользователя, а ткнули со своего профиля
-            plainUser = new PlainUser(user);
+        try {
+            Intent intent = getIntent();
+            plainUser = (PlainUser) intent.getSerializableExtra("user");
+            if (plainUser == null) { //попали сюда не ткнув на какого-то пользователя, а ткнули со своего профиля
+                plainUser = new PlainUser(user);
+            }
+            FirebasePathHelper.getInstance().getMyProfile(user.getUid());
+            FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        FirebasePathHelper.getInstance().getMyProfile(user.getUid());
-        FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMyProfileData(MyProfileEvent evt) {
-        //   plainUser = new PlainUser(user.getDisplayName(), user.getUid());
-        myProfile = evt.getProfile();
-        if (myProfile != null && myProfile.getUuid().equals(plainUser.getUuid())) {
-            Map<String, PlainUser> subscriptions = myProfile.getSubscriptions();
-            subscribersAdapter.replaceData(new ArrayList<>(subscriptions.values()));
+        try {
+            //   plainUser = new PlainUser(user.getDisplayName(), user.getUid());
+            myProfile = evt.getProfile();
+            if (myProfile != null && myProfile.getUuid().equals(plainUser.getUuid())) {
+                Map<String, PlainUser> subscriptions = myProfile.getSubscriptions();
+                subscribersAdapter.replaceData(new ArrayList<>(subscriptions.values()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUserProfileData(UserProfileEvent evt) {
-        if (plainUser == null) {
-            plainUser = new PlainUser(user);
+        try {
+            if (plainUser == null) {
+                plainUser = new PlainUser(user);
+            }
+            profile = evt.getProfile();
+            if (profile != null && profile.getUuid().equals(plainUser.getUuid())) {
+                Map<String, PlainUser> subscriptions = profile.getSubscriptions();
+                subscribersAdapter.replaceData(new ArrayList<>(subscriptions.values()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        profile = evt.getProfile();
-        if (profile != null && profile.getUuid().equals(plainUser.getUuid())) {
-            Map<String, PlainUser> subscriptions = profile.getSubscriptions();
-            subscribersAdapter.replaceData(new ArrayList<>(subscriptions.values()));
-        }
-
     }
 
     @Override
@@ -99,15 +113,11 @@ public class SubscriptionsActivity extends EBActivity {
         return true;
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(AllMyUsersEvent event) {
         List<PlainUser> myPlainUsers = event.getPlainUsers();
         subscribersAdapter.replaceData(myPlainUsers);
-    };
-
-
-
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

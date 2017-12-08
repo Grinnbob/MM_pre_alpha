@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
     tools:context="com.mycompany.grifon.mm_pre_alpha.ui.ProfileActivity">
 
     <include
@@ -16,7 +15,7 @@
         android:layout_height="80dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/toolbar"
-        android:src="@drawable/ic_account_circle" />
+        android:src="@drawable/ic_account_circle_black_48dp" />
 
     <TextView
         android:id="@+id/tv_userName"
@@ -152,6 +151,7 @@
         android:layout_alignParentEnd="true" />
 
     <android.support.v7.widget.RecyclerView
+        android:padding="5dp"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

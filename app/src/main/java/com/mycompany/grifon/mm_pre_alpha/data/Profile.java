@@ -77,7 +77,7 @@ public class Profile {
     //public List<Post> getUserPlayList(){return userPlayList;}
     public Map<String, Post> getPosts(){return posts;}
     // не работает корректно
-    public int getMyPostsSize(){
+    /*public int getMyPostsSize(){
         PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
         List<Post> myPosts = new ArrayList<>();
         for(Post postIter : posts.values()) {
@@ -86,7 +86,7 @@ public class Profile {
             }
         }
         return myPosts.size();
-    }
+    }*/
 
     public void setSubscribers(Map<String, PlainUser> subscribers){
         this.subscribers.clear();

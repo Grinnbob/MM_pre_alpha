@@ -23,11 +23,8 @@ import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.grifon.mm_pre_alpha.engine.firebase.FirebaseUtils;
 import com.mycompany.grifon.mm_pre_alpha.ui.music.RecyclerViewAdapterPosts;
 import com.mycompany.grifon.mm_pre_alpha.data.Post;
-import com.mycompany.grifon.mm_pre_alpha.ui.splash.SplashActivity;
 
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 public class NewsActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -86,9 +83,9 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
                 public void run() {
                     createWall(myDataset, myUuid);
                 }
-            }, 1*500);
-        } catch (NullPointerException e) {
-            Log.d("MY LOG:", "NPE: " + e);
+            }, 1 * 500);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         //create new post
@@ -98,10 +95,14 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
 
     // создаём стену
     private void createWall(LinkedHashMap<String, Post> myDataset, String myUuid) {
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, false, false, firebaseUtils);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        try {
+            mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, false, false, firebaseUtils);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -109,11 +110,15 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
         // добавить post
         if (view.getId() == R.id.btn_add_post) {
             // Выбираем файл на смартфоне и загружаем в Firebase storage and database
-            Intent intent = new Intent();
-            intent.setType("audio/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            startActivityForResult(intent, SELECT_MUSIC);
+            try {
+                Intent intent = new Intent();
+                intent.setType("audio/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                startActivityForResult(intent, SELECT_MUSIC);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -122,20 +127,23 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_MUSIC) {
-                selectedAudioUri = data.getData();
-                selectedAudioPath = getPath(selectedAudioUri);
+                try {
+                    selectedAudioUri = data.getData();
+                    selectedAudioPath = getPath(selectedAudioUri);
 
-                // загружаем в бд музыку
-                // и создаём свой пост
-                progressBar.setVisibility(ProgressBar.VISIBLE);
-                firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, postText.getText().toString(), progressBar);
-
+                    // загружаем в бд музыку
+                    // и создаём свой пост
+                    progressBar.setVisibility(ProgressBar.VISIBLE);
+                    firebaseUtils.uploadFileInFirebase(selectedAudioUri, name, postText.getText().toString(), progressBar);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     // получить абсолютный путь к выбранному файлу по uri и имя файла
-    public String getPath(Uri uri) {
+    public String getPath(Uri uri) throws Exception {
         String[] projection = {MediaStore.Audio.Media.DATA};
         @SuppressWarnings("deprecation")
         Cursor cursor = managedQuery(uri, projection, null, null, null);
@@ -151,9 +159,9 @@ public class NewsActivity extends AppCompatActivity implements View.OnClickListe
         returnCursor.moveToFirst();
         name = returnCursor.getString(name_index);
         // отрезаем .mp3
-        if(name.contains(".mp3")){
+        if (name.contains(".mp3")) {
             name = name.replaceAll(".mp3", "");
-        } else if(name.contains(".wma")){
+        } else if (name.contains(".wma")) {
             name = name.replaceAll(".wma", "");
         }
         return cursor.getString(column_index);

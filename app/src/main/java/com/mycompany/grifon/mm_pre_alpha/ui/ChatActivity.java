@@ -41,35 +41,40 @@ public class ChatActivity extends AppCompatActivity {
     Button button;
     DatabaseReference reference;
     EditText input;
-    private final Map<String,Message> messages=new HashMap<>();
+    private final Map<String, Message> messages = new HashMap<>();
     private Chat chat;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
-        final PlainChat chat = (PlainChat) getIntent().getSerializableExtra("chat");
-        reference= FirebasePathHelper.getInstance().getChatMessagesReference(chat.getUuid());
-        //reference.orderByChild("timeMessage");
-        input = (EditText) findViewById(R.id.editText);
+        try {
+            setContentView(R.layout.activity_chat);
+            final PlainChat chat = (PlainChat) getIntent().getSerializableExtra("chat");
+            reference = FirebasePathHelper.getInstance().getChatMessagesReference(chat.getUuid());
+            //reference.orderByChild("timeMessage");
+            input = (EditText) findViewById(R.id.editText);
 
-        activity_chat = (RelativeLayout) findViewById(R.id.activity_chat);
-        button = (Button)findViewById(R.id.button2);
-        //присваиваем кнопке обработчик нажатия
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //поле ввода
+            activity_chat = (RelativeLayout) findViewById(R.id.activity_chat);
+            button = (Button) findViewById(R.id.button2);
+            //присваиваем кнопке обработчик нажатия
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //поле ввода
 
-                //считываем тект из поля ввода и отправляем новый экземпляр сообщения в БД firebase
-                FirebasePathHelper.getInstance().addMessageToChat(chat.getUuid(), new Message(input.getText().toString(),
-                                FirebaseAuth.getInstance().getCurrentUser().getEmail()));
-                input.setText("");
-            }
-        });
-        //прежде чем отправить сообщение пользователь нужно сделать проверку того -
-        //подписался ли ты на данного пользователя и не занёс ли он тебя в ЧС и открыта ли у него личка
-        //
-        displayChat();
+                    //считываем тект из поля ввода и отправляем новый экземпляр сообщения в БД firebase
+                    FirebasePathHelper.getInstance().addMessageToChat(chat.getUuid(), new Message(input.getText().toString(),
+                            FirebaseAuth.getInstance().getCurrentUser().getEmail()));
+                    input.setText("");
+                }
+            });
+            //прежде чем отправить сообщение пользователь нужно сделать проверку того -
+            //подписался ли ты на данного пользователя и не занёс ли он тебя в ЧС и открыта ли у него личка
+            //
+            displayChat();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*@Subscribe(threadMode = ThreadMode.MAIN)
@@ -84,20 +89,23 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void displayChat() {
-
-        RecyclerView listMessages = (RecyclerView) findViewById(R.id.listView);
-        LinearLayoutManager mgr = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
-        mgr.setStackFromEnd(true);
-        listMessages.setLayoutManager(mgr);
-        adapter = new ChatRecyclerViewAdapter(this,reference);
-        //listMessages.get
+        try {
+            RecyclerView listMessages = (RecyclerView) findViewById(R.id.listView);
+            LinearLayoutManager mgr = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            mgr.setStackFromEnd(true);
+            listMessages.setLayoutManager(mgr);
+            adapter = new ChatRecyclerViewAdapter(this, reference);
+            //listMessages.get
        /* Collections.sort(listMessages, new Comparator<Message>() {
             @Override
             public int compare(Message message1, Message message2) {
                 return message1.compareTo(message2);
             }
         });*/
-        listMessages.setAdapter(adapter);
+            listMessages.setAdapter(adapter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
    /* @Override
     protected void onStart() {

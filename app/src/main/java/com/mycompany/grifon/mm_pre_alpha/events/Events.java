@@ -10,30 +10,29 @@ public class Events {
         public NamesEvent(List<PlainUser> arg) {
             super(arg);
         }
-    };
-    public static class SubscribersEvent extends EventWithSingleArg<List<PlainUser>>  {
+    }
 
+    public static class SubscribersEvent extends EventWithSingleArg<List<PlainUser>> {
         public SubscribersEvent(List<PlainUser> arg) {
             super(arg);
         }
     }
-    /*public static class SubscriptionsEvent extends EventWithSingleArg<List<PlainUser>>  {
 
+    /*public static class SubscriptionsEvent extends EventWithSingleArg<List<PlainUser>>  {
         public SubscriptionsEvent(List<PlainUser> arg) {
             super(arg);
         }
     }*/
-    public static class AllUsersEvent extends EventWithSingleArg<List<PlainUser>>  {
 
+    public static class AllUsersEvent extends EventWithSingleArg<List<PlainUser>> {
         public AllUsersEvent(List<PlainUser> arg) {
             super(arg);
         }
     }
-    /*public static class MyProfileEvent extends EventWithSingleArg<Profile>  {
 
+    /*public static class MyProfileEvent extends EventWithSingleArg<Profile>  {
         public MyProfileEvent(Profile arg) {
             super(arg);
         }
     }*/
-
 }

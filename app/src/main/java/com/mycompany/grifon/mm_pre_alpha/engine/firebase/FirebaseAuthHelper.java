@@ -1,17 +1,12 @@
 package com.mycompany.grifon.mm_pre_alpha.engine.firebase;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-import com.mycompany.grifon.mm_pre_alpha.data.PlainUser;
 import com.mycompany.grifon.mm_pre_alpha.data.Profile;
 import com.mycompany.grifon.mm_pre_alpha.data.events.login.LoginEvent;
 import com.mycompany.grifon.mm_pre_alpha.data.events.login.RegistrationEvent;
@@ -85,17 +80,21 @@ public class FirebaseAuthHelper {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                boolean success = task.isSuccessful() && (task.getResult().getUser() != null);
-                signedIn = success;
-                String uuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                //signIn after registration
-                //if there is no user in Database, we will add him
-                if (newUser) {
-                    Profile myProfile = new Profile(userName, uuid);
-                    //firebasePathHelper.uploadProfileDB(myProfile);
-                    FirebasePathHelper.getInstance().writeNewProfileDB(myProfile);
+                try {
+                    boolean success = task.isSuccessful() && (task.getResult().getUser() != null);
+                    signedIn = success;
+                    String uuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    //signIn after registration
+                    //if there is no user in Database, we will add him
+                    if (newUser) {
+                        Profile myProfile = new Profile(userName, uuid);
+                        //firebasePathHelper.uploadProfileDB(myProfile);
+                        FirebasePathHelper.getInstance().uploadProfileDB(myProfile);
+                    }
+                    eventBus.post(new LoginEvent(success, email));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                eventBus.post(new LoginEvent(success, email));
             }
         });
     }
@@ -113,16 +112,20 @@ public class FirebaseAuthHelper {
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                FirebaseUser user = null;
-                if (task.isSuccessful()) {
-                    user = task.getResult().getUser();
-                    if (user != null) {
-                        newUser = true;
-                        signIn(email, password, userName);
-                        eventBus.post(new MyProfileEvent(profile));
+                try {
+                    FirebaseUser user = null;
+                    if (task.isSuccessful()) {
+                        user = task.getResult().getUser();
+                        if (user != null) {
+                            newUser = true;
+                            signIn(email, password, userName);
+                            eventBus.post(new MyProfileEvent(profile));
+                        }
                     }
+                    eventBus.post(new RegistrationEvent(user != null, email));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                eventBus.post(new RegistrationEvent(user != null, email));
             }
         });
     }

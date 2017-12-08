@@ -10,8 +10,10 @@
         android:id="@+id/tv_author_name"
         android:layout_width="wrap_content"
         android:layout_height="15dp"
-        android:text=" "
-        android:textSize="12sp" />
+        android:text=""
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:layout_alignParentTop="true" />
 
     <TextView
         android:id="@+id/tv_text_post_item"
@@ -19,15 +21,12 @@
         android:layout_height="15dp"
         android:text="post_text"
         android:textSize="10sp"
-        android:layout_alignBaseline="@+id/tv_author_name"
-        android:layout_alignBottom="@+id/tv_author_name"
-        android:layout_toRightOf="@+id/tv_author_name"
-        android:layout_toEndOf="@+id/tv_author_name" />
+        android:layout_below="@+id/tv_author_name"/>
 
     <Button
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_below="@+id/tv_author_name"
+        android:layout_below="@+id/tv_text_post_item"
         android:layout_weight="0.03"
         android:id="@+id/btn_play"
         android:background="@color/colorWhite"
@@ -37,7 +36,7 @@
     <Button
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_below="@+id/tv_author_name"
+        android:layout_below="@+id/tv_text_post_item"
         android:layout_toRightOf="@+id/btn_play"
         android:layout_weight="0.03"
         android:id="@+id/btn_pause"
@@ -51,6 +50,7 @@
         android:layout_height="10dp"
         android:text="song_name"
         android:textSize="10sp"
+        android:paddingLeft="5dp"
         android:layout_below="@+id/tv_text_post_item"
         android:layout_toRightOf="@+id/btn_pause"
         android:layout_alignBottom="@+id/btn_pause" />
@@ -91,7 +91,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@color/colorWhite"
-        android:drawableLeft="@drawable/ic_clear_black_24dp"
+        android:drawableLeft="@drawable/ic_clear_black_18dp"
         android:padding="0.1dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"

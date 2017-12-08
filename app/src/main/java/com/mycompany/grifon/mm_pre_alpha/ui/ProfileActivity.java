@@ -76,43 +76,44 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        chatButton = (Button) findViewById(R.id.chatButton);
-        chatButton.setOnClickListener(this);
-        checkBox = (CheckBox) findViewById(R.id.subscribeCheckBox);
-        checkBox.setOnCheckedChangeListener(checkBoxListener);
+        try {
+            setContentView(R.layout.activity_profile);
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            chatButton = (Button) findViewById(R.id.chatButton);
+            chatButton.setOnClickListener(this);
+            checkBox = (CheckBox) findViewById(R.id.subscribeCheckBox);
+            checkBox.setOnCheckedChangeListener(checkBoxListener);
 
-        tv_userName = (TextView) findViewById(R.id.tv_userName);
-        tv_numberOfSubscribers = (TextView) findViewById(R.id.tv_numberOfSubscribers);
-        tv_numberOfSubscribers.setOnClickListener(this);
-        Log.i(TAG, "All is up!");
-        tv_numberOfSubscriptions = (TextView) findViewById(R.id.tv_numberOfSubscriptions);
-        tv_numberOfSubscriptions.setOnClickListener(this);
-        //tv_numberOfPublications.setOnClickListener(this);
-        tv_subscribeMe = (TextView) findViewById(R.id.tv_subscribe_me);
-        tv_subscribeMe.setOnClickListener(this);
+            tv_userName = (TextView) findViewById(R.id.tv_userName);
+            tv_numberOfSubscribers = (TextView) findViewById(R.id.tv_numberOfSubscribers);
+            tv_numberOfSubscribers.setOnClickListener(this);
+            Log.i(TAG, "All is up!");
+            tv_numberOfSubscriptions = (TextView) findViewById(R.id.tv_numberOfSubscriptions);
+            tv_numberOfSubscriptions.setOnClickListener(this);
+            //tv_numberOfPublications.setOnClickListener(this);
+            tv_subscribeMe = (TextView) findViewById(R.id.tv_subscribe_me);
+            tv_subscribeMe.setOnClickListener(this);
 
-        tv_numberOfSameSongs = (TextView) findViewById(R.id.tv_number_of_the_same_songs);
-        tv_numberOfSameSongs.setOnClickListener(this);
-        tv_sameSongs = (TextView) findViewById(R.id.tv_same_songs);
-        tv_sameSongs.setOnClickListener(this);
+            tv_numberOfSameSongs = (TextView) findViewById(R.id.tv_number_of_the_same_songs);
+            tv_numberOfSameSongs.setOnClickListener(this);
+            tv_sameSongs = (TextView) findViewById(R.id.tv_same_songs);
+            tv_sameSongs.setOnClickListener(this);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(ProgressBar.INVISIBLE);
+            progressBar = (ProgressBar) findViewById(R.id.progressBar);
+            progressBar.setVisibility(ProgressBar.INVISIBLE);
 
-        // нереализованный функционал
-        tv_userInfo = (TextView) findViewById(R.id.userINfo);
-        tv_userInfo.setOnClickListener(this);
-        tv_userInfo.setVisibility(View.INVISIBLE);
+            // нереализованный функционал
+            tv_userInfo = (TextView) findViewById(R.id.userINfo);
+            tv_userInfo.setOnClickListener(this);
+            tv_userInfo.setVisibility(View.INVISIBLE);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
+            user = FirebaseAuth.getInstance().getCurrentUser();
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-        // подключаемся к Firebase
-        firebaseUtils = new FirebaseUtils();
+            // подключаемся к Firebase
+            firebaseUtils = new FirebaseUtils();
 
        /*Intent intent = getIntent();
         plainUser = (PlainUser) intent.getSerializableExtra("user");
@@ -123,148 +124,176 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
         FirebasePathHelper.getMyProfile(user.getUid());
         FirebasePathHelper.getUserProfile(plainUser.getUuid());*/
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // создаём стену
     private void createWall(LinkedHashMap<String, Post> myDataset, String myUuid, boolean profyleType) {
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, profyleType, true, firebaseUtils);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        try {
+            mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            mAdapter = new RecyclerViewAdapterPosts(this, myDataset, myUuid, profyleType, true, firebaseUtils);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     CompoundButton.OnCheckedChangeListener checkBoxListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
             if (!isChecked) {
                 // отписка
-                if (profile.getSubscribers().size() > 0) {
-                    profile.getSubscribers().remove(user.getUid());
-                    FirebasePathHelper.getInstance().writeNewProfileDB(profile);
-                }
-
-                final Map<String, Post> myPosts = myProfile.getPosts();
-                final Map<String, Post> hisPosts = profile.getPosts();
-                final Map<String, Post> hisOwnPosts = new HashMap<>();
-                for (String s : hisPosts.keySet()) {
-                    final Post post = hisPosts.get(s);
-                    if (post.getAuthor().getUuid().equals(profile.getUuid())) {
-                        hisOwnPosts.put(s, post);
-                        myPosts.remove(s);
+                try {
+                    if (profile.getSubscribers().size() > 0) {
+                        profile.getSubscribers().remove(user.getUid());
+                        FirebasePathHelper.getInstance().updateProfileDB(profile);
                     }
-                }
 
-                if (myProfile.getSubscriptions().size() > 0) {
-                    myProfile.getSubscriptions().remove(plainUser.getUuid());
-                    FirebasePathHelper.getInstance().writeNewProfileDB(myProfile);
-                }
+                    final Map<String, Post> myPosts = myProfile.getPosts();
+                    final Map<String, Post> hisPosts = profile.getPosts();
+                    final Map<String, Post> hisOwnPosts = new HashMap<>();
+                    for (String s : hisPosts.keySet()) {
+                        final Post post = hisPosts.get(s);
+                        if (post.getAuthor().getUuid().equals(profile.getUuid())) {
+                            hisOwnPosts.put(s, post);
+                            myPosts.remove(s);
+                        }
+                    }
 
-                // delete posts from wall
-               // firebaseUtils.deleteSubscribersPostsDB(plainUser);
+                    if (myProfile.getSubscriptions().size() > 0) {
+                        myProfile.getSubscriptions().remove(plainUser.getUuid());
+                        FirebasePathHelper.getInstance().updateProfileDB(myProfile);
+                    }
+
+                    // delete posts from wall
+                    // firebaseUtils.deleteSubscribersPostsDB(plainUser);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             } else {
                 // подписка
-                Map<String, PlainUser> subscribers = profile.getSubscribers();
-                if (subscribers == null) {
-                    subscribers = new HashMap<>();
-                }
-                subscribers.put(user.getUid(), new PlainUser(myProfile.getName(), user.getUid()));
-                FirebasePathHelper.getInstance().writeNewProfileDB(profile);
-
-                final Map<String, Post> myPosts = myProfile.getPosts();
-                final Map<String, Post> hisPosts = profile.getPosts();
-                final Map<String, Post> hisOwnPosts = new HashMap<>();
-                for (String s : hisPosts.keySet()) {
-                    final Post post = hisPosts.get(s);
-                    if (post.getAuthor().getUuid().equals(profile.getUuid())) {
-                        hisOwnPosts.put(s, post);
+                try {
+                    Map<String, PlainUser> subscribers = profile.getSubscribers();
+                    if (subscribers == null) {
+                        subscribers = new HashMap<>();
                     }
+                    subscribers.put(user.getUid(), new PlainUser(myProfile.getName(), user.getUid()));
+                    FirebasePathHelper.getInstance().updateProfileDB(profile);
+
+                    final Map<String, Post> myPosts = myProfile.getPosts();
+                    final Map<String, Post> hisPosts = profile.getPosts();
+                    final Map<String, Post> hisOwnPosts = new HashMap<>();
+                    for (String s : hisPosts.keySet()) {
+                        final Post post = hisPosts.get(s);
+                        if (post.getAuthor().getUuid().equals(profile.getUuid())) {
+                            hisOwnPosts.put(s, post);
+                        }
+                    }
+                    myPosts.putAll(hisOwnPosts);
+
+                    Map<String, PlainUser> subscriptions = myProfile.getSubscriptions();
+                    subscriptions.put(plainUser.getUuid(), plainUser);
+                    FirebasePathHelper.getInstance().updateProfileDB(myProfile);
+
+
+                    // добавляем существующие посты новому подписчику (себе) в ленту
+                    //firebaseUtils.addSubPostsToMeDB(plainUser);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                myPosts.putAll(hisOwnPosts);
-                
-                Map<String, PlainUser> subscriptions = myProfile.getSubscriptions();
-                subscriptions.put(plainUser.getUuid(), plainUser);
-                FirebasePathHelper.getInstance().writeNewProfileDB(myProfile);
-
-
-                // добавляем существующие посты новому подписчику (себе) в ленту
-                //firebaseUtils.addSubPostsToMeDB(plainUser);
             }
         }
     };
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMyProfileData(MyProfileEvent evt) {
-        //   plainUser = new PlainUser(user.getDisplayName(), user.getUid());
-        myProfile = evt.getProfile();
-        if (myProfile != null && myProfile.getUuid().equals(plainUser.getUuid())) {
-            tv_userName.setText(myProfile.getName());
-            tv_numberOfSubscribers.setText(String.valueOf(myProfile.getSubscribers().size()));
-            tv_numberOfSubscriptions.setText(String.valueOf(myProfile.getSubscriptions().size()));
-            //tv_numberOfPublications.setText(String.valueOf(myProfile.getMyPostsSize()));
-            setControls();
+        try {
+            //   plainUser = new PlainUser(user.getDisplayName(), user.getUid());
+            myProfile = evt.getProfile();
+            if (myProfile != null && myProfile.getUuid().equals(plainUser.getUuid())) {
+                tv_userName.setText(myProfile.getName());
+                tv_numberOfSubscribers.setText(String.valueOf(myProfile.getSubscribers().size()));
+                tv_numberOfSubscriptions.setText(String.valueOf(myProfile.getSubscriptions().size()));
+                //tv_numberOfPublications.setText(String.valueOf(myProfile.getMyPostsSize()));
+                setControls();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUserProfileData(UserProfileEvent evt) {
-        if (plainUser == null) {
-            plainUser = new PlainUser(user);
-        }
-        profile = evt.getProfile();
-        if (profile != null && profile.getUuid().equals(plainUser.getUuid())) {
-            tv_userName.setText(profile.getName());
-            tv_numberOfSubscribers.setText(String.valueOf(profile.getSubscribers().size()));
-            tv_numberOfSubscriptions.setText(String.valueOf(profile.getSubscriptions().size()));
-            //tv_numberOfPublications.setText(String.valueOf(myProfile.getMyPostsSize()));
-            PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
-
-            Map<String, Post> posts = profile.getPosts();
-            for (final String s : posts.keySet()) {
-                final Post post = posts.get(s);
-                if (me.equals(post.getAuthor()))
-                    userSetSongs.add(post.getSong().getName());
+        try {
+            if (plainUser == null) {
+                plainUser = new PlainUser(user);
             }
+            profile = evt.getProfile();
+            if (profile != null && profile.getUuid().equals(plainUser.getUuid())) {
+                tv_userName.setText(profile.getName());
+                tv_numberOfSubscribers.setText(String.valueOf(profile.getSubscribers().size()));
+                tv_numberOfSubscriptions.setText(String.valueOf(profile.getSubscriptions().size()));
+                //tv_numberOfPublications.setText(String.valueOf(myProfile.getMyPostsSize()));
+                PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
 
-            boolean flag = false;
-            Map<String, PlainUser> subscribers = profile.getSubscribers();
-            for (final String s : subscribers.keySet()) {
-                final PlainUser user = subscribers.get(s);
-                flag = myProfile != null && !TextUtils.isEmpty(myProfile.getUuid()) &&
-                    myProfile.getUuid().equals(user.getUuid());
+                Map<String, Post> posts = profile.getPosts();
+                for (final String s : posts.keySet()) {
+                    final Post post = posts.get(s);
+                    if (me.equals(post.getAuthor()))
+                        userSetSongs.add(post.getSong().getName());
+                }
 
-                if (flag) break;
+                boolean flag = false;
+                Map<String, PlainUser> subscribers = profile.getSubscribers();
+                for (final String s : subscribers.keySet()) {
+                    final PlainUser user = subscribers.get(s);
+                    flag = myProfile != null && !TextUtils.isEmpty(myProfile.getUuid()) &&
+                            myProfile.getUuid().equals(user.getUuid());
+
+                    if (flag) break;
+                }
+
+                setControls();
+                checkBox.setOnCheckedChangeListener(null);
+                checkBox.setChecked(flag);
+                checkBox.setOnCheckedChangeListener(checkBoxListener);
             }
-
-            setControls();
-            checkBox.setOnCheckedChangeListener(null);
-            checkBox.setChecked(flag);
-            checkBox.setOnCheckedChangeListener(checkBoxListener);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 
     void setControls() {
-        boolean isMine = user!=null &&  plainUser != null && user.getUid().equals(plainUser.getUuid());
-        if (isMine) {
-            //chatView.setVisibility(View.INVISIBLE);//later
-            checkBox.setVisibility(View.INVISIBLE);
-            chatButton.setVisibility(View.INVISIBLE);
-            tv_subscribeMe.setVisibility(View.INVISIBLE);
-            tv_numberOfSameSongs.setVisibility(View.INVISIBLE);
-            tv_sameSongs.setVisibility(View.INVISIBLE);
+        try {
+            boolean isMine = user != null && plainUser != null && user.getUid().equals(plainUser.getUuid());
+            if (isMine) {
+                //chatView.setVisibility(View.INVISIBLE);//later
+                checkBox.setVisibility(View.INVISIBLE);
+                chatButton.setVisibility(View.INVISIBLE);
+                tv_subscribeMe.setVisibility(View.INVISIBLE);
+                tv_numberOfSameSongs.setVisibility(View.INVISIBLE);
+                tv_sameSongs.setVisibility(View.INVISIBLE);
 
-        } else {
-            //chatView.setVisibility(View.VISIBLE);
-            checkBox.setVisibility(View.VISIBLE);
-            chatButton.setVisibility(View.VISIBLE);
-            tv_subscribeMe.setVisibility(View.VISIBLE);
-            tv_numberOfSameSongs.setVisibility(View.VISIBLE);
-            tv_sameSongs.setVisibility(View.VISIBLE);
-            int c = getNumberOfTheSameSongs(myProfile.getUuid(), profile.getUuid());
-            numberOfSameSongs = String.valueOf(c) + "%";
-            progressBar.setVisibility(ProgressBar.VISIBLE);
-            progressBar.setProgress(c);
+            } else {
+                //chatView.setVisibility(View.VISIBLE);
+                checkBox.setVisibility(View.VISIBLE);
+                chatButton.setVisibility(View.VISIBLE);
+                tv_subscribeMe.setVisibility(View.VISIBLE);
+                tv_numberOfSameSongs.setVisibility(View.VISIBLE);
+                tv_sameSongs.setVisibility(View.VISIBLE);
+                int c = getNumberOfTheSameSongs(myProfile.getUuid(), profile.getUuid());
+                numberOfSameSongs = String.valueOf(c) + "%";
+                progressBar.setVisibility(ProgressBar.VISIBLE);
+                progressBar.setProgress(c);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -287,15 +316,15 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
     @Override
     protected void onResume() {
         super.onResume();
-        Intent intent = getIntent();
-        plainUser = (PlainUser) intent.getSerializableExtra("user");
-        if (plainUser == null) { //попали сюда не ткнув на какого-то пользователя, а ткнули на свой профиль просто
-            plainUser = new PlainUser(user);
-        }
-        FirebasePathHelper.getInstance().getMyProfile(user.getUid());
-        FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
-
         try {
+            Intent intent = getIntent();
+            plainUser = (PlainUser) intent.getSerializableExtra("user");
+            if (plainUser == null) { //попали сюда не ткнув на какого-то пользователя, а ткнули на свой профиль просто
+                plainUser = new PlainUser(user);
+            }
+            FirebasePathHelper.getInstance().getMyProfile(user.getUid());
+            FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
+
             // получаем полный список своих постов
             //final String numberOfSameSongs;
             final String currentUuid;
@@ -324,7 +353,7 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
 
             // my posts
             //true - Означает что мы передаём только те из постов данного пользователя, в которых автором является он сам(т.е. те которые он запостил или репостнул)
-            final LinkedHashMap<String ,Post> currentDataSet = firebaseUtils.getPostSet(currentUuid, true);
+            final LinkedHashMap<String, Post> currentDataSet = firebaseUtils.getPostSet(currentUuid, true);
 
             if (currentDataSet.isEmpty())
                 Log.d("MY LOG:", "POSTS SET is empty ");
@@ -340,69 +369,86 @@ public class ProfileActivity extends EBActivity implements View.OnClickListener 
             }, 1 * 500);
 
 
-        } catch (NullPointerException e) {
-            Log.d("MY LOG:", "NPE: " + e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     // совпадения по песням
     private int getNumberOfTheSameSongs(String myUid, String userUid) {
-        final Set<String> resSet = new HashSet<>();
-        Map<String, Post> posts = myProfile.getPosts();
-        PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
+        try {
+            final Set<String> resSet = new HashSet<>();
+            Map<String, Post> posts = myProfile.getPosts();
+            PlainUser me = FirebaseAuthHelper.getInstance().getProfile().toPlain();
 
-        for (final String s : posts.keySet()) {
-            final Post post = posts.get(s);
-            if (me.equals(post.getAuthor()))
-                mySetSongs.add(post.getSong().getName());
-        }
-        int a = mySetSongs.size();
-        Log.d("MY LOG:", "a: " + a);
-        int b = userSetSongs.size();
-        Log.d("MY LOG:", "b: " + b);
-        if (a == 0)
+            for (final String s : posts.keySet()) {
+                final Post post = posts.get(s);
+                if (me.equals(post.getAuthor()))
+                    mySetSongs.add(post.getSong().getName());
+            }
+            int a = mySetSongs.size();
+            Log.d("MY LOG:", "a: " + a);
+            int b = userSetSongs.size();
+            Log.d("MY LOG:", "b: " + b);
+            if (a == 0)
+                return 0;
+            else if (b == 0)
+                return 0;
+            else {
+                resSet.addAll(mySetSongs);
+                resSet.addAll(userSetSongs);
+                int c = resSet.size();
+                c = 1 - (c - b) / a;
+                Log.d("MY LOG:", "c: " + c);
+                c *= 100;
+                return c;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             return 0;
-        else if (b == 0)
-            return 0;
-        else {
-            resSet.addAll(mySetSongs);
-            resSet.addAll(userSetSongs);
-            int c = resSet.size();
-            c = 1 - (c - b) / a;
-            Log.d("MY LOG:", "c: " + c);
-            c *= 100;
-            return c;
         }
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.chatButton) {
-            Intent intentChat = new Intent(ProfileActivity.this, ChatActivity.class);
-            PlainChat pc;
-            pc = myProfile.getPlainChatWithUser(plainUser);
-            if (pc == null) {
-                pc = new PlainChat(myProfile.getName() + " with " + plainUser.getName(), UUID.randomUUID().toString(), Arrays.asList(myProfile.toPlain(), plainUser));
-                FirebasePathHelper.getInstance().createChat(pc);
+            try {
+                Intent intentChat = new Intent(ProfileActivity.this, ChatActivity.class);
+                PlainChat pc;
+                pc = myProfile.getPlainChatWithUser(plainUser);
+                if (pc == null) {
+                    pc = new PlainChat(myProfile.getName() + " with " + plainUser.getName(), UUID.randomUUID().toString(), Arrays.asList(myProfile.toPlain(), plainUser));
+                    FirebasePathHelper.getInstance().createChat(pc);
+                }
+                intentChat.putExtra("chat", (Serializable) pc);
+                startActivity(intentChat);
+                finish();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            intentChat.putExtra("chat", (Serializable) pc);
-            startActivity(intentChat);
-            finish();
         }
         if (view.getId() == R.id.tv_numberOfSubscribers) {
-            Intent intentSubscribers = new Intent(ProfileActivity.this, SubscribersActivity.class);
-            intentSubscribers.putExtra("user", plainUser);
-            startActivity(intentSubscribers);
-            finish();
+            try {
+                Intent intentSubscribers = new Intent(ProfileActivity.this, SubscribersActivity.class);
+                intentSubscribers.putExtra("user", plainUser);
+                startActivity(intentSubscribers);
+                finish();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         if (view.getId() == R.id.tv_numberOfSubscriptions) {
-            Intent intentSubscriptions = new Intent(ProfileActivity.this, SubscriptionsActivity.class);
-            //Intent i = new Intent(c, ProfileActivity.class);
-            //intentSubscribers.putExtra("user", plainUser);
-            intentSubscriptions.putExtra("user", plainUser);
-            //c.startActivity(i);
-            startActivity(intentSubscriptions);
-            finish();
+            try {
+                Intent intentSubscriptions = new Intent(ProfileActivity.this, SubscriptionsActivity.class);
+                //Intent i = new Intent(c, ProfileActivity.class);
+                //intentSubscribers.putExtra("user", plainUser);
+                intentSubscriptions.putExtra("user", plainUser);
+                //c.startActivity(i);
+                startActivity(intentSubscriptions);
+                finish();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

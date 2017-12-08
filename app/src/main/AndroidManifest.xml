@@ -56,8 +56,6 @@
             android:name=".ui.splash.SplashActivity"
             android:theme="@style/SplashTheme" />
         <activity android:name=".ui.AddSongToPostActivity" />
-
-        <service android:name="com.mycompany.grifon.mm_pre_alpha.engine.music.MediaPlayerService" />
     </application>
 
 </manifest>
