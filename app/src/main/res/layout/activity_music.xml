@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    tools:context="com.mycompany.grifon.mm_pre_alpha.ui.MusicActivity">
+    tools:context="com.mycompany.mm_pre_alpha.ui.MusicActivity">
     <include layout="@layout/toolbar" />
 
     <Button

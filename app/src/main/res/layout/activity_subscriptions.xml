@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    tools:context="com.mycompany.grifon.mm_pre_alpha.ui.SubscribersActivity">
+    tools:context="com.mycompany.mm_pre_alpha.ui.SubscribersActivity">
 
     <include
         android:id="@+id/toolbar"
