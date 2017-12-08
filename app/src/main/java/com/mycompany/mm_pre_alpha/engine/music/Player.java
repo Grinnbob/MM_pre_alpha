@@ -1,4 +1,4 @@
-package com.mycompany.grifon.mm_pre_alpha.engine.music;
+package com.mycompany.mm_pre_alpha.engine.music;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
