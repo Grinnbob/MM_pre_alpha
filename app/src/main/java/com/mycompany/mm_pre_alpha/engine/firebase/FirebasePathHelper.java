@@ -253,8 +253,8 @@ public class FirebasePathHelper {
         });
     }
 
-    // пишем new profile в Database
-    public void writeNewProfileDB(Profile info) {
+    // пишем update profile в Database
+    public void updateProfileDB(Profile info) {
         getRoot().child("users").child(info.getUuid()).setValue(info);
     }
 
@@ -268,7 +268,7 @@ public class FirebasePathHelper {
     public void deletePostDB(String myUuid, String author, Post post) {
         //String key = getRoot().getKey();
         // use timestamps
-            getRoot().child("users").child(myUuid).child("posts").child(post.getUuid()).setValue(null);
+        getRoot().child("users").child(myUuid).child("posts").child(post.getUuid()).setValue(null);
     }
 
     // пишем new post в Database in subscribers profiles

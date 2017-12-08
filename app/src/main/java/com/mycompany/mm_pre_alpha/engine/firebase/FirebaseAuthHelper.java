@@ -80,17 +80,21 @@ public class FirebaseAuthHelper {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                boolean success = task.isSuccessful() && (task.getResult().getUser() != null);
-                signedIn = success;
-                String uuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                //signIn after registration
-                //if there is no user in Database, we will add him
-                if (newUser) {
-                    Profile myProfile = new Profile(userName, uuid);
-                    //firebasePathHelper.uploadProfileDB(myProfile);
-                    FirebasePathHelper.getInstance().writeNewProfileDB(myProfile);
+                try {
+                    boolean success = task.isSuccessful() && (task.getResult().getUser() != null);
+                    signedIn = success;
+                    String uuid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    //signIn after registration
+                    //if there is no user in Database, we will add him
+                    if (newUser) {
+                        Profile myProfile = new Profile(userName, uuid);
+                        //firebasePathHelper.uploadProfileDB(myProfile);
+                        FirebasePathHelper.getInstance().uploadProfileDB(myProfile);
+                    }
+                    eventBus.post(new LoginEvent(success, email));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                eventBus.post(new LoginEvent(success, email));
             }
         });
     }
@@ -108,16 +112,20 @@ public class FirebaseAuthHelper {
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                FirebaseUser user = null;
-                if (task.isSuccessful()) {
-                    user = task.getResult().getUser();
-                    if (user != null) {
-                        newUser = true;
-                        signIn(email, password, userName);
-                        eventBus.post(new MyProfileEvent(profile));
+                try {
+                    FirebaseUser user = null;
+                    if (task.isSuccessful()) {
+                        user = task.getResult().getUser();
+                        if (user != null) {
+                            newUser = true;
+                            signIn(email, password, userName);
+                            eventBus.post(new MyProfileEvent(profile));
+                        }
                     }
+                    eventBus.post(new RegistrationEvent(user != null, email));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                eventBus.post(new RegistrationEvent(user != null, email));
             }
         });
     }

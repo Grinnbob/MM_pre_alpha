@@ -1,11 +1,9 @@
 package com.mycompany.mm_pre_alpha.ui.music;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.IBinder;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +14,9 @@ import android.widget.ToggleButton;
 
 import com.mycompany.grifon.mm_pre_alpha.R;
 import com.mycompany.mm_pre_alpha.data.SongInfo;
-import com.mycompany.mm_pre_alpha.engine.music.MediaPlayerService;
 import com.mycompany.mm_pre_alpha.ui.AddSongToPostActivity;
+import com.mycompany.mm_pre_alpha.ui.LoginActivity;
+import com.mycompany.mm_pre_alpha.engine.music.Player;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,11 +28,10 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
     private List<SongInfo> mData = Collections.emptyList();
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    private Context context;
 
     // player
-    private MediaPlayerService player;
-    boolean serviceBound = false;
-    private Context context;
+    private Player player;
 
     // data is passed into the constructor
     public RecyclerViewAdapterMusic(Context context, List<SongInfo> data) {
@@ -41,39 +39,7 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
         this.mData = data;
         this.context = context;
 
-        //mediaPlayerService = new MediaPlayerService();
-    }
-
-    //Binding this Client to the AudioPlayer Service
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
-            player = binder.getService();
-            serviceBound = true;
-
-            //Toast.makeText(context, "Service Bound", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            serviceBound = false;
-        }
-    };
-
-    // The following function creates a new instance of the MediaPlayerService and sends a media file to play
-    private void playAudio(String media) {
-        //Check is service is active
-        if (!serviceBound) {
-            Intent playerIntent = new Intent(context, MediaPlayerService.class);
-            playerIntent.putExtra("media", media);
-            context.startService(playerIntent);
-            context.bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-        } else {
-            //Service is active
-            //Send media with BroadcastReceiver
-        }
+        this.player = LoginActivity.player;
     }
 
     // inflates the row layout from xml when needed
@@ -89,7 +55,7 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
     public void onBindViewHolder(ViewHolder holder, int position) {
         String songName = mData.get(position).getName();
         holder.tv_songName.setText(songName);
-        holder.toogleButton.setChecked(false);
+        holder.toogleButton_play.setChecked(false);
     }
 
     // total number of rows
@@ -101,52 +67,41 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
-        public TextView tv_songName;
-        public ToggleButton toogleButton;
-        //public Button btnv_play;
-        //public Button btnv_pause;
-        public Button btnv_plusSong;
+        TextView tv_songName;
+        ToggleButton toogleButton_play;
+        Button btnv_plusSong;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
+            try {
+                tv_songName = (TextView) itemView.findViewById(R.id.tv_recycler_item);
+                btnv_plusSong = (Button) itemView.findViewById(R.id.btn_plus_song);
 
-            tv_songName = (TextView) itemView.findViewById(R.id.tv_recycler_item);
-            //btnv_play = (Button) itemView.findViewById(R.id.btn_play);
-            //btnv_pause = (Button) itemView.findViewById(R.id.btn_pause);
-            btnv_plusSong = (Button) itemView.findViewById(R.id.btn_plus_song);
+                btnv_plusSong.setOnClickListener(this);
+                itemView.setOnClickListener(this);
 
-            //btnv_play.setOnClickListener(this);
-            //btnv_pause.setOnClickListener(this);
-            btnv_plusSong.setOnClickListener(this);
-            itemView.setOnClickListener(this);
-
-            toogleButton = (ToggleButton) itemView.findViewById(R.id.tbtn_play);
-            toogleButton.setOnCheckedChangeListener(this);
+                toogleButton_play = (ToggleButton) itemView.findViewById(R.id.tbtn_play);
+                toogleButton_play.setOnCheckedChangeListener(this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isChecked) {
-                // Состояние: Включён (stop)
-                if (serviceBound) {
-                    // подпорка, надо нормально сделать
-                    context.unbindService(serviceConnection);
-                    serviceBound = false;
-                    //service is active
-                    player.stopSelf();
-
-                    playAudio(mData.get(getAdapterPosition()).getUrl());
-                } else {
-                    playAudio(mData.get(getAdapterPosition()).getUrl());
+                // play song
+                try {
+                    player.startPlayback(mData.get(getAdapterPosition()).getUrl());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } else {
-                // Состояние: Выключен (play)
-                if (serviceBound) {
-                    // подпорка, надо нормально сделать
-                    context.unbindService(serviceConnection);
-                    serviceBound = false;
-                    //service is active
-                    player.stopSelf();
+                // stop song
+                try {
+                    player.stopPlayback();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -155,12 +110,16 @@ public class RecyclerViewAdapterMusic extends RecyclerView.Adapter<RecyclerViewA
         @Override
         public void onClick(View view) {
             if (view.getId() == R.id.btn_plus_song) {
-                Intent intent = new Intent(context, AddSongToPostActivity.class);
-                SongInfo songInfo = mData.get(getAdapterPosition());
-                intent.putExtra("song_name", songInfo.getName());
-                intent.putExtra("song_url", songInfo.getUrl());
-                //intent.putExtra("song_likes", songInfo.getLikes());
-                context.startActivity(intent);
+                try {
+                    Intent intent = new Intent(context, AddSongToPostActivity.class);
+                    SongInfo songInfo = mData.get(getAdapterPosition());
+                    intent.putExtra("song_name", songInfo.getName());
+                    intent.putExtra("song_url", songInfo.getUrl());
+                    //intent.putExtra("song_likes", songInfo.getLikes());
+                    context.startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

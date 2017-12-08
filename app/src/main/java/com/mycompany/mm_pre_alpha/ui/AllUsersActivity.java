@@ -36,25 +36,33 @@ public class AllUsersActivity extends EBActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_subscribers);
+        try {
+            setContentView(R.layout.activity_subscribers);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
-        rvSubscribers = (RecyclerView) findViewById(R.id.rvSubscribers);
+            rvSubscribers = (RecyclerView) findViewById(R.id.rvSubscribers);
 
-        createWall();
+            createWall();
 
-        et_searchUsers = (EditText) findViewById(R.id.et_search_users);
-        findViewById(R.id.btn_search_subscribers).setOnClickListener(this);
+            et_searchUsers = (EditText) findViewById(R.id.et_search_users);
+            findViewById(R.id.btn_search_subscribers).setOnClickListener(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void createWall() {
-        subscribersAdapter = new SubscribersAdapter(this);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        rvSubscribers.setLayoutManager(layoutManager);
-        rvSubscribers.setAdapter(subscribersAdapter);
-        FirebasePathHelper.getInstance().requestAllUsers();
+        try {
+            subscribersAdapter = new SubscribersAdapter(this);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            rvSubscribers.setLayoutManager(layoutManager);
+            rvSubscribers.setAdapter(subscribersAdapter);
+            FirebasePathHelper.getInstance().requestAllUsers();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -65,8 +73,9 @@ public class AllUsersActivity extends EBActivity implements View.OnClickListener
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(AllMyUsersEvent event) {
-        myPlainUsers = event.getPlainUsers();
-       // Падало потому что мы удаляли из листа - то у нас всё падало
+        try {
+            myPlainUsers = event.getPlainUsers();
+            // Падало потому что мы удаляли из листа - то у нас всё падало
         /* List<PlainUser> myPlainUsersCopy = Collections.singletonList(myPlainUsers);
         if (!(searchName == null || "".equals(searchName))) {
 
@@ -76,31 +85,38 @@ public class AllUsersActivity extends EBActivity implements View.OnClickListener
                 }
             }
         }*/
-        if (!(searchName == null || "".equals(searchName))) {
-            for (ListIterator<PlainUser> iter = myPlainUsers.listIterator(); iter.hasNext();) {
-                PlainUser myPlainUser = iter.next();
-                if (!myPlainUser.getName().toLowerCase().contains(searchName)) {
-                    iter.remove();
-                }
-                // 1 - can call methods of element
-                // 2 - can use iter.remove() to remove the current element from the list
-                // 3 - can use iter.add(...) to insert a new element into the list
-                //     between element and iter->next()
-                // 4 - can use iter.set(...) to replace the current element
+            if (!(searchName == null || "".equals(searchName))) {
+                for (ListIterator<PlainUser> iter = myPlainUsers.listIterator(); iter.hasNext(); ) {
+                    PlainUser myPlainUser = iter.next();
+                    if (!myPlainUser.getName().toLowerCase().contains(searchName)) {
+                        iter.remove();
+                    }
+                    // 1 - can call methods of element
+                    // 2 - can use iter.remove() to remove the current element from the list
+                    // 3 - can use iter.add(...) to insert a new element into the list
+                    //     between element and iter->next()
+                    // 4 - can use iter.set(...) to replace the current element
 
-                // ...
+                    // ...
+                }
             }
+            //subscribersAdapter.replaceData();
+            subscribersAdapter.replaceData(myPlainUsers);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        //subscribersAdapter.replaceData();
-        subscribersAdapter.replaceData(myPlainUsers);
     }
 
     @Override
     public void onClick(View view) {
         // поиск людей
-        if (view.getId() == R.id.btn_search_subscribers) {
-            searchName = et_searchUsers.getText().toString().toLowerCase();
-            FirebasePathHelper.getInstance().requestAllUsers();
+        try {
+            if (view.getId() == R.id.btn_search_subscribers) {
+                searchName = et_searchUsers.getText().toString().toLowerCase();
+                FirebasePathHelper.getInstance().requestAllUsers();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

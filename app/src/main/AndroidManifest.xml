@@ -56,8 +56,6 @@
             android:name="com.mycompany.mm_pre_alpha.ui.splash.SplashActivity"
             android:theme="@style/SplashTheme" />
         <activity android:name="com.mycompany.mm_pre_alpha.ui.AddSongToPostActivity" />
-
-        <service android:name="com.mycompany.mm_pre_alpha.engine.music.MediaPlayerService" />
     </application>
 
 </manifest>

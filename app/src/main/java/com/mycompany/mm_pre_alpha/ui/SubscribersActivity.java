@@ -46,49 +46,61 @@ public class SubscribersActivity extends EBActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_subscribers);
+        try {
+            setContentView(R.layout.activity_subscribers);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
-        rvSubscribers = (RecyclerView) findViewById(R.id.rvSubscribers);
-        subscribersAdapter = new SubscribersAdapter(this);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        rvSubscribers.setLayoutManager(layoutManager);
-        rvSubscribers.setAdapter(subscribersAdapter);
-        //FirebasePathHelper.requestAllUsers();
+            rvSubscribers = (RecyclerView) findViewById(R.id.rvSubscribers);
+            subscribersAdapter = new SubscribersAdapter(this);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            rvSubscribers.setLayoutManager(layoutManager);
+            rvSubscribers.setAdapter(subscribersAdapter);
+            //FirebasePathHelper.requestAllUsers();
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
+            user = FirebaseAuth.getInstance().getCurrentUser();
 
-        et_searchUsers = (EditText) findViewById(R.id.et_search_users);
-        findViewById(R.id.btn_search_subscribers).setOnClickListener(this);
+            et_searchUsers = (EditText) findViewById(R.id.et_search_users);
+            findViewById(R.id.btn_search_subscribers).setOnClickListener(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Intent intent = getIntent();
-        plainUser = (PlainUser) intent.getSerializableExtra("user");
-        if (plainUser == null) { //попали сюда не ткнув на какого-то пользователя, а ткнули со своего профиля
-            plainUser = new PlainUser(user);
+        try {
+            Intent intent = getIntent();
+            plainUser = (PlainUser) intent.getSerializableExtra("user");
+            if (plainUser == null) { //попали сюда не ткнув на какого-то пользователя, а ткнули со своего профиля
+                plainUser = new PlainUser(user);
+            }
+            FirebasePathHelper.getInstance().getMyProfile(user.getUid());
+            FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        FirebasePathHelper.getInstance().getMyProfile(user.getUid());
-        FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMyProfileData(MyProfileEvent evt) {
-        //   plainUser = new PlainUser(user.getDisplayName(), user.getUid());
-        myProfile = evt.getProfile();
-        if (myProfile != null && myProfile.getUuid().equals(plainUser.getUuid())) {
-            subscribers = myProfile.getSubscribers();
-            if (!(searchName == null || "".equals(searchName))) {
-                for(String key : subscribers.keySet()){
-                    if(!subscribers.get(key).getName().toLowerCase().contains(searchName))
-                        subscribers.remove(key);
+        try {
+            //   plainUser = new PlainUser(user.getDisplayName(), user.getUid());
+            myProfile = evt.getProfile();
+            if (myProfile != null && myProfile.getUuid().equals(plainUser.getUuid())) {
+                subscribers = myProfile.getSubscribers();
+                if (!(searchName == null || "".equals(searchName))) {
+                    for (String key : subscribers.keySet()) {
+                        if (!subscribers.get(key).getName().toLowerCase().contains(searchName))
+                            subscribers.remove(key);
+                    }
                 }
+                subscribersAdapter.replaceData(new ArrayList<>(subscribers.values()));
             }
-            subscribersAdapter.replaceData(new ArrayList<>(subscribers.values()));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -96,30 +108,37 @@ public class SubscribersActivity extends EBActivity implements View.OnClickListe
     public void onClick(View view) {
         // поиск людей
         if (view.getId() == R.id.btn_search_subscribers) {
-            searchName = et_searchUsers.getText().toString().toLowerCase();
-            FirebasePathHelper.getInstance().getMyProfile(user.getUid());
-            FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
+            try {
+                searchName = et_searchUsers.getText().toString().toLowerCase();
+                FirebasePathHelper.getInstance().getMyProfile(user.getUid());
+                FirebasePathHelper.getInstance().getUserProfile(plainUser.getUuid());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUserProfileData(UserProfileEvent evt) {
-        if (plainUser == null) {
-            plainUser = new PlainUser(user);
-        }
-        profile = evt.getProfile();
-        if (profile != null && profile.getUuid().equals(plainUser.getUuid())) {
-            subscribers = myProfile.getSubscribers();
-            if (!(searchName == null || "".equals(searchName))) {
-                for(String key : subscribers.keySet()){
-                    if(!subscribers.get(key).getName().toLowerCase().contains(searchName))
-                        subscribers.remove(key);
-                }
+        try {
+            if (plainUser == null) {
+                plainUser = new PlainUser(user);
             }
-            subscribersAdapter.replaceData(new ArrayList<>(subscribers.values()));
+            profile = evt.getProfile();
+            if (profile != null && profile.getUuid().equals(plainUser.getUuid())) {
+                subscribers = myProfile.getSubscribers();
+                if (!(searchName == null || "".equals(searchName))) {
+                    for (String key : subscribers.keySet()) {
+                        if (!subscribers.get(key).getName().toLowerCase().contains(searchName))
+                            subscribers.remove(key);
+                    }
+                }
+                subscribersAdapter.replaceData(new ArrayList<>(subscribers.values()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 
     @Override
@@ -130,8 +149,12 @@ public class SubscribersActivity extends EBActivity implements View.OnClickListe
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(AllMyUsersEvent event) {
-        List<PlainUser> myPlainUsers = event.getPlainUsers();
-        subscribersAdapter.replaceData(myPlainUsers);
+        try {
+            List<PlainUser> myPlainUsers = event.getPlainUsers();
+            subscribersAdapter.replaceData(myPlainUsers);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

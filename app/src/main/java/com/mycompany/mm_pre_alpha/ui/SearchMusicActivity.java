@@ -15,7 +15,7 @@ import com.mycompany.mm_pre_alpha.data.SongInfo;
 import java.util.List;
 
 // search music
-public class SearchMusicActivity extends AppCompatActivity{
+public class SearchMusicActivity extends AppCompatActivity {
 
     // для стены
     private RecyclerView mRecyclerView;
@@ -24,34 +24,36 @@ public class SearchMusicActivity extends AppCompatActivity{
     // song name to write in database and storage
     private FirebaseUtils firebaseUtils;
 
-    // song name for search
-    private EditText searchName;
-
-    final String LOG_TAG = "myLogs";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_music);
+        try {
+            mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
-        // подключаемся к Firebase
-        firebaseUtils = NewsActivity.getFirebaseUtils();
-        // получаем полный список, хранящихся в БД песен
-        Intent intent = getIntent();
-        String songName = intent.getStringExtra("data");
-        //Log.d(LOG_TAG, searchName.getText().toString() + "!!!!!!!!");
-        List<SongInfo> myDataset = firebaseUtils.getSearchedDataSet(songName);
-        // создаём стену
-        createWall(myDataset);
+            // подключаемся к Firebase
+            firebaseUtils = NewsActivity.getFirebaseUtils();
+            // получаем полный список, хранящихся в БД песен
+            Intent intent = getIntent();
+            String songName = intent.getStringExtra("data");
+            //Log.d("my_log", searchName.getText().toString() + "!!!!!!!!");
+            List<SongInfo> myDataset = firebaseUtils.getSearchedDataSet(songName);
+            // создаём стену
+            createWall(myDataset);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // создаём стену
     private void createWall(List<SongInfo> myDataset) {
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new RecyclerViewAdapterMusic(this, myDataset);
-        mRecyclerView.setAdapter(mAdapter);
+        try {
+            mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mAdapter = new RecyclerViewAdapterMusic(this, myDataset);
+            mRecyclerView.setAdapter(mAdapter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
