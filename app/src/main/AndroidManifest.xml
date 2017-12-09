@@ -20,7 +20,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.mycompany.mm_pre_alpha.ui.LoginActivity"
-            android:label="login">
+            android:label="MM">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
